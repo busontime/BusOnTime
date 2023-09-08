@@ -1,0 +1,14 @@
+node_modules/
+android/
+ios/
+coverage/
+.bundle/
+.build/
+build/
+dist/
+tmp/
+temp/
+logs/
+**/*.d.ts
+*.min.js
+package-lock.json

@@ -1,0 +1,14 @@
+android/
+ios/
+coverage/
+.bundle/
+.build/
+build/
+dist/
+tmp/
+temp/
+logs/
+*.log
+*.bak
+*.swp
+package-lock.json
