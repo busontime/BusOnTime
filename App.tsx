@@ -5,7 +5,7 @@ LogBox.ignoreLogs(['']);
 // LogBox.ignoreAllLogs();
 
 export const App = (): JSX.Element => {
-  const title = 'Bienvenidos a mi app';
+  const title = 'Bienvenidos a mi app Bus on Time';
   return (
     <SafeAreaView>
       <StatusBar />
