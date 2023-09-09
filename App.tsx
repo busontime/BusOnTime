@@ -5,10 +5,11 @@ LogBox.ignoreLogs(['']);
 // LogBox.ignoreAllLogs();
 
 export const App = (): JSX.Element => {
+  const title = 'Bienvenidos a mi app';
   return (
     <SafeAreaView>
       <StatusBar />
-      <Text>Bienvenidos a mi app</Text>
+      <Text>{title}</Text>
     </SafeAreaView>
   );
 };
