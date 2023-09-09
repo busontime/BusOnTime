@@ -7,5 +7,4 @@ import renderer from 'react-test-renderer';
 
 it('renders correctly', () => {
   renderer.create(<App />);
-  expect(1).toBe(2);
 });
