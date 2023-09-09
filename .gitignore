@@ -68,6 +68,6 @@ yarn-error.log
 # npm
 package-lock.json
 
-# personal 
+# personal
 .env
 /dev
