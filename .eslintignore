@@ -12,3 +12,4 @@ logs/
 **/*.d.ts
 *.min.js
 package-lock.json
+dev/
