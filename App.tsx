@@ -1,8 +1,10 @@
 import 'react-native-gesture-handler';
 
 import React from 'react';
-import { SafeAreaView, StatusBar, LogBox } from 'react-native';
+import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import { TamaguiProvider } from 'tamagui';
+import config from './tamagui.config';
 
 import { Providers } from '@/contexts';
 import { AppRouter } from '@/routes';
@@ -10,15 +12,14 @@ import { AppRouter } from '@/routes';
 LogBox.ignoreLogs(['']);
 // LogBox.ignoreAllLogs();
 
-export const App = (): JSX.Element => {
+export const App = (props) => {
   return (
-    <NavigationContainer>
-      <Providers>
-        <SafeAreaView style={{ flex: 1 }}>
-          <StatusBar animated={true} />
+    <TamaguiProvider config={config}>
+      <NavigationContainer {...props}>
+        <Providers>
           <AppRouter />
-        </SafeAreaView>
-      </Providers>
-    </NavigationContainer>
+        </Providers>
+      </NavigationContainer>
+    </TamaguiProvider>
   );
 };
