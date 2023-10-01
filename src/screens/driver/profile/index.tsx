@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export const DriverProfileScreen = (): JSX.Element => {
+export const DriverProfileScreen = () => {
   const navigation = useNavigation();
 
   return (

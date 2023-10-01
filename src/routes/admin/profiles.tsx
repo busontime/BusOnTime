@@ -5,9 +5,9 @@ import { AdminProfileScreen } from '@/screens/admin/profile';
 
 const Stack = createStackNavigator();
 
-export const AdminProfileStack = (): JSX.Element => {
+export const AdminProfileStack = (props) => {
   return (
-    <Stack.Navigator initialRouteName='profile' screenOptions={{ headerShown: false }}>
+    <Stack.Navigator {...props} initialRouteName='profile' screenOptions={{ headerShown: false }}>
       <Stack.Screen name='profile' component={AdminProfileScreen} />
     </Stack.Navigator>
   );

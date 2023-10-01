@@ -8,9 +8,10 @@ import { Sidebar } from '@/components/sidebar';
 
 const Drawer = createDrawerNavigator();
 
-export const DriverRouter = (): JSX.Element => {
+export const DriverRouter = (props) => {
   return (
     <Drawer.Navigator
+      {...props}
       drawerContent={(props) => <Sidebar {...props} />}
       initialRouteName='home-menu'
       screenOptions={{

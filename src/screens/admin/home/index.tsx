@@ -1,23 +1,27 @@
 import React from 'react';
-import { View, Text, Button } from 'react-native';
+import { Button, Stack, Text } from 'tamagui';
 import { useNavigation } from '@react-navigation/native';
 
-export const AdminHomeScreen = (): JSX.Element => {
+import { User2 } from 'lucide-react-native';
+
+export const AdminHomeScreen = () => {
   const navigation = useNavigation();
 
   return (
-    <View
-      style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{ color: 'cyan', textAlign: 'center', fontWeight: 'bold', fontSize: 40 }}>
+    <Stack bg={'$backgroundFocus'} f={1} jc='center'>
+      <Text ta='center' color={'$color'}>
         Home Admin
       </Text>
 
       <Button
-        title='Profile'
+        icon={<User2 size={48} />}
+        variant='outlined'
+        backgroundColor='$green8'
         onPress={() => {
           navigation.navigate('profile-menu' as never);
-        }}
-      />
-    </View>
+        }}>
+        Profile
+      </Button>
+    </Stack>
   );
 };

@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { useAuthContext } from '@/contexts/auth';
 
-export const LoginScreen = (): JSX.Element => {
+export const LoginScreen = () => {
   const navigation = useNavigation();
   const { user, loginWithGoogle, login } = useAuthContext();
 

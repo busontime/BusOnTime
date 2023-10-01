@@ -5,9 +5,9 @@ import { PassengerHomeScreen } from '@/screens/passenger/home';
 
 const Stack = createStackNavigator();
 
-export const PassengerHomeStack = (): JSX.Element => {
+export const PassengerHomeStack = (props) => {
   return (
-    <Stack.Navigator initialRouteName='home' screenOptions={{ headerShown: false }}>
+    <Stack.Navigator {...props} initialRouteName='home' screenOptions={{ headerShown: false }}>
       <Stack.Screen name='home' component={PassengerHomeScreen} />
     </Stack.Navigator>
   );

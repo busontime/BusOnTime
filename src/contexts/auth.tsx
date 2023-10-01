@@ -3,13 +3,15 @@ import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import Config from 'react-native-config';
 
+import { type ChildrenProps } from '@/interfaces';
+
 GoogleSignin.configure({ webClientId: Config.WEB_CLIENT_ID });
 
 export const AuthContext = createContext(null);
 
 export const useAuthContext = () => useContext(AuthContext);
 
-export const AuthProvider = ({ children }: childrenProp): JSX.Element => {
+export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
   const [user, setUser] = useState();
 
   const loginWithGoogle = async () => {

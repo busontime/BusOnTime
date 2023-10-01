@@ -6,9 +6,9 @@ import { RegisterScreen } from '@/screens/public/register';
 
 const Stack = createStackNavigator();
 
-export const PublicRouter = (): JSX.Element => {
+export const PublicRouter = (props) => {
   return (
-    <Stack.Navigator initialRouteName='login' screenOptions={{ headerShown: false }}>
+    <Stack.Navigator {...props} initialRouteName='login' screenOptions={{ headerShown: false }}>
       <Stack.Screen name='login' component={LoginScreen} />
       <Stack.Screen name='register' component={RegisterScreen} />
     </Stack.Navigator>

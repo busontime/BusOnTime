@@ -5,9 +5,9 @@ import { DriverProfileScreen } from '@/screens/driver/profile';
 
 const Stack = createStackNavigator();
 
-export const DriverProfileStack = (): JSX.Element => {
+export const DriverProfileStack = (props) => {
   return (
-    <Stack.Navigator initialRouteName='profile' screenOptions={{ headerShown: false }}>
+    <Stack.Navigator {...props} initialRouteName='profile' screenOptions={{ headerShown: false }}>
       <Stack.Screen name='profile' component={DriverProfileScreen} />
     </Stack.Navigator>
   );

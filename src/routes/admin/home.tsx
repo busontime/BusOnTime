@@ -5,9 +5,9 @@ import { AdminHomeScreen } from '@/screens/admin/home';
 
 const Stack = createStackNavigator();
 
-export const AdminHomeStack = (): JSX.Element => {
+export const AdminHomeStack = (props) => {
   return (
-    <Stack.Navigator initialRouteName='home' screenOptions={{ headerShown: false }}>
+    <Stack.Navigator {...props} initialRouteName='home' screenOptions={{ headerShown: false }}>
       <Stack.Screen name='home' component={AdminHomeScreen} />
     </Stack.Navigator>
   );

@@ -8,9 +8,10 @@ import { Sidebar } from '@/components/sidebar';
 
 const Drawer = createDrawerNavigator();
 
-export const AdminRouter = (): JSX.Element => {
+export const AdminRouter = (props) => {
   return (
     <Drawer.Navigator
+      {...props}
       drawerContent={(props) => <Sidebar {...props} />}
       initialRouteName='home-menu'
       screenOptions={{
