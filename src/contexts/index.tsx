@@ -1,7 +1,14 @@
 import React from 'react';
 
-import { AuthProvider } from './auth';
+import { type ChildrenProps } from '@/interfaces';
 
-export const Providers = ({ children }: childrenProp): JSX.Element => {
-  return <AuthProvider>{children}</AuthProvider>;
+import { AuthProvider } from './auth';
+import { ThemeProvider } from './theme';
+
+export const Providers: React.FC<ChildrenProps> = ({ children }) => {
+  return (
+    <ThemeProvider>
+      <AuthProvider>{children}</AuthProvider>
+    </ThemeProvider>
+  );
 };
