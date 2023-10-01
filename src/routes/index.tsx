@@ -1,4 +1,6 @@
-import React, { useState, Fragment, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, StatusBar } from 'react-native';
+import { Theme } from 'tamagui';
 
 import { PublicRouter } from './public';
 import { AdminRouter } from './admin';
@@ -6,11 +8,15 @@ import { DriverRouter } from './driver';
 import { PassengerRouter } from './passenger';
 
 import { useAuthContext } from '@/contexts/auth';
+import { useThemeContext } from '@/contexts/theme';
 
-export const AppRouter = (): JSX.Element => {
+import { styles } from './styles';
+
+export const AppRouter = () => {
   const [router, setRouter] = useState('');
 
   const { user } = useAuthContext();
+  const { isDark } = useThemeContext();
 
   const configRouter = () => {
     if (user === null || user === undefined) {
@@ -31,11 +37,14 @@ export const AppRouter = (): JSX.Element => {
   }, [user]);
 
   return (
-    <Fragment>
-      {router === 'public' && <PublicRouter />}
-      {router === 'admin' && <AdminRouter />}
-      {router === 'driver' && <DriverRouter />}
-      {router === 'passenger' && <PassengerRouter />}
-    </Fragment>
+    <Theme name={isDark ? 'dark' : 'light'}>
+      <StatusBar animated={true} />
+      <SafeAreaView style={styles.content}>
+        {router === 'public' && <PublicRouter />}
+        {router === 'admin' && <AdminRouter />}
+        {router === 'driver' && <DriverRouter />}
+        {router === 'passenger' && <PassengerRouter />}
+      </SafeAreaView>
+    </Theme>
   );
 };

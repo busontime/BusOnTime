@@ -1,31 +1,38 @@
 import React from 'react';
-import type { PropsWithChildren } from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Button, Text, XStack } from 'tamagui';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-import { styles } from './styles';
-
-type SidebarItemProps = PropsWithChildren<{
-  label: string;
-  iconName?: string;
-  onPress?: () => void;
-  active?: boolean;
-  color?: string;
-}>;
+import { useThemeContext } from '@/contexts/theme';
 
 export const SidebarItem = ({
   label,
   iconName = 'home',
   onPress = () => {},
   active = false,
-  color = 'black',
-}: SidebarItemProps): JSX.Element => {
+  isRed = false,
+}) => {
+  const { isDark } = useThemeContext();
+
   return (
-    <TouchableOpacity
-      style={[styles.container, { borderLeftColor: active ? 'cyan' : 'transparent' }]}
-      onPress={onPress}>
-      <MaterialIcon name={iconName} size={40} color={color} />
-      <Text style={[styles.text, { color }]}>{label}</Text>
-    </TouchableOpacity>
+    <XStack
+      borderLeftColor={active ? '$blue8' : 'transparent'}
+      borderLeftWidth={'$1.5'}
+      borderRadius={'$2'}>
+      <Button
+        f={1}
+        paddingHorizontal='$2'
+        justifyContent='flex-start'
+        backgroundColor='transparent'
+        onPress={onPress}
+        icon={
+          <MaterialIcon
+            name={iconName}
+            size={30}
+            color={isRed ? 'red' : isDark ? '#fff' : '#000'}
+          />
+        }>
+        <Text color={isRed ? 'red' : '$gray12'}>{label}</Text>
+      </Button>
+    </XStack>
   );
 };
