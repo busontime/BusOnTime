@@ -5,6 +5,7 @@ import { PassengerHomeStack } from './home';
 import { PassengerProfileStack } from './profile';
 
 import { Sidebar } from '@/components/sidebar';
+import { PassengerRegisterStack } from './PassengerRegisterStack';
 
 const Drawer = createDrawerNavigator();
 
@@ -32,6 +33,15 @@ export const PassengerRouter = (props) => {
         options={{
           drawerLabel: 'Mi Perfil',
           title: 'person-2',
+        }}
+      />
+
+      <Drawer.Screen
+        name='edit-menu'
+        component={PassengerRegisterStack}
+        options={{
+          drawerLabel: 'Editar Perfil',
+          title: 'edit',
         }}
       />
     </Drawer.Navigator>
