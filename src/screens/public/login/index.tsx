@@ -6,6 +6,8 @@ import { Button, Stack, H2, ScrollView, SizableText, XStack } from 'tamagui';
 import { Pen, LogIn } from 'lucide-react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import { userService } from '@/services/user';
+
 import { TogleTheme } from '@/components/togleTheme';
 import { Logo } from '@/components/logo';
 import { FormInput } from '@/components/formInput';
@@ -17,6 +19,7 @@ import { showAlertDialog, showErrorDialog } from '@/utils/dialog';
 import { validateEmail } from '@/utils/validate';
 
 import { COLORS } from '@/constants/styles';
+import { ROLES_ID } from '@/constants/bd';
 
 const initForm = {
   email: '',
@@ -75,7 +78,22 @@ export const LoginScreen = () => {
 
   const loginGoogle = async () => {
     try {
-      await loginWithGoogle();
+      const res = await loginWithGoogle();
+
+      const { additionalUserInfo, user } = res;
+
+      if (additionalUserInfo.isNewUser) {
+        const data = {
+          name: additionalUserInfo.profile.given_name,
+          lastname: additionalUserInfo.profile.family_name,
+          email: user.email,
+          roleId: ROLES_ID.passenger,
+          phone: '',
+          birthdate: null,
+        };
+
+        await userService.createUser(user.uid, data);
+      }
     } catch (error) {
       console.log('error', error);
     }

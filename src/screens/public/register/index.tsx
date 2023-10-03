@@ -50,6 +50,8 @@ export const RegisterScreen = () => {
           };
 
           await userService.createUser(user.uid, data);
+
+          goToLoginScreen();
         }
       } catch (error) {
         console.log('error', error);

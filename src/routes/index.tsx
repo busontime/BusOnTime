@@ -18,7 +18,7 @@ export const AppRouter = () => {
     if (profile) {
       const { person, user } = profile;
 
-      if (user === null || user === undefined) {
+      if (user === null || user === undefined || person === undefined || person === null) {
         setRouter(ROUTERS.public);
         return;
       }

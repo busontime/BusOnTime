@@ -26,7 +26,9 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
 
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-      await auth().signInWithCredential(googleCredential);
+      const data = await auth().signInWithCredential(googleCredential);
+
+      return data;
     } catch (error) {
       console.log('error', error);
     }
@@ -65,6 +67,8 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
   const createAccount = async (email: string, password: string) => {
     try {
       const data = await auth().createUserWithEmailAndPassword(email, password);
+
+      logout();
 
       return data;
     } catch (error) {
