@@ -3,6 +3,10 @@ import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import Config from 'react-native-config';
 
+import { userService } from '@/services/user';
+
+import { showErrorDialog } from '@/utils/dialog';
+
 import { type ChildrenProps } from '@/interfaces';
 
 GoogleSignin.configure({ webClientId: Config.WEB_CLIENT_ID });
@@ -12,7 +16,7 @@ export const AuthContext = createContext(null);
 export const useAuthContext = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
-  const [user, setUser] = useState();
+  const [profile, setProfile] = useState(null);
 
   const loginWithGoogle = async () => {
     try {
@@ -33,12 +37,59 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
       await auth().signInWithEmailAndPassword(email, password);
     } catch (error) {
       console.log('error', error);
-      if (error.code === 'auth/email-already-in-use') {
-        console.log('That email address is already in use!');
-      }
 
-      if (error.code === 'auth/invalid-email') {
-        console.log('That email address is invalid!');
+      switch (error.code) {
+        case 'auth/invalid-email':
+          showErrorDialog('Correo electrónico no válido.!');
+          break;
+
+        case 'auth/user-not-found':
+          showErrorDialog('Usuario no registrado.!');
+          break;
+
+        case 'auth/wrong-password':
+          showErrorDialog('Contraseña incorrecta.!');
+          break;
+
+        case 'auth/network-request-failed':
+          showErrorDialog('Necesita conexión a internet.!');
+          break;
+
+        default:
+          showErrorDialog('No puede iniciar Sesión.!');
+          break;
+      }
+    }
+  };
+
+  const createAccount = async (email: string, password: string) => {
+    try {
+      const data = await auth().createUserWithEmailAndPassword(email, password);
+
+      return data;
+    } catch (error) {
+      console.log('error', error);
+
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          showErrorDialog('Correo electrónico ya en uso.!');
+          break;
+
+        case 'auth/invalid-email':
+          showErrorDialog('Correo electrónico no válido.!');
+          break;
+
+        case 'auth/weak-password':
+          showErrorDialog('La contraseña es demasiado débil. Debe contener al menos 6 caracteres');
+          break;
+
+        case 'auth/network-request-failed':
+          showErrorDialog('Necesita conexión a internet.!');
+          break;
+
+        default:
+          showErrorDialog('No puede registrarse, Intentelo más tarde.!');
+          break;
       }
     }
   };
@@ -51,8 +102,18 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     }
   };
 
-  const onAuthStateChanged = (user): void => {
-    setUser(user);
+  const onAuthStateChanged = async (user) => {
+    const _profile = { user, person: null };
+
+    if (user) {
+      const { _user } = user;
+
+      const data = await userService.getById(_user.uid);
+
+      _profile.person = data;
+    }
+
+    setProfile(_profile);
   };
 
   useEffect(() => {
@@ -62,10 +123,11 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
   }, []);
 
   const data = {
-    user,
+    profile,
     loginWithGoogle,
     logout,
     login,
+    createAccount,
   };
 
   return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;
