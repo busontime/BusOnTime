@@ -13,6 +13,13 @@ export const PassengerProfileScreen = () => {
       </Text>
 
       <Button
+        title='Edicion de Perfil'
+        onPress={() => {
+          navigation.navigate('edit-profile' as never);
+        }}
+      />
+
+      <Button
         title='Back'
         onPress={() => {
           navigation.goBack();

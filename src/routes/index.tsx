@@ -10,8 +10,6 @@ import { PassengerRouter } from './passenger';
 import { useAuthContext } from '@/contexts/auth';
 import { useThemeContext } from '@/contexts/theme';
 
-import { styles } from './styles';
-
 export const AppRouter = () => {
   const [router, setRouter] = useState('');
 
@@ -39,7 +37,7 @@ export const AppRouter = () => {
   return (
     <Theme name={isDark ? 'dark' : 'light'}>
       <StatusBar animated={true} />
-      <SafeAreaView style={styles.content}>
+      <SafeAreaView>
         {router === 'public' && <PublicRouter />}
         {router === 'admin' && <AdminRouter />}
         {router === 'driver' && <DriverRouter />}

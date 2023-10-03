@@ -3,9 +3,9 @@ import { Button, Form, Image, Input, Spinner } from 'tamagui';
 import { editProfile } from '@/mock/EditProfile';
 import { View, TextInput, TouchableOpacity, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { styles } from '@/routes/styles';
+import { styles } from './styles';
 
-export const PassengerRegister = () => {
+export const EditProfilePassenger = () => {
   const [updateForm, setUpdateForm] = useState(editProfile);
   const [status, setStatus] = useState<'off' | 'submiting' | 'submitted'>('off');
   const [isEditing, setIsEditing] = useState(false);
