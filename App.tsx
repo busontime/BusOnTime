@@ -7,6 +7,7 @@ import { TamaguiProvider } from 'tamagui';
 import config from './tamagui.config';
 
 import { Providers } from '@/contexts';
+import { ConfigApp } from './src';
 import { AppRouter } from '@/routes';
 
 LogBox.ignoreLogs(['']);
@@ -17,7 +18,9 @@ export const App = (props) => {
     <TamaguiProvider config={config}>
       <NavigationContainer {...props}>
         <Providers>
-          <AppRouter />
+          <ConfigApp>
+            <AppRouter />
+          </ConfigApp>
         </Providers>
       </NavigationContainer>
     </TamaguiProvider>
