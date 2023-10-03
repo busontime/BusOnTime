@@ -1,6 +1,6 @@
 import React from 'react';
-import { YStack, XStack, Text } from 'tamagui';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
+import { YStack, XStack, Text } from 'tamagui';
 
 import { useAuthContext } from '@/contexts/auth';
 
@@ -10,14 +10,14 @@ import { TogleTheme } from '../togleTheme';
 export const Sidebar = (props) => {
   const { state, descriptors, navigation } = props;
 
-  const { logout, user } = useAuthContext();
+  const { logout, profile } = useAuthContext();
 
   return (
     <YStack bg={'$backgroundFocus'} f={1}>
       <DrawerContentScrollView {...props}>
         <XStack bg={'$blue8'} jc='space-between' padding='$2' ai='center' mt='$-1.5'>
           <Text color={'$gray12'} fontWeight={'$true'} f={1} ta='center'>
-            {user?.displayName || user?.email}
+            {profile?.person?.name || profile?.user?.email}
           </Text>
 
           <TogleTheme />
