@@ -13,4 +13,13 @@ export const bdService = {
       .then((res) => res)
       .catch((err) => err);
   },
+
+  updateUserById: async (collection, id, data) => {
+    return await firestore()
+      .collection(collection)
+      .doc(id)
+      .update(data)
+      .then((res) => res)
+      .catch((err) => err);
+  },
 };

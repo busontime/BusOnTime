@@ -34,6 +34,16 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     }
   };
 
+  const updateProfile = (updatedPerson) => {
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      person: {
+        ...prevProfile.person,
+        ...updatedPerson,
+      },
+    }));
+  };
+
   const login = async (email: string, password: string) => {
     try {
       await auth().signInWithEmailAndPassword(email, password);
@@ -132,6 +142,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     logout,
     login,
     createAccount,
+    updateProfile,
   };
 
   return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;

@@ -1,166 +1,218 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Form, Image, Input, Spinner } from 'tamagui';
-import { editProfile } from '@/mock/EditProfile';
-import { View, TextInput, TouchableOpacity, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Button, Form, ScrollView } from 'tamagui';
+import {
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { styles } from './styles';
+import { useNavigation } from '@react-navigation/native';
+import { useAuthContext } from '@/contexts/auth';
+import { UserCircle2 } from 'lucide-react-native';
+import { COLORS } from '@/constants/styles';
+import { useThemeContext } from '@/contexts/theme';
+import { FormInput } from '@/components/formInput';
+import { userService } from '@/services/user';
+import { showAlertDialog } from '@/utils/dialog';
+import { validateEmail } from '@/utils/validate';
+
+const initForm = {
+  birthdate: '',
+  email: '',
+  lastname: '',
+  name: '',
+  phone: '',
+};
 
 export const EditProfilePassenger = () => {
-  const [updateForm, setUpdateForm] = useState(editProfile);
-  const [status, setStatus] = useState<'off' | 'submiting' | 'submitted'>('off');
-  const [isEditing, setIsEditing] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const { profile, updateProfile } = useAuthContext();
+  const [updateForm, setUpdateForm] = useState({ ...initForm, ...profile.person });
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
+  const { isDark } = useThemeContext();
+  const navigation = useNavigation();
 
   useEffect(() => {
-    if (status === 'submiting') {
-      const timer = setTimeout(() => {
-        setStatus('off');
-      }, 2000);
-      return () => {
-        clearTimeout(timer);
-      };
+    setUpdateForm({
+      ...updateForm,
+      ...profile.person,
+    });
+  }, [profile.person]);
+
+  const update = async () => {
+    if (validateForm()) {
+      try {
+        const data = {
+          birthdate: updateForm.birthdate,
+          email: updateForm.email,
+          lastname: updateForm.lastname,
+          name: updateForm.name,
+          phone: updateForm.phone,
+        };
+        await userService.updateUserById(profile.user.uid, data);
+        updateProfile(data);
+      } catch (error) {
+        console.log('error al  actualizar', error);
+      }
     }
-  }, [status]);
+  };
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowPicker(Platform.OS === 'ios');
     setDate(currentDate);
+    const formattedDate = currentDate.toLocaleDateString('es-ES');
+    setUpdateForm({ ...updateForm, birthdate: formattedDate });
   };
 
-  const handleSave = () => {
-    setIsSaving(true);
-    setStatus('submiting');
+  const validateForm = () => {
+    const email = updateForm.email.trim().toLowerCase();
+    if (email === '') {
+      showAlertDialog('El email esta vacio');
+      return false;
+    }
 
-    setTimeout(() => {
-      setIsSaving(false);
-      setStatus('submitted');
-    }, 2000);
+    if (!validateEmail(email)) {
+      showAlertDialog('el email no es valido');
+      return false;
+    }
+
+    if (updateForm.name === '') {
+      showAlertDialog('El nombre esta vacio');
+      return false;
+    }
+
+    if (updateForm.lastname === '') {
+      showAlertDialog('El apellido esta vacio');
+      return false;
+    }
+
+    if (updateForm.phone === '') {
+      showAlertDialog('El telefono esta vacio');
+      return false;
+    }
+
+    if (updateForm.birthdate === '') {
+      showAlertDialog('La fecha de nacimiento esta vacia');
+      return false;
+    }
+
+    return true;
   };
 
   return (
-    <Form
-      alignItems='center'
-      backgroundColor='$backgroundFocus'
-      height='100%'
-      width='100%'
-      gap='$3'
-      onSubmit={function (): void {
-        setStatus('submiting');
-      }}
-      padding='$8'>
-      <Image backgroundColor='white' source={0} width={100} height={100} borderRadius={50} />
-
-      <Input
-        width='90%'
-        backgroundColor='$background'
-        borderColor='$background'
-        color='white'
-        padding='$3'
-        margin='$2'
-        size='$5'
-        placeholder='Nombre'
-        value={updateForm.name}
-        onChangeText={(text) => {
-          if (!isSaving && isEditing) {
-            setUpdateForm({ ...updateForm, name: text });
-          }
-        }}
-        disabled={!isEditing || isSaving}
-      />
-
-      <Input
-        width='90%'
-        backgroundColor='$background'
-        borderColor='$background'
-        color='white'
-        margin='$2'
-        padding='$3'
-        size='$5'
-        placeholder='Apellido'
-        value={updateForm.lastname}
-        onChangeText={(text) => {
-          if (!isSaving && isEditing) {
-            setUpdateForm({ ...updateForm, lastname: text });
-          }
-        }}
-        disabled={!isEditing || isSaving}
-      />
-
-      <Input
-        width='90%'
-        backgroundColor='$background'
-        borderColor='$background'
-        color='white'
-        margin='$2'
-        padding='$3'
-        size='$5'
-        placeholder='Email'
-        value={updateForm.email}
-        onChangeText={(text) => {
-          if (!isSaving && isEditing) {
-            setUpdateForm({ ...updateForm, email: text });
-          }
-        }}
-        disabled={!isEditing || isSaving}
-      />
-
-      <Input
-        width='90%'
-        backgroundColor='$background'
-        borderColor='$background'
-        color='white'
-        margin='$2'
-        padding='$'
-        size='$5'
-        placeholder='Telefono'
-        value={updateForm.phone}
-        onChangeText={(text) => {
-          if (!isSaving && isEditing) {
-            setUpdateForm({ ...updateForm, phone: text });
-          }
-        }}
-        disabled={!isEditing || isSaving}
-      />
-
-      <View>
-        <View>
-          <TouchableOpacity
-            style={styles.inputTextPicker}
-            onPress={() => {
-              setShowPicker(!showPicker && isEditing);
-            }}>
-            <TextInput
-              style={styles.textPicker}
-              editable={false}
-              value={date.toLocaleDateString('es-ES')}
-            />
-          </TouchableOpacity>
-        </View>
-        {showPicker && (
-          <DateTimePicker value={date} mode='date' display='spinner' onChange={onChange} />
-        )}
-      </View>
-
-      <Form.Trigger asChild>
-        <Button
-          disabled={isSaving}
-          size='$3'
-          backgroundColor='$green11Light'
-          color='black'
-          icon={isSaving ? () => <Spinner /> : undefined}
-          onPress={() => {
-            if (isEditing) {
-              handleSave();
-            } else {
-              setIsEditing(true);
-            }
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{
+        flex: 1,
+      }}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          bg={'$backgroundFocus'}
+          f={1}
+          space='$3'
+          contentContainerStyle={{
+            justifyContent: 'center',
+            alignItems: 'center',
           }}>
-          {isEditing ? 'Guardar' : 'Editar'}
-        </Button>
-      </Form.Trigger>
-    </Form>
+          <Form
+            alignItems='center'
+            height='100%'
+            width='100%'
+            gap='$3'
+            onSubmit={() => {
+              console.log('hi');
+            }}
+            padding='$8'>
+            <UserCircle2 color={isDark ? COLORS.light : COLORS.dark} size={50} />
+            <FormInput
+              placeholder='Nombre'
+              value={updateForm.name}
+              onChangeText={(text) => {
+                setUpdateForm({ ...updateForm, name: text });
+              }}
+            />
+
+            <FormInput
+              placeholder='Apellido'
+              value={updateForm.lastname}
+              onChangeText={(text) => {
+                setUpdateForm({ ...updateForm, lastname: text });
+              }}
+            />
+
+            <FormInput
+              placeholder='Email'
+              value={updateForm.email}
+              onChangeText={(text) => {
+                setUpdateForm({ ...updateForm, email: text });
+              }}
+            />
+
+            <FormInput
+              placeholder='Telefono'
+              value={updateForm.phone}
+              onChangeText={(text) => {
+                setUpdateForm({ ...updateForm, phone: text });
+              }}
+            />
+
+            <View>
+              <View>
+                <TouchableOpacity
+                  style={[
+                    styles.inputTextPicker,
+                    { backgroundColor: isDark ? COLORS.dark : COLORS.light },
+                  ]}
+                  onPress={() => {
+                    setShowPicker(!showPicker);
+                  }}>
+                  <TextInput
+                    style={[styles.textPicker, { color: isDark ? COLORS.light : COLORS.dark }]}
+                    editable={false}
+                    placeholder='Seleccione una fecha'
+                    onChangeText={(text) => {
+                      setUpdateForm({ ...updateForm, birthdate: text });
+                    }}
+                    value={updateForm.birthdate}
+                  />
+                </TouchableOpacity>
+              </View>
+              {showPicker && (
+                <DateTimePicker value={date} mode='date' display='calendar' onChange={onChange} />
+              )}
+            </View>
+
+            <View style={{ flexDirection: 'row' }}>
+              <Button
+                margin='$1'
+                size='$3'
+                backgroundColor='$green8'
+                color='black'
+                onPress={() => {
+                  update();
+                }}>
+                Guardar
+              </Button>
+
+              <Button
+                margin='$1'
+                backgroundColor='$red10'
+                onPress={() => {
+                  navigation.navigate('profile' as never);
+                }}
+                size='$3'>
+                Regresar
+              </Button>
+            </View>
+          </Form>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };

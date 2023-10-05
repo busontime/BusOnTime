@@ -13,6 +13,7 @@ export const FormInput = ({
   onChangeText = (val) => {},
   type = 'default',
   isSecure = false,
+  disabled = false,
 }) => {
   const { isDark } = useThemeContext();
 
@@ -26,6 +27,7 @@ export const FormInput = ({
         onChangeText={onChangeText}
         keyboardType={type}
         secureTextEntry={showPassword}
+        disabled={disabled}
         w='$20'
         focusStyle={{
           bw: 2,

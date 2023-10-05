@@ -2,9 +2,7 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   inputTextPicker: {
-    borderWidth: 1,
-    color: 'white',
-    minWidth: '90%',
+    minWidth: '98%',
     borderRadius: 8,
     backgroundColor: '#111111',
     margin: 6,
@@ -12,6 +10,7 @@ export const styles = StyleSheet.create({
 
   textPicker: {
     marginLeft: 14,
-    color: 'white',
+    borderRadius: 6,
+    minWidth: '100%',
   },
 });

@@ -22,4 +22,12 @@ export const userService = {
       console.error('Error al recuperar usuario: ' + userId, error);
     }
   },
+
+  updateUserById: async (userId, data) => {
+    try {
+      return await bdService.updateUserById(COLLECTION_NAME, userId, data);
+    } catch (error) {
+      console.error('Ocurrio un error al actualizar el usuario: ' + userId, error);
+    }
+  },
 };
