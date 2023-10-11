@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, ScrollView } from 'tamagui';
+import { Button, Form, ScrollView, Spinner } from 'tamagui';
 import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
   View,
-  TextInput,
   TouchableOpacity,
   Platform,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { styles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthContext } from '@/contexts/auth';
 import { UserCircle2 } from 'lucide-react-native';
@@ -31,6 +29,7 @@ const initForm = {
 
 export const EditProfilePassenger = () => {
   const { profile, updateProfile } = useAuthContext();
+  const [status, setStatus] = useState<'off' | 'submitting' | 'submitted'>('off');
   const [updateForm, setUpdateForm] = useState({ ...initForm, ...profile.person });
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
@@ -46,6 +45,7 @@ export const EditProfilePassenger = () => {
 
   const update = async () => {
     if (validateForm()) {
+      setStatus('submitting');
       try {
         const data = {
           birthdate: updateForm.birthdate,
@@ -58,6 +58,8 @@ export const EditProfilePassenger = () => {
         updateProfile(data);
       } catch (error) {
         console.log('error al  actualizar', error);
+      } finally {
+        setStatus('submitted');
       }
     }
   };
@@ -126,10 +128,10 @@ export const EditProfilePassenger = () => {
             width='100%'
             gap='$3'
             onSubmit={() => {
-              console.log('hi');
+              setStatus('submitting');
             }}
             padding='$8'>
-            <UserCircle2 color={isDark ? COLORS.light : COLORS.dark} size={50} />
+            <UserCircle2 color={isDark ? COLORS.light : COLORS.dark} size={70} />
             <FormInput
               placeholder='Nombre'
               value={updateForm.name}
@@ -165,15 +167,10 @@ export const EditProfilePassenger = () => {
             <View>
               <View>
                 <TouchableOpacity
-                  style={[
-                    styles.inputTextPicker,
-                    { backgroundColor: isDark ? COLORS.dark : COLORS.light },
-                  ]}
                   onPress={() => {
                     setShowPicker(!showPicker);
                   }}>
-                  <TextInput
-                    style={[styles.textPicker, { color: isDark ? COLORS.light : COLORS.dark }]}
+                  <FormInput
                     editable={false}
                     placeholder='Seleccione una fecha'
                     onChangeText={(text) => {
@@ -194,15 +191,17 @@ export const EditProfilePassenger = () => {
                 size='$3'
                 backgroundColor='$green8'
                 color='black'
+                icon={status === 'submitting' ? () => <Spinner /> : undefined}
                 onPress={() => {
                   update();
                 }}>
-                Guardar
+                {status === 'submitting' ? 'Guardando...' : 'Guardar'}
               </Button>
 
               <Button
                 margin='$1'
-                backgroundColor='$red10'
+                backgroundColor={status === 'submitting' ? '$gray10' : '$red10'}
+                disabled={status === 'submitting'}
                 onPress={() => {
                   navigation.navigate('profile' as never);
                 }}

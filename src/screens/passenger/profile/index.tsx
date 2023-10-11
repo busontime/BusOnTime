@@ -24,7 +24,7 @@ export const PassengerProfileScreen = () => {
       width='100%'
       gap='$4'
       padding='$9'>
-      <UserCircle2 color={isDark ? COLORS.light : COLORS.dark} size={50} />
+      <UserCircle2 color={isDark ? COLORS.light : COLORS.dark} size={70} />
       <FormInput
         value={firstWordUpper(profile?.person?.name)}
         placeholder='Nombre'
