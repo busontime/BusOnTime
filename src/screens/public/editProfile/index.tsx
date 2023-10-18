@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, ScrollView, Spinner } from 'tamagui';
+import { Button, Form, ScrollView, SizableText, Spinner, XStack } from 'tamagui';
 import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
@@ -27,8 +27,8 @@ const initForm = {
   phone: '',
 };
 
-export const EditProfilePassenger = () => {
-  const { profile, updateProfile } = useAuthContext();
+export const EditProfile = () => {
+  const { profile, updateProfile, updateEmail } = useAuthContext();
   const [status, setStatus] = useState<'off' | 'submitting' | 'submitted'>('off');
   const [updateForm, setUpdateForm] = useState({ ...initForm, ...profile.person });
   const [date, setDate] = useState(new Date());
@@ -54,22 +54,33 @@ export const EditProfilePassenger = () => {
           name: updateForm.name,
           phone: updateForm.phone,
         };
-        await userService.updateUserById(profile.user.uid, data);
+        if (updateForm.email !== profile.person.email) {
+          const deme = await updateEmail(updateForm.email);
+          console.log(deme);
+          if (!deme) {
+            return;
+          }
+        }
+        console.log('uodate email before');
+        await userService.updateById(profile.user.uid, data);
         updateProfile(data);
       } catch (error) {
         console.log('error al  actualizar', error);
+        showAlertDialog('Error al actualizar, Intentelo mas tarde');
       } finally {
         setStatus('submitted');
       }
     }
   };
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
+  const onChange = (selectedDate) => {
     setShowPicker(Platform.OS === 'ios');
-    setDate(currentDate);
-    const formattedDate = currentDate.toLocaleDateString('es-ES');
-    setUpdateForm({ ...updateForm, birthdate: formattedDate });
+    if (selectedDate) {
+      const currentDate = selectedDate || date;
+      setDate(currentDate);
+      const formattedDate = currentDate.toLocaleDateString('es-ES');
+      setUpdateForm({ ...updateForm, birthdate: formattedDate });
+    }
   };
 
   const validateForm = () => {
@@ -185,9 +196,8 @@ export const EditProfilePassenger = () => {
               )}
             </View>
 
-            <View style={{ flexDirection: 'row' }}>
+            <XStack gap='$5'>
               <Button
-                margin='$1'
                 size='$3'
                 backgroundColor='$green8'
                 color='black'
@@ -195,20 +205,23 @@ export const EditProfilePassenger = () => {
                 onPress={() => {
                   update();
                 }}>
-                {status === 'submitting' ? 'Guardando...' : 'Guardar'}
+                <SizableText color={'$color'} fontWeight={'bold'}>
+                  {status === 'submitting' ? 'Guardando...' : 'Guardar'}
+                </SizableText>
               </Button>
 
               <Button
-                margin='$1'
                 backgroundColor={status === 'submitting' ? '$gray10' : '$red10'}
                 disabled={status === 'submitting'}
                 onPress={() => {
                   navigation.navigate('profile' as never);
                 }}
                 size='$3'>
-                Regresar
+                <SizableText color={'$color'} fontWeight={'bold'}>
+                  Regresar
+                </SizableText>
               </Button>
-            </View>
+            </XStack>
           </Form>
         </ScrollView>
       </TouchableWithoutFeedback>

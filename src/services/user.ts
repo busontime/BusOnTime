@@ -23,9 +23,9 @@ export const userService = {
     }
   },
 
-  updateUserById: async (userId, data) => {
+  updateById: async (userId, data) => {
     try {
-      return await bdService.updateUserById(COLLECTION_NAME, userId, data);
+      return await bdService.updateById(COLLECTION_NAME, userId, data);
     } catch (err) {
       console.error('Ocurrio un error al actualizar el usuario: ' + userId, err);
     }

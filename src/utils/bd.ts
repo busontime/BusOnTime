@@ -14,7 +14,7 @@ export const bdService = {
       .catch((err) => err);
   },
 
-  updateUserById: async (collection, id, data) => {
+  updateById: async (collection, id, data) => {
     return await firestore()
       .collection(collection)
       .doc(id)
