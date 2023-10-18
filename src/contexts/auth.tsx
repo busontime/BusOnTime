@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     }
   };
 
-  const updateProfile = (updatedPerson) => {
+  const updateProfile = async (updatedPerson) => {
     setProfile((prevProfile) => ({
       ...prevProfile,
       person: {
@@ -42,6 +42,39 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
         ...updatedPerson,
       },
     }));
+  };
+
+  const updateEmail = async (email: string) => {
+    try {
+      await auth().currentUser.updateEmail(email);
+      return true;
+    } catch (error) {
+      console.log('error', error);
+
+      switch (error.code) {
+        case 'auth/invalid-email':
+          showErrorDialog('Correo electrónico no válido.!');
+
+          break;
+
+        case 'auth/email-already-in-use':
+          showErrorDialog('Correo electrónico ya en uso.!');
+          break;
+
+        case 'auth/network-request-failed':
+          showErrorDialog('Necesita conexión a internet.!');
+          break;
+
+        case 'auth/requires-recent-login':
+          showErrorDialog('Para poder modificar el email debe volver a iniciar sesion.!');
+          break;
+
+        default:
+          showErrorDialog('No se pudo cambiar el email.!');
+          break;
+      }
+      return false;
+    }
   };
 
   const login = async (email: string, password: string) => {
@@ -138,6 +171,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
 
   const data = {
     profile,
+    updateEmail,
     loginWithGoogle,
     logout,
     login,
