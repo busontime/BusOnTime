@@ -1,13 +1,18 @@
 import React from 'react';
-import { View } from 'react-native';
+import { YStack } from 'tamagui';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { Map } from '@/components/map';
+import { BusStopView } from '@/components/passenger/busStopView';
 
 export const PassengerHomeScreen = () => {
   return (
-    <View
-      style={{ backgroundColor: 'transparent', paddingLeft: 15, height: '100%', width: '100%' }}>
+    <YStack f={1} bg={'$backgroundFocus'}>
+      <TogleSidebar />
+
       <Map />
-    </View>
+
+      <BusStopView />
+    </YStack>
   );
 };

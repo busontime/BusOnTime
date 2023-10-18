@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.busontime">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
       android:name=".MainApplication"
@@ -12,7 +14,7 @@
 
       <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyA1Gs2IKveikCtWinKC-2tVVZ7CIIJOU3w"
+        android:value="AIzaSyAVCxEQMfNHryysta3-mX0mg6la5k4IIFk"
       />
       <activity
         android:name=".MainActivity"
