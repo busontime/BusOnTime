@@ -1,10 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  map: {
+  f1: {
     flex: 1,
   },
 });
