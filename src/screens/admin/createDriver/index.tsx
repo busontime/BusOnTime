@@ -1,23 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Form, Label, ScrollView, SizableText, Spinner, XStack } from 'tamagui';
+import { FormInput } from '@/components/formInput';
+import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
-  View,
-  TouchableOpacity,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
+import { Button, Form, Label, ScrollView, SizableText, Spinner, View, XStack } from 'tamagui';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
-import { useAuthContext } from '@/contexts/auth';
-import { UserCircle2 } from 'lucide-react-native';
-import { COLORS } from '@/constants/styles';
-import { useThemeContext } from '@/contexts/theme';
-import { FormInput } from '@/components/formInput';
 import { userService } from '@/services/user';
-import { showAlertDialog } from '@/utils/dialog';
+import { ROLES_ID } from '@/constants/bd';
+import { showAlertDialog, showErrorDialog, showSuccessDialog } from '@/utils/dialog';
 import { validateEmail } from '@/utils/validate';
+import { useAuthContext } from '@/contexts/auth';
 
 const initForm = {
   birthdate: '',
@@ -28,47 +25,36 @@ const initForm = {
   cedula: '',
 };
 
-export const EditProfile = () => {
-  const { profile, updateProfile, updateEmail } = useAuthContext();
-  const [status, setStatus] = useState<'off' | 'submitting' | 'submitted'>('off');
-  const [updateForm, setUpdateForm] = useState({ ...initForm, ...profile.person });
+export const CreateDriver = () => {
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
-  const { isDark } = useThemeContext();
+  const [formValues, setFormValues] = useState(initForm);
   const navigation = useNavigation();
+  const [status, setStatus] = useState<'off' | 'submitting' | 'submitted'>('off');
+  const { createDriver } = useAuthContext();
 
-  useEffect(() => {
-    setUpdateForm({
-      ...updateForm,
-      ...profile.person,
-    });
-  }, [profile.person]);
-
-  const update = async () => {
+  const create = async () => {
     if (validateForm()) {
-      setStatus('submitting');
+      const email = formValues.email.trim().toLowerCase();
       try {
-        const data = {
-          birthdate: updateForm.birthdate,
-          email: updateForm.email,
-          lastname: updateForm.lastname,
-          name: updateForm.name,
-          phone: updateForm.phone,
-          cedula: updateForm.cedula,
-        };
-        if (updateForm.email !== profile.person.email) {
-          const updateEmailUser = await updateEmail(updateForm.email);
-          if (!updateEmailUser) {
-            return;
-          }
+        const driverRegister = await createDriver(email, formValues.cedula);
+        if (driverRegister) {
+          const { user } = driverRegister;
+          const data = {
+            name: formValues.name,
+            lastname: formValues.lastname,
+            email,
+            roleId: ROLES_ID.driver,
+            phone: formValues.phone,
+            birthdate: formValues.birthdate,
+            cedula: formValues.cedula,
+          };
+          await userService.createUser(user.uid, data);
+          showSuccessDialog('Conductor Creado');
         }
-        await userService.updateById(profile.user.uid, data);
-        updateProfile(data);
       } catch (error) {
-        console.log('error al  actualizar', error);
-        showAlertDialog('Error al actualizar, Intentelo mas tarde');
-      } finally {
-        setStatus('submitted');
+        console.log(error, 'no se pudo crear el conductor');
+        showErrorDialog(error?.message ?? 'Ocurrio un problema!');
       }
     }
   };
@@ -79,39 +65,50 @@ export const EditProfile = () => {
       const currentDate = selectedDate || date;
       setDate(currentDate);
       const formattedDate = currentDate.toLocaleDateString('es-ES');
-      setUpdateForm({ ...updateForm, birthdate: formattedDate });
+      setFormValues({ ...formValues, birthdate: formattedDate });
     }
   };
 
   const validateForm = () => {
-    const email = updateForm.email.trim().toLowerCase();
+    const email = formValues.email.trim().toLowerCase();
+
     if (email === '') {
-      showAlertDialog('El email esta vacio');
+      showAlertDialog('El correo esta vacío');
       return false;
     }
 
     if (!validateEmail(email)) {
-      showAlertDialog('el email no es valido');
+      showAlertDialog('El email no es válido');
       return false;
     }
 
-    if (updateForm.name === '') {
-      showAlertDialog('El nombre esta vacio');
+    if (formValues.birthdate === '') {
+      showAlertDialog('La fecha esta vacia');
       return false;
     }
 
-    if (updateForm.lastname === '') {
-      showAlertDialog('El apellido esta vacio');
+    if (formValues.cedula === '') {
+      showAlertDialog('La cedula esta vacia');
       return false;
     }
 
-    if (updateForm.phone === '') {
-      showAlertDialog('El telefono esta vacio');
+    if (formValues.lastname === '') {
+      showAlertDialog('El compo apellidos esta vacio');
       return false;
     }
 
-    if (updateForm.birthdate === '') {
-      showAlertDialog('La fecha de nacimiento esta vacia');
+    if (formValues.name === '') {
+      showAlertDialog('El compo nombres esta vacio');
+      return false;
+    }
+
+    if (formValues.phone === '') {
+      showAlertDialog('El compo telefono esta vacio');
+      return false;
+    }
+
+    if (formValues.cedula.length !== 10) {
+      showAlertDialog('La cedula debe contener 10 digitos');
       return false;
     }
 
@@ -142,48 +139,48 @@ export const EditProfile = () => {
               setStatus('submitting');
             }}
             padding='$8'>
-            <UserCircle2 color={isDark ? COLORS.light : COLORS.dark} size={70} />
-
             <View>
-              <Label margin='$1'>Nombres:</Label>
+              <Label>Nombres:</Label>
               <FormInput
                 placeholder='Nombre'
-                value={updateForm.name}
+                value={formValues.name}
                 onChangeText={(text) => {
-                  setUpdateForm({ ...updateForm, name: text });
+                  setFormValues({ ...formValues, name: text });
                 }}
               />
             </View>
 
             <View>
-              <Label margin='$1'>Apellidos:</Label>
+              <Label>Apellidos:</Label>
               <FormInput
-                placeholder='Apellido'
-                value={updateForm.lastname}
+                placeholder='Apellidos'
+                value={formValues.lastname}
                 onChangeText={(text) => {
-                  setUpdateForm({ ...updateForm, lastname: text });
+                  setFormValues({ ...formValues, lastname: text });
                 }}
               />
             </View>
 
             <View>
-              <Label margin='$1'>Email:</Label>
+              <Label>Correo:</Label>
               <FormInput
-                placeholder='Email'
-                value={updateForm.email}
+                placeholder='Correo'
+                value={formValues.email}
+                type={'email-address'}
                 onChangeText={(text) => {
-                  setUpdateForm({ ...updateForm, email: text });
+                  setFormValues({ ...formValues, email: text });
                 }}
               />
             </View>
 
             <View>
-              <Label margin='$1'>Telefono:</Label>
+              <Label>Telefono:</Label>
               <FormInput
                 placeholder='Telefono'
-                value={updateForm.phone}
+                type={'numeric'}
+                value={formValues.phone}
                 onChangeText={(text) => {
-                  setUpdateForm({ ...updateForm, phone: text });
+                  setFormValues({ ...formValues, phone: text });
                 }}
               />
             </View>
@@ -198,10 +195,10 @@ export const EditProfile = () => {
                   <FormInput
                     editable={false}
                     placeholder='Seleccione una fecha'
+                    value={formValues.birthdate}
                     onChangeText={(text) => {
-                      setUpdateForm({ ...updateForm, birthdate: text });
+                      setFormValues({ ...formValues, birthdate: text });
                     }}
-                    value={updateForm.birthdate}
                   />
                 </TouchableOpacity>
               </View>
@@ -210,18 +207,17 @@ export const EditProfile = () => {
               )}
             </View>
 
-            {profile?.person?.cedula && (
-              <View>
-                <Label margin='$1'>Cédula:</Label>
-                <FormInput
-                  onChangeText={(text) => {
-                    setUpdateForm({ ...updateForm, cedula: text });
-                  }}
-                  placeholder='Cedula'
-                  value={updateForm.cedula}
-                />
-              </View>
-            )}
+            <View>
+              <Label>Cedula:</Label>
+              <FormInput
+                placeholder='Cedula'
+                type={'numeric'}
+                value={formValues.cedula}
+                onChangeText={(text) => {
+                  setFormValues({ ...formValues, cedula: text });
+                }}
+              />
+            </View>
 
             <XStack gap='$5'>
               <Button
@@ -230,7 +226,7 @@ export const EditProfile = () => {
                 color='black'
                 icon={status === 'submitting' ? () => <Spinner /> : undefined}
                 onPress={() => {
-                  update();
+                  create();
                 }}>
                 <SizableText color={'$color'} fontWeight={'bold'}>
                   {status === 'submitting' ? 'Guardando...' : 'Guardar'}
@@ -241,7 +237,7 @@ export const EditProfile = () => {
                 backgroundColor={status === 'submitting' ? '$gray10' : '$red10'}
                 disabled={status === 'submitting'}
                 onPress={() => {
-                  navigation.navigate('profile' as never);
+                  navigation.goBack();
                 }}
                 size='$3'>
                 <SizableText color={'$color'} fontWeight={'bold'}>

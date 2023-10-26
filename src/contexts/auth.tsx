@@ -79,7 +79,8 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      await auth().signInWithEmailAndPassword(email, password);
+      const data = await auth().signInWithEmailAndPassword(email, password);
+      console.log('error', data);
     } catch (error) {
       console.log('error', error);
 
@@ -102,6 +103,39 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
 
         default:
           showErrorDialog('No puede iniciar Sesión.!');
+          break;
+      }
+    }
+  };
+
+  const createDriver = async (email: string, password: string) => {
+    try {
+      const data = await auth().createUserWithEmailAndPassword(email, password);
+      logout();
+      login('admin@bot.com', '123456');
+      return data;
+    } catch (error) {
+      console.log('error', error);
+
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          showErrorDialog('Correo electrónico ya en uso.!');
+          break;
+
+        case 'auth/invalid-email':
+          showErrorDialog('Correo electrónico no válido.!');
+          break;
+
+        case 'auth/weak-password':
+          showErrorDialog('La contraseña es demasiado débil. Debe contener al menos 6 caracteres');
+          break;
+
+        case 'auth/network-request-failed':
+          showErrorDialog('Necesita conexión a internet.!');
+          break;
+
+        default:
+          showErrorDialog('No puede registrarse, Intentelo más tarde.!');
           break;
       }
     }
@@ -177,6 +211,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     login,
     createAccount,
     updateProfile,
+    createDriver,
   };
 
   return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;
