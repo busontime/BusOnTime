@@ -18,6 +18,7 @@ import { FormInput } from '@/components/formInput';
 import { userService } from '@/services/user';
 import { showAlertDialog } from '@/utils/dialog';
 import { validateEmail } from '@/utils/validate';
+import moment from 'moment';
 
 const initForm = {
   birthdate: '',
@@ -56,6 +57,10 @@ export const EditProfile = () => {
           phone: updateForm.phone,
           cedula: updateForm.cedula,
         };
+
+        if (!profile?.person?.cedula) {
+          delete data.cedula;
+        }
         if (updateForm.email !== profile.person.email) {
           const updateEmailUser = await updateEmail(updateForm.email);
           if (!updateEmailUser) {
@@ -112,6 +117,24 @@ export const EditProfile = () => {
 
     if (updateForm.birthdate === '') {
       showAlertDialog('La fecha de nacimiento esta vacia');
+      return false;
+    }
+
+    if (updateForm.cedula.length !== 10 && profile?.person?.cedula) {
+      showAlertDialog('La cedula debe contener 10 digitos');
+      return false;
+    }
+
+    if (updateForm.cedula === '' && profile?.person?.cedula) {
+      showAlertDialog('La cedula esta vacia');
+      return false;
+    }
+
+    const birthDate = moment(updateForm.birthdate, 'DD/MM/YYYY');
+    const age = moment().diff(birthDate, 'years');
+
+    if (age < 18) {
+      showAlertDialog('Debes ser mayor de edad');
       return false;
     }
 
