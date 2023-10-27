@@ -1,4 +1,3 @@
-import { FormInput } from '@/components/formInput';
 import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
@@ -7,14 +6,21 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
-import { Button, Form, Label, ScrollView, SizableText, Spinner, View, XStack } from 'tamagui';
+import { Button, Form, Label, ScrollView, SizableText, Spinner, View, XStack, H4 } from 'tamagui';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
 import { useNavigation } from '@react-navigation/native';
+
+import { useAuthContext } from '@/contexts/auth';
+
 import { userService } from '@/services/user';
-import { ROLES_ID } from '@/constants/bd';
+
+import { FormInput } from '@/components/formInput';
+
 import { showAlertDialog, showErrorDialog, showSuccessDialog } from '@/utils/dialog';
 import { validateEmail } from '@/utils/validate';
-import { useAuthContext } from '@/contexts/auth';
+
+import { ROLES_ID } from '@/constants/bd';
 
 const initForm = {
   birthdate: '',
@@ -26,18 +32,20 @@ const initForm = {
 };
 
 export const CreateDriver = () => {
+  const { createDriver } = useAuthContext();
+  const navigation = useNavigation();
+
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [formValues, setFormValues] = useState(initForm);
-  const navigation = useNavigation();
   const [status, setStatus] = useState<'off' | 'submitting' | 'submitted'>('off');
-  const { createDriver } = useAuthContext();
 
   const create = async () => {
     if (validateForm()) {
       const email = formValues.email.trim().toLowerCase();
       try {
         const driverRegister = await createDriver(email, formValues.cedula);
+
         if (driverRegister) {
           const { user } = driverRegister;
           const data = {
@@ -50,6 +58,7 @@ export const CreateDriver = () => {
             cedula: formValues.cedula,
           };
           await userService.createUser(user.uid, data);
+
           showSuccessDialog('Conductor Creado');
         }
       } catch (error) {
@@ -72,6 +81,16 @@ export const CreateDriver = () => {
   const validateForm = () => {
     const email = formValues.email.trim().toLowerCase();
 
+    if (formValues.name === '') {
+      showAlertDialog('El nombre no debe estar vacío');
+      return false;
+    }
+
+    if (formValues.lastname === '') {
+      showAlertDialog('El apellido no debe estar vacío');
+      return false;
+    }
+
     if (email === '') {
       showAlertDialog('El correo esta vacío');
       return false;
@@ -82,33 +101,31 @@ export const CreateDriver = () => {
       return false;
     }
 
+    if (formValues.phone === '') {
+      showAlertDialog('El telefono no debe estar vacío');
+      return false;
+    }
+
     if (formValues.birthdate === '') {
-      showAlertDialog('La fecha esta vacia');
+      showAlertDialog('La fecha de nacimiento no debe estar vacía');
+      return false;
+    }
+
+    const birthDate = moment(formValues.birthdate, 'DD/MM/YYYY');
+    const age = moment().diff(birthDate, 'years');
+
+    if (age < 18) {
+      showAlertDialog('El conductor debe ser mayor de edad');
       return false;
     }
 
     if (formValues.cedula === '') {
-      showAlertDialog('La cedula esta vacia');
-      return false;
-    }
-
-    if (formValues.lastname === '') {
-      showAlertDialog('El compo apellidos esta vacio');
-      return false;
-    }
-
-    if (formValues.name === '') {
-      showAlertDialog('El compo nombres esta vacio');
-      return false;
-    }
-
-    if (formValues.phone === '') {
-      showAlertDialog('El compo telefono esta vacio');
+      showAlertDialog('La cédula no debe estar vacía');
       return false;
     }
 
     if (formValues.cedula.length !== 10) {
-      showAlertDialog('La cedula debe contener 10 digitos');
+      showAlertDialog('La cédula debe tener 10 dígitos');
       return false;
     }
 
@@ -139,6 +156,8 @@ export const CreateDriver = () => {
               setStatus('submitting');
             }}
             padding='$8'>
+            <H4 color={'$color'}>Nuevo Conductor</H4>
+
             <View>
               <Label>Nombres:</Label>
               <FormInput
@@ -208,9 +227,9 @@ export const CreateDriver = () => {
             </View>
 
             <View>
-              <Label>Cedula:</Label>
+              <Label>Cédula:</Label>
               <FormInput
-                placeholder='Cedula'
+                placeholder='Cédula'
                 type={'numeric'}
                 value={formValues.cedula}
                 onChangeText={(text) => {
@@ -223,25 +242,24 @@ export const CreateDriver = () => {
               <Button
                 size='$3'
                 backgroundColor='$green8'
-                color='black'
                 icon={status === 'submitting' ? () => <Spinner /> : undefined}
-                onPress={() => {
-                  create();
+                onPress={async () => {
+                  await create();
                 }}>
                 <SizableText color={'$color'} fontWeight={'bold'}>
-                  {status === 'submitting' ? 'Guardando...' : 'Guardar'}
+                  {status === 'submitting' ? 'Creando...' : 'Crear'}
                 </SizableText>
               </Button>
 
               <Button
-                backgroundColor={status === 'submitting' ? '$gray10' : '$red10'}
+                backgroundColor={status === 'submitting' ? '$gray10' : '$red9'}
                 disabled={status === 'submitting'}
                 onPress={() => {
                   navigation.goBack();
                 }}
                 size='$3'>
                 <SizableText color={'$color'} fontWeight={'bold'}>
-                  Regresar
+                  Cancelar
                 </SizableText>
               </Button>
             </XStack>

@@ -54,7 +54,6 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
       switch (error.code) {
         case 'auth/invalid-email':
           showErrorDialog('Correo electrónico no válido.!');
-
           break;
 
         case 'auth/email-already-in-use':
@@ -79,8 +78,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const data = await auth().signInWithEmailAndPassword(email, password);
-      console.log('error', data);
+      await auth().signInWithEmailAndPassword(email, password);
     } catch (error) {
       console.log('error', error);
 
@@ -135,7 +133,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
           break;
 
         default:
-          showErrorDialog('No puede registrarse, Intentelo más tarde.!');
+          showErrorDialog('No se pudo registrar, Intentelo más tarde.!');
           break;
       }
     }

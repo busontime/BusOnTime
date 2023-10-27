@@ -3,9 +3,9 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import { AdminHomeStack } from './home';
 import { AdminProfileStack } from './profiles';
+import { AdminDriverStack } from './driver';
 
 import { Sidebar } from '@/components/sidebar';
-import { AdminDriverStack } from './driver';
 
 const Drawer = createDrawerNavigator();
 
@@ -31,7 +31,7 @@ export const AdminRouter = (props) => {
         name='driver-menu'
         component={AdminDriverStack}
         options={{
-          drawerLabel: 'Crear Conductor',
+          drawerLabel: 'Conductores',
           title: 'airline-seat-recline-normal',
         }}
       />
