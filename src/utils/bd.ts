@@ -5,6 +5,14 @@ export const bdService = {
     firestore().collection(collection).doc(id).set(data);
   },
 
+  createDocument: async (collection, data) => {
+    return await firestore()
+      .collection(collection)
+      .add(data)
+      .then((res) => res)
+      .catch((err) => err);
+  },
+
   getById: async (collection, id) => {
     return await firestore()
       .collection(collection)
@@ -27,6 +35,15 @@ export const bdService = {
       .collection(collection)
       .doc(id)
       .update(data)
+      .then((res) => res)
+      .catch((err) => err);
+  },
+
+  deleteById: async (collection, id) => {
+    return await firestore()
+      .collection(collection)
+      .doc(id)
+      .delete()
       .then((res) => res)
       .catch((err) => err);
   },

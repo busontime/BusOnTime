@@ -29,8 +29,9 @@
     "react/prop-types": ["off", { "ignore": ["navigation", "navigation.navigate"] }],
     "react/no-children-prop": "off",
     "@typescript-eslint/no-floating-promises": "off",
-    "@typescript-eslint/prefer-optional-chain": "off"
+    "@typescript-eslint/prefer-optional-chain": "off",
     // "arrow-body-style": ["error", "as-needed"]
+    "@typescript-eslint/consistent-type-assertions": "off"
   },
   "settings": {
     "react": {

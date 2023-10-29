@@ -6,6 +6,7 @@ import { AdminProfileStack } from './profiles';
 import { AdminDriverStack } from './driver';
 
 import { Sidebar } from '@/components/sidebar';
+import { AdminCooperativeStack } from './cooperatives';
 
 const Drawer = createDrawerNavigator();
 
@@ -24,6 +25,15 @@ export const AdminRouter = (props) => {
         options={{
           drawerLabel: 'Inicio',
           title: 'home-filled',
+        }}
+      />
+
+      <Drawer.Screen
+        name='cooperative-menu'
+        component={AdminCooperativeStack}
+        options={{
+          drawerLabel: 'Cooperativas',
+          title: 'maps-home-work',
         }}
       />
 

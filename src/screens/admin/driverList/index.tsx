@@ -52,6 +52,7 @@ export const DriverList = () => {
       <ScrollView
         space='$3'
         f={1}
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           justifyContent: 'center',
           alignItems: 'center',
