@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, YStack, H3 } from 'tamagui';
 import { useNavigation } from '@react-navigation/native';
 
-import { BusFront, User, Bus, TrainTrack } from 'lucide-react-native';
+import { BusFront, User, Bus, TrainTrack, CarTaxiFront } from 'lucide-react-native';
 
 import { useAuthContext } from '@/contexts/auth';
 
@@ -15,6 +15,18 @@ export const AdminHomeScreen = () => {
       <H3 ta='center' color={'$color'}>
         Bienvenido {profile?.person?.name}
       </H3>
+
+      <Button
+        w={'$15'}
+        size={'$5'}
+        icon={<CarTaxiFront size={40} />}
+        variant='outlined'
+        backgroundColor='$blue6'
+        onPress={() => {
+          navigation.navigate('cooperative-menu' as never);
+        }}>
+        Cooperativas
+      </Button>
 
       <Button
         w={'$15'}
