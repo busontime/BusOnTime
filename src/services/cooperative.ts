@@ -1,6 +1,6 @@
 import { bdService } from '@/utils/bd';
 
-const NAME_COLLECTION = 'cooperative';
+const NAME_COLLECTION = 'cooperatives';
 
 export const cooperativeService = {
   createCooperative: async (data) => {

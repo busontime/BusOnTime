@@ -1,20 +1,9 @@
 import { cooperativeService } from '@/services/cooperative';
 import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Card,
-  H4,
-  ScrollView,
-  Text,
-  XStack,
-  YStack,
-  Dialog,
-  Adapt,
-  Sheet,
-  Unspaced,
-} from 'tamagui';
+import { Button, Card, H4, ScrollView, Text, XStack, YStack, Dialog, Adapt, Sheet } from 'tamagui';
 import { useNavigation } from '@react-navigation/native';
 import { Pencil, Trash2 } from 'lucide-react-native';
+import { showSuccessToast } from '@/utils/toast';
 
 export const CooperativeList = () => {
   const [cooperatives, setCooperatives] = useState([]);
@@ -36,6 +25,7 @@ export const CooperativeList = () => {
     } catch (error) {
       console.log(error);
     } finally {
+      showSuccessToast('Cooperativa Eliminada Exitosamente!');
       await getCooperatives();
     }
   };
@@ -75,7 +65,6 @@ export const CooperativeList = () => {
       </Button>
 
       <ScrollView
-        space='$3'
         f={1}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
@@ -83,7 +72,7 @@ export const CooperativeList = () => {
           alignItems: 'center',
         }}>
         {cooperatives.map((item, index) => (
-          <Card elevate bordered size={'$3.5'} key={index} w={'$20'}>
+          <Card elevate bordered size={'$3.5'} key={index} w={'$20'} mb='$5'>
             <Card.Header padded>
               <YStack space='$1'>
                 <XStack space='$2'>
@@ -119,7 +108,7 @@ export const CooperativeList = () => {
                       setOpen(open);
                     }}>
                     <Dialog.Trigger asChild>
-                      <Button icon={<Trash2 />} variant='outlined' bg={'$red8'} />
+                      <Button size={'$3'} icon={<Trash2 />} variant='outlined' bg={'$red8'} />
                     </Dialog.Trigger>
 
                     <Adapt when='sm' platform='touch'>
@@ -127,6 +116,7 @@ export const CooperativeList = () => {
                         <Sheet.Frame padding='$4' gap='$4'>
                           <Adapt.Contents />
                         </Sheet.Frame>
+
                         <Sheet.Overlay
                           animation='medium'
                           enterStyle={{ opacity: 0 }}
@@ -160,38 +150,40 @@ export const CooperativeList = () => {
                         enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
                         exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
                         gap='$4'>
-                        <Dialog.Title color={'$color'} size={'$3'}>
-                          {item?.name}
-                        </Dialog.Title>
                         <Dialog.Description>
-                          ¿Está seguro que desea eliminar la cooperativa?
+                          ¿Está seguro que desea eliminar la cooperativa {item?.name}?
                         </Dialog.Description>
-                        <Unspaced>
+
+                        <XStack space='$5' jc='center' ai='center'>
                           <Dialog.Close displayWhenAdapted asChild>
                             <Button
                               onPress={() => {
                                 deleteCooperative(item?.id);
                               }}
-                              theme='alt1'
                               color={'$color'}
+                              fontWeight={'$true'}
                               aria-label='Close'
-                              bg={'$green8'}>
+                              bg={'$blue8'}>
                               Eliminar
                             </Button>
                           </Dialog.Close>
-                        </Unspaced>
-                        <Unspaced>
+
                           <Dialog.Close displayWhenAdapted asChild>
-                            <Button theme='alt1' color={'$color'} aria-label='Close' bg={'$red8'}>
+                            <Button
+                              color={'$color'}
+                              aria-label='Close'
+                              fontWeight={'$true'}
+                              bg={'$red8'}>
                               Cancelar
                             </Button>
                           </Dialog.Close>
-                        </Unspaced>
+                        </XStack>
                       </Dialog.Content>
                     </Dialog.Portal>
                   </Dialog>
 
                   <Button
+                    size={'$3'}
                     icon={<Pencil />}
                     variant='outlined'
                     bg={'$green8'}

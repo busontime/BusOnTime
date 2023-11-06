@@ -25,7 +25,7 @@ export const MapProvider: React.FC<ChildrenProps> = ({ children }) => {
       const _data = data.map((element) => element._data);
       setLines(_data ?? []);
     } catch (error) {
-      console.log('error', error);
+      console.log('error get lines', error);
     }
   };
 
@@ -35,7 +35,7 @@ export const MapProvider: React.FC<ChildrenProps> = ({ children }) => {
       const _data = data.map((element) => element._data);
       setBusStops(_data ?? []);
     } catch (error) {
-      console.log('error', error);
+      console.log('error get bus stops', error);
     }
   };
 

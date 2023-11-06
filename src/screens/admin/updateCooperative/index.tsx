@@ -12,6 +12,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { showAlertDialog } from '@/utils/dialog';
 import { cooperativeService } from '@/services/cooperative';
+import { showSuccessToast } from '@/utils/toast';
 
 const initForm = {
   alias: '',
@@ -37,6 +38,7 @@ export const UpdateCooperative = () => {
           name: formValues.name,
         };
         await cooperativeService.updateCooperativeById(idCooperative, data);
+        showSuccessToast('Cooperativa Actualizada!');
         navigation.goBack();
       } catch (error) {
         console.log('Error al crear la cooperativa', error);
@@ -62,17 +64,17 @@ export const UpdateCooperative = () => {
     }
   };
 
-  const cooperative = async () => {
+  const getData = async () => {
     try {
       const response = await cooperativeService.getCooperativeById(idCooperative);
-      setFormValues(response._data);
+      setFormValues(response?._data);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    cooperative();
+    getData();
   }, []);
 
   return (
@@ -144,10 +146,11 @@ export const UpdateCooperative = () => {
               />
             </View>
 
-            <XStack gap='$5'>
+            <XStack space='$5' mt='$3'>
               <Button
+                w={'$10'}
                 size='$3'
-                backgroundColor='$green8'
+                bg='$green8'
                 icon={status === 'submitting' ? () => <Spinner /> : undefined}
                 onPress={async () => {
                   await update();
@@ -158,10 +161,11 @@ export const UpdateCooperative = () => {
               </Button>
 
               <Button
-                backgroundColor={status === 'submitting' ? '$gray10' : '$red9'}
+                w={'$10'}
+                bg={status === 'submitting' ? '$gray10' : '$red9'}
                 disabled={status === 'submitting'}
                 onPress={() => {
-                  navigation.navigate('cooperative-list' as never);
+                  navigation.goBack();
                 }}
                 size='$3'>
                 <SizableText color={'$color'} fontWeight={'bold'}>

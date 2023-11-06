@@ -34,10 +34,9 @@ export const CreateCooperative = () => {
           date_foundation: formValues.date_foundation,
           name: formValues.name,
         };
-        console.log(data);
         await cooperativeService.createCooperative(data);
         showSuccessDialog('Cooperativa creada con exito');
-        navigation.navigate('cooperative-list' as never);
+        navigation.goBack();
       } catch (error) {
         showErrorDialog('ocurrio un error intentelo mas tarde');
         console.log('Error al crear la cooperativa', error);
@@ -131,10 +130,11 @@ export const CreateCooperative = () => {
               />
             </View>
 
-            <XStack gap='$5'>
+            <XStack space='$5' mt='$3'>
               <Button
+                w={'$10'}
                 size='$3'
-                backgroundColor='$green8'
+                bg='$green8'
                 icon={status === 'submitting' ? () => <Spinner /> : undefined}
                 onPress={async () => {
                   await create();
@@ -145,7 +145,8 @@ export const CreateCooperative = () => {
               </Button>
 
               <Button
-                backgroundColor={status === 'submitting' ? '$gray10' : '$red9'}
+                w={'$10'}
+                bg={status === 'submitting' ? '$gray10' : '$red9'}
                 disabled={status === 'submitting'}
                 onPress={() => {
                   navigation.navigate('cooperative-list' as never);

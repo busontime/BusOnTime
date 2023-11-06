@@ -4,9 +4,9 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { AdminHomeStack } from './home';
 import { AdminProfileStack } from './profiles';
 import { AdminDriverStack } from './driver';
+import { AdminCooperativeStack } from './cooperatives';
 
 import { Sidebar } from '@/components/sidebar';
-import { AdminCooperativeStack } from './cooperatives';
 
 const Drawer = createDrawerNavigator();
 
