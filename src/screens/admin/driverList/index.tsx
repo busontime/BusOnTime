@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, ScrollView, H4, Text, Card, XStack, YStack } from 'tamagui';
+import { ScrollView, Text, Card, XStack, YStack } from 'tamagui';
 import { useNavigation } from '@react-navigation/native';
 
 import { Contact } from 'lucide-react-native';
@@ -7,6 +7,8 @@ import { Contact } from 'lucide-react-native';
 import { useThemeContext } from '@/contexts/theme';
 
 import { userService } from '@/services/user';
+
+import { HeaderList } from '@/components/admin/headerList';
 
 import { COLORS } from '@/constants/styles';
 
@@ -32,22 +34,12 @@ export const DriverList = () => {
 
   return (
     <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$2' pos='relative'>
-      <H4 color={'$color'} textAlign='center'>
-        Lista de Conductores
-      </H4>
-
-      <Button
-        pos='absolute'
-        top={'$2.5'}
-        right={'$2.5'}
-        size={'$3.5'}
-        variant='outlined'
-        backgroundColor={'$blue8'}
+      <HeaderList
+        title='Lista de Conductores'
         onPress={() => {
           navigation.navigate('driver' as never);
-        }}>
-        Nuevo
-      </Button>
+        }}
+      />
 
       <ScrollView
         space='$3'

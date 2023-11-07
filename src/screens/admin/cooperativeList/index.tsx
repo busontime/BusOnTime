@@ -1,8 +1,13 @@
-import { cooperativeService } from '@/services/cooperative';
 import React, { useEffect, useState } from 'react';
-import { Button, Card, H4, ScrollView, Text, XStack, YStack, Dialog, Adapt, Sheet } from 'tamagui';
+import { Button, Card, ScrollView, Text, XStack, YStack, Dialog, Adapt, Sheet } from 'tamagui';
 import { useNavigation } from '@react-navigation/native';
+
 import { Pencil, Trash2 } from 'lucide-react-native';
+
+import { cooperativeService } from '@/services/cooperative';
+
+import { HeaderList } from '@/components/admin/headerList';
+
 import { showSuccessToast } from '@/utils/toast';
 
 export const CooperativeList = () => {
@@ -47,22 +52,12 @@ export const CooperativeList = () => {
 
   return (
     <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$2' pos='relative'>
-      <H4 color={'$color'} textAlign='center'>
-        Lista de Cooperativas
-      </H4>
-
-      <Button
-        pos='absolute'
-        top={'$2.5'}
-        right={'$2.5'}
-        size={'$3.5'}
-        variant='outlined'
-        backgroundColor={'$blue8'}
+      <HeaderList
+        title='Lista de Cooperativas'
         onPress={() => {
           navigation.navigate('create-coopetative' as never);
-        }}>
-        Nuevo
-      </Button>
+        }}
+      />
 
       <ScrollView
         f={1}
