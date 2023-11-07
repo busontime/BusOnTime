@@ -6,12 +6,7 @@ import Config from 'react-native-config';
 import { userService } from '@/services/user';
 
 import { type ChildrenProps } from '@/interfaces';
-import {
-  validateErrorCreateAccount,
-  validateErrorDriver,
-  validateErrorEmail,
-  validateErrorLogin,
-} from '@/utils/error';
+import { validateAuthError } from '@/utils/error';
 
 GoogleSignin.configure({ webClientId: Config.WEB_CLIENT_ID });
 
@@ -53,7 +48,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
       await auth().currentUser.updateEmail(email);
       return true;
     } catch (error) {
-      validateErrorEmail(error);
+      return validateAuthError(error, 'No se pudo cambiar el email.!');
     }
   };
 
@@ -61,7 +56,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     try {
       await auth().signInWithEmailAndPassword(email, password);
     } catch (error) {
-      validateErrorLogin(error);
+      validateAuthError(error, 'No puede iniciar Sesión.!');
     }
   };
 
@@ -72,7 +67,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
       login('admin@bot.com', '123456');
       return data;
     } catch (error) {
-      validateErrorDriver(error);
+      validateAuthError(error, 'No se pudo registrar, Intentelo más tarde.!');
     }
   };
 
@@ -84,7 +79,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
 
       return data;
     } catch (error) {
-      validateErrorCreateAccount(error);
+      validateAuthError(error, 'No puede registrarse, Intentelo más tarde.!');
     }
   };
 
