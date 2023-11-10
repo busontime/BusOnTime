@@ -42,6 +42,7 @@ export const CreateDriver = () => {
 
   const create = async () => {
     if (validateForm()) {
+      setStatus('submitting');
       const email = formValues.email.trim().toLowerCase();
       try {
         const driverRegister = await createDriver(email, formValues.cedula);
@@ -64,6 +65,8 @@ export const CreateDriver = () => {
       } catch (error) {
         console.log(error, 'no se pudo crear el conductor');
         showErrorDialog(error?.message ?? 'Ocurrio un problema!');
+      } finally {
+        setStatus('submitted');
       }
     }
   };

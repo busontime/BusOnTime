@@ -7,6 +7,7 @@ import { AdminDriverStack } from './driver';
 import { AdminCooperativeStack } from './cooperatives';
 
 import { Sidebar } from '@/components/sidebar';
+import { AdminStopStack } from './stops';
 
 const Drawer = createDrawerNavigator();
 
@@ -43,6 +44,15 @@ export const AdminRouter = (props) => {
         options={{
           drawerLabel: 'Conductores',
           title: 'airline-seat-recline-normal',
+        }}
+      />
+
+      <Drawer.Screen
+        name='stop-menu'
+        component={AdminStopStack}
+        options={{
+          drawerLabel: 'Paradas',
+          title: 'dangerous',
         }}
       />
 

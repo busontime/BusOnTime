@@ -1,46 +1,43 @@
-import { FormInput } from '@/components/formInput';
-import React, { useState } from 'react';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { Button, Form, Label, ScrollView, SizableText, Spinner, View, XStack } from 'tamagui';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { useNavigation } from '@react-navigation/native';
+import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { FormInput } from '@/components/formInput';
 import { showAlertDialog, showErrorDialog, showSuccessDialog } from '@/utils/dialog';
-import { cooperativeService } from '@/services/cooperative';
+import { busStopService } from '@/services/busStop';
 
 const initForm = {
-  alias: '',
-  date_foundation: '',
   name: '',
+  coordinate: {
+    latitude: '',
+    longitude: '',
+  },
 };
 
-export const CreateCooperative = () => {
-  const [status, setStatus] = useState<'off' | 'submitting' | 'submitted'>('off');
-  const [showPicker, setShowPicker] = useState(false);
-  const [date, setDate] = useState(new Date());
+export const UpdateStops = () => {
   const [formValues, setFormValues] = useState(initForm);
+  const [status, setStatus] = useState<'off' | 'submitting' | 'submitted'>('off');
+  const route = useRoute();
   const navigation = useNavigation();
+  const idStop = route.params;
 
-  const create = async () => {
+  const update = async () => {
     if (validateForm()) {
       setStatus('submitting');
       try {
         const data = {
-          alias: formValues.alias,
-          date_foundation: formValues.date_foundation,
           name: formValues.name,
+          coordinate: {
+            latitude: Number(formValues.coordinate.latitude),
+            longitude: Number(formValues.coordinate.longitude),
+          },
         };
-        await cooperativeService.createCooperative(data);
-        showSuccessDialog('Cooperativa creada con exito');
+        await busStopService.updateStopById(idStop, data);
+        showSuccessDialog('Parada Actualizada');
         navigation.goBack();
       } catch (error) {
-        showErrorDialog('ocurrio un error intentelo mas tarde');
-        console.log('Error al crear la cooperativa', error);
+        showErrorDialog('error al actualizar la parada');
+        console.log('error al actualizar la parada de bus', error);
       } finally {
         setStatus('submitted');
       }
@@ -49,21 +46,33 @@ export const CreateCooperative = () => {
 
   const validateForm = () => {
     if (formValues.name === '') {
-      showAlertDialog('El nombre esta vacio');
+      showAlertDialog('El nombre de la linea esta vacio');
+      return false;
+    }
+
+    if (formValues.coordinate.latitude === '') {
+      showAlertDialog('La latitud es requerida');
+      return false;
+    }
+
+    if (formValues.coordinate.longitude === '') {
+      showAlertDialog('La longitud es requerida');
       return false;
     }
     return true;
   };
 
-  const onChange = (value, selectedDate) => {
-    setShowPicker(Platform.OS === 'ios');
-    if (selectedDate) {
-      const currentDate = selectedDate || date;
-      setDate(currentDate);
-      const formattedDate = currentDate.toLocaleDateString('es-ES');
-      setFormValues({ ...formValues, date_foundation: formattedDate });
+  const getStop = async () => {
+    try {
+      const response = await busStopService.getStopById(idStop);
+      setFormValues(response?._data);
+    } catch (error) {
+      console.log('error al obtener la parada de bus');
     }
   };
+  useEffect(() => {
+    getStop();
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -99,40 +108,35 @@ export const CreateCooperative = () => {
                 }}
               />
             </View>
-
+            <Label textAlign='center'>Coordenadas</Label>
             <View>
-              <View>
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowPicker(!showPicker);
-                  }}>
-                  <Label margin='$1'>Fecha de creacion:</Label>
-                  <FormInput
-                    editable={false}
-                    placeholder='Seleccione una fecha'
-                    value={formValues.date_foundation}
-                    onChangeText={(text) => {
-                      setFormValues({ ...formValues, date_foundation: text });
-                    }}
-                  />
-                </TouchableOpacity>
-              </View>
-              {showPicker && (
-                <DateTimePicker value={date} mode='date' display='calendar' onChange={onChange} />
-              )}
-            </View>
-
-            <View>
-              <Label>Alias:</Label>
+              <Label>Latitud:</Label>
               <FormInput
                 placeholder='Nombre'
-                value={formValues.alias}
+                type={'numeric'}
+                value={formValues.coordinate.latitude.toString()}
                 onChangeText={(text) => {
-                  setFormValues({ ...formValues, alias: text });
+                  setFormValues({
+                    ...formValues,
+                    coordinate: { ...formValues.coordinate, latitude: text },
+                  });
                 }}
               />
             </View>
-
+            <View>
+              <Label>Latitud:</Label>
+              <FormInput
+                placeholder='Nombre'
+                type={'numeric'}
+                value={formValues.coordinate.longitude.toString()}
+                onChangeText={(text) => {
+                  setFormValues({
+                    ...formValues,
+                    coordinate: { ...formValues.coordinate, longitude: text },
+                  });
+                }}
+              />
+            </View>
             <XStack space='$5' mt='$3'>
               <Button
                 w={'$10'}
@@ -140,10 +144,10 @@ export const CreateCooperative = () => {
                 bg='$green8'
                 icon={status === 'submitting' ? () => <Spinner /> : undefined}
                 onPress={async () => {
-                  await create();
+                  await update();
                 }}>
                 <SizableText color={'$color'} fontWeight={'bold'}>
-                  {status === 'submitting' ? 'Creando..' : 'Crear'}
+                  Actualizar
                 </SizableText>
               </Button>
 
@@ -152,7 +156,7 @@ export const CreateCooperative = () => {
                 bg={status === 'submitting' ? '$gray10' : '$red9'}
                 disabled={status === 'submitting'}
                 onPress={() => {
-                  navigation.navigate('cooperative-list' as never);
+                  navigation.goBack();
                 }}
                 size='$3'>
                 <SizableText color={'$color'} fontWeight={'bold'}>
