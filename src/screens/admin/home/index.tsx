@@ -56,7 +56,9 @@ export const AdminHomeScreen = () => {
         icon={<TrainTrack size={40} />}
         variant='outlined'
         backgroundColor='$blue8'
-        onPress={() => {}}>
+        onPress={() => {
+          navigation.navigate('line-menu' as never);
+        }}>
         Lineas
       </Button>
 

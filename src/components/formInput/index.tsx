@@ -15,6 +15,7 @@ export const FormInput = ({
   isSecure = false,
   disabled = false,
   editable = true,
+  w = '$20',
 }) => {
   const { isDark } = useThemeContext();
 
@@ -30,7 +31,7 @@ export const FormInput = ({
         secureTextEntry={showPassword}
         disabled={disabled}
         editable={editable}
-        w='$20'
+        w={w}
         focusStyle={{
           bw: 2,
           boc: '$blue8',
