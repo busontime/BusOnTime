@@ -1,10 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Label, ScrollView, SizableText, Spinner, View, XStack } from 'tamagui';
-import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import MapView, { Marker } from 'react-native-maps';
+
 import { FormInput } from '@/components/formInput';
+
 import { showAlertDialog, showErrorDialog, showSuccessDialog } from '@/utils/dialog';
+
 import { busStopService } from '@/services/busStop';
+import { stylesMap } from '../createStop/styles';
+import { MapPin, X } from 'lucide-react-native';
 
 const initForm = {
   name: '',
@@ -17,6 +30,8 @@ const initForm = {
 export const UpdateStops = () => {
   const [formValues, setFormValues] = useState(initForm);
   const [status, setStatus] = useState<'off' | 'submitting' | 'submitted'>('off');
+  const [startMarker, setStartMarker] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const route = useRoute();
   const navigation = useNavigation();
   const idStop = route.params;
@@ -62,10 +77,29 @@ export const UpdateStops = () => {
     return true;
   };
 
+  const handleMapPress = (event) => {
+    const { coordinate } = event.nativeEvent;
+    setStartMarker({ id: 'start', coordinate });
+    setFormValues({
+      ...formValues,
+      coordinate: {
+        latitude: String(coordinate.latitude),
+        longitude: String(coordinate.longitude),
+      },
+    });
+  };
+
   const getStop = async () => {
     try {
       const response = await busStopService.getStopById(idStop);
       setFormValues(response?._data);
+      setStartMarker({
+        id: 'start',
+        coordinate: {
+          latitude: response?._data.coordinate.latitude,
+          longitude: response?._data.coordinate.longitude,
+        },
+      });
     } catch (error) {
       console.log('error al obtener la parada de bus');
     }
@@ -137,6 +171,54 @@ export const UpdateStops = () => {
                 }}
               />
             </View>
+            <XStack
+              width={'$20'}
+              space={3}
+              alignItems='center'
+              onPress={() => {
+                setShowModal(true);
+              }}>
+              <MapPin size={30} color='#0eff0a' strokeWidth={3} />
+              <SizableText color={'$color'} fontWeight={'bold'} textAlign='center'>
+                Seleccionar coordenada
+              </SizableText>
+            </XStack>
+
+            {showModal && (
+              <Modal animationType='slide' visible={true}>
+                <TouchableOpacity
+                  style={{
+                    position: 'absolute',
+                    top: 10,
+                    left: 10,
+                    zIndex: 2,
+                  }}
+                  onPress={() => {
+                    setShowModal(false);
+                  }}>
+                  <X size={35} color='#ff0a0a' />
+                </TouchableOpacity>
+                <MapView
+                  mapType='standard'
+                  customMapStyle={stylesMap.styles}
+                  initialRegion={{
+                    latitude: -0.967653,
+                    longitude: -80.70891,
+                    latitudeDelta: 0.05,
+                    longitudeDelta: 0.05,
+                  }}
+                  onPress={handleMapPress}
+                  style={{ height: '100%', width: '100%' }}>
+                  {startMarker && (
+                    <Marker
+                      key={startMarker.id}
+                      coordinate={startMarker.coordinate}
+                      pinColor='#0eff0a'
+                    />
+                  )}
+                </MapView>
+              </Modal>
+            )}
             <XStack space='$5' mt='$3'>
               <Button
                 w={'$10'}
