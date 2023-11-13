@@ -7,7 +7,9 @@ import { AdminDriverStack } from './driver';
 import { AdminCooperativeStack } from './cooperatives';
 
 import { Sidebar } from '@/components/sidebar';
+
 import { AdminStopStack } from './stops';
+import { AdminLineStack } from './line';
 
 const Drawer = createDrawerNavigator();
 
@@ -48,6 +50,15 @@ export const AdminRouter = (props) => {
       />
 
       <Drawer.Screen
+        name='line-menu'
+        component={AdminLineStack}
+        options={{
+          drawerLabel: 'Lineas',
+          title: 'linear-scale',
+        }}
+      />
+                 
+                   <Drawer.Screen
         name='stop-menu'
         component={AdminStopStack}
         options={{
