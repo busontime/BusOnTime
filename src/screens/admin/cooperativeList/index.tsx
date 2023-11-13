@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, ScrollView, Text, XStack, YStack, Dialog, Adapt, Sheet } from 'tamagui';
+import { Button, Card, ScrollView, Text, XStack, YStack, AlertDialog } from 'tamagui';
 import { useNavigation } from '@react-navigation/native';
-
 import { Pencil, Trash2 } from 'lucide-react-native';
 
 import { cooperativeService } from '@/services/cooperative';
@@ -12,7 +11,7 @@ import { showSuccessToast } from '@/utils/toast';
 
 export const CooperativeList = () => {
   const [cooperatives, setCooperatives] = useState([]);
-  const [open, setOpen] = useState(false);
+
   const navigation = useNavigation();
 
   const getCooperatives = async () => {
@@ -97,45 +96,24 @@ export const CooperativeList = () => {
                 </XStack>
 
                 <XStack jc='flex-end' space='$3' mt='$2'>
-                  <Dialog
-                    modal
-                    onOpenChange={() => {
-                      setOpen(open);
-                    }}>
-                    <Dialog.Trigger asChild>
+                  <AlertDialog>
+                    <AlertDialog.Trigger asChild>
                       <Button size={'$3'} icon={<Trash2 />} variant='outlined' bg={'$red8'} />
-                    </Dialog.Trigger>
-
-                    <Adapt when='sm' platform='touch'>
-                      <Sheet animation='medium' zIndex={200000} modal dismissOnSnapToBottom>
-                        <Sheet.Frame padding='$4' gap='$4'>
-                          <Adapt.Contents />
-                        </Sheet.Frame>
-
-                        <Sheet.Overlay
-                          animation='medium'
-                          enterStyle={{ opacity: 0 }}
-                          exitStyle={{ opacity: 0 }}
-                        />
-                      </Sheet>
-                    </Adapt>
-
-                    <Dialog.Portal>
-                      <Dialog.Overlay
+                    </AlertDialog.Trigger>
+                    <AlertDialog.Portal>
+                      <AlertDialog.Overlay
                         key='overlay'
-                        animation='medium'
+                        animation='quick'
                         opacity={0.5}
                         enterStyle={{ opacity: 0 }}
                         exitStyle={{ opacity: 0 }}
                       />
-
-                      <Dialog.Content
+                      <AlertDialog.Content
                         bordered
                         elevate
                         key='content'
-                        animateOnly={['transform', 'opacity']}
                         animation={[
-                          'medium',
+                          'quick',
                           {
                             opacity: {
                               overshootClamping: true,
@@ -144,38 +122,43 @@ export const CooperativeList = () => {
                         ]}
                         enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
                         exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
-                        gap='$4'>
-                        <Dialog.Description>
-                          ¿Está seguro que desea eliminar la cooperativa {item?.name}?
-                        </Dialog.Description>
-
-                        <XStack space='$5' jc='center' ai='center'>
-                          <Dialog.Close displayWhenAdapted asChild>
-                            <Button
+                        x={0}
+                        scale={1}
+                        opacity={1}
+                        y={0}>
+                        <YStack space>
+                          <AlertDialog.Title size={10}>Eliminar Cooperativa</AlertDialog.Title>
+                          <AlertDialog.Description>
+                            <Text>Está seguro que desea eliminar la Cooperativa {item?.name}</Text>
+                          </AlertDialog.Description>
+                          <XStack space='$3' justifyContent='flex-end'>
+                            <AlertDialog.Cancel asChild>
+                              <Button
+                                color={'$color'}
+                                aria-label='Close'
+                                fontWeight={'$true'}
+                                bg={'$red8'}>
+                                Cancelar
+                              </Button>
+                            </AlertDialog.Cancel>
+                            <AlertDialog.Action
+                              asChild
                               onPress={() => {
                                 deleteCooperative(item?.id);
-                              }}
-                              color={'$color'}
-                              fontWeight={'$true'}
-                              aria-label='Close'
-                              bg={'$blue8'}>
-                              Eliminar
-                            </Button>
-                          </Dialog.Close>
-
-                          <Dialog.Close displayWhenAdapted asChild>
-                            <Button
-                              color={'$color'}
-                              aria-label='Close'
-                              fontWeight={'$true'}
-                              bg={'$red8'}>
-                              Cancelar
-                            </Button>
-                          </Dialog.Close>
-                        </XStack>
-                      </Dialog.Content>
-                    </Dialog.Portal>
-                  </Dialog>
+                              }}>
+                              <Button
+                                color={'$color'}
+                                fontWeight={'$true'}
+                                aria-label='Close'
+                                bg={'$blue8'}>
+                                Eliminar
+                              </Button>
+                            </AlertDialog.Action>
+                          </XStack>
+                        </YStack>
+                      </AlertDialog.Content>
+                    </AlertDialog.Portal>
+                  </AlertDialog>
 
                   <Button
                     size={'$3'}
