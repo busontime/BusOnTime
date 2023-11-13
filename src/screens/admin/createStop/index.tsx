@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
-import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { Button, Form, Label, ScrollView, SizableText, Spinner, View, XStack } from 'tamagui';
 import { useNavigation } from '@react-navigation/native';
+import MapView, { Marker } from 'react-native-maps';
+import { MapPin, X } from 'lucide-react-native';
+
 import { FormInput } from '@/components/formInput';
+
 import { busStopService } from '@/services/busStop';
+
 import { showAlertDialog, showSuccessDialog } from '@/utils/dialog';
+import { stylesMap } from './styles';
 
 const initForm = {
   name: '',
@@ -17,6 +30,8 @@ const initForm = {
 export const CreateStop = () => {
   const [formValues, setFormValues] = useState(initForm);
   const [status, setStatus] = useState<'off' | 'submitting' | 'submitted'>('off');
+  const [startMarker, setStartMarker] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const navigation = useNavigation();
 
   const create = async () => {
@@ -40,6 +55,18 @@ export const CreateStop = () => {
         setStatus('submitted');
       }
     }
+  };
+
+  const handleMapPress = (event) => {
+    const { coordinate } = event.nativeEvent;
+    setStartMarker({ id: 'start', coordinate });
+    setFormValues({
+      ...formValues,
+      coordinate: {
+        latitude: String(coordinate.latitude),
+        longitude: String(coordinate.longitude),
+      },
+    });
   };
 
   const validateForm = () => {
@@ -100,6 +127,7 @@ export const CreateStop = () => {
               <FormInput
                 placeholder='Nombre'
                 type={'numeric'}
+                editable={false}
                 value={formValues.coordinate.latitude}
                 onChangeText={(text) => {
                   setFormValues({
@@ -113,6 +141,7 @@ export const CreateStop = () => {
               <Label>Latitud:</Label>
               <FormInput
                 placeholder='Nombre'
+                editable={false}
                 type={'numeric'}
                 value={formValues.coordinate.longitude}
                 onChangeText={(text) => {
@@ -123,6 +152,55 @@ export const CreateStop = () => {
                 }}
               />
             </View>
+            <XStack
+              width={'$20'}
+              space={3}
+              alignItems='center'
+              onPress={() => {
+                setShowModal(true);
+              }}>
+              <MapPin size={30} color='#0eff0a' strokeWidth={3} />
+              <SizableText color={'$color'} fontWeight={'bold'} textAlign='center'>
+                Seleccionar coordenada
+              </SizableText>
+            </XStack>
+
+            {showModal && (
+              <Modal animationType='slide' visible={true}>
+                <TouchableOpacity
+                  style={{
+                    position: 'absolute',
+                    top: 10,
+                    left: 10,
+                    zIndex: 2,
+                  }}
+                  onPress={() => {
+                    setShowModal(false);
+                  }}>
+                  <X size={35} color='#ff0a0a' />
+                </TouchableOpacity>
+                <MapView
+                  mapType='standard'
+                  customMapStyle={stylesMap.styles}
+                  initialRegion={{
+                    latitude: -0.967653,
+                    longitude: -80.70891,
+                    latitudeDelta: 0.05,
+                    longitudeDelta: 0.05,
+                  }}
+                  onPress={handleMapPress}
+                  style={{ height: '100%', width: '100%' }}>
+                  {startMarker && (
+                    <Marker
+                      key={startMarker.id}
+                      coordinate={startMarker.coordinate}
+                      pinColor='#0eff0a'
+                    />
+                  )}
+                </MapView>
+              </Modal>
+            )}
+
             <XStack space='$5' mt='$3'>
               <Button
                 w={'$10'}
