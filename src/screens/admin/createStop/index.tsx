@@ -1,29 +1,22 @@
-import { FormInput } from '@/components/formInput';
 import React, { useState } from 'react';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
 import { Button, Form, Label, ScrollView, SizableText, Spinner, View, XStack } from 'tamagui';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
-import { showAlertDialog, showErrorDialog, showSuccessDialog } from '@/utils/dialog';
-import { cooperativeService } from '@/services/cooperative';
+import { FormInput } from '@/components/formInput';
+import { busStopService } from '@/services/busStop';
+import { showAlertDialog, showSuccessDialog } from '@/utils/dialog';
 
 const initForm = {
-  alias: '',
-  date_foundation: '',
   name: '',
+  coordinate: {
+    latitude: '',
+    longitude: '',
+  },
 };
 
-export const CreateCooperative = () => {
-  const [status, setStatus] = useState<'off' | 'submitting' | 'submitted'>('off');
-  const [showPicker, setShowPicker] = useState(false);
-  const [date, setDate] = useState(new Date());
+export const CreateStop = () => {
   const [formValues, setFormValues] = useState(initForm);
+  const [status, setStatus] = useState<'off' | 'submitting' | 'submitted'>('off');
   const navigation = useNavigation();
 
   const create = async () => {
@@ -31,16 +24,18 @@ export const CreateCooperative = () => {
       setStatus('submitting');
       try {
         const data = {
-          alias: formValues.alias,
-          date_foundation: formValues.date_foundation,
           name: formValues.name,
+          coordinate: {
+            latitude: Number(formValues.coordinate.latitude),
+            longitude: Number(formValues.coordinate.longitude),
+          },
         };
-        await cooperativeService.createCooperative(data);
-        showSuccessDialog('Cooperativa creada con exito');
+
+        await busStopService.createStop(data);
+        showSuccessDialog('Linea creada con exito');
         navigation.goBack();
       } catch (error) {
-        showErrorDialog('ocurrio un error intentelo mas tarde');
-        console.log('Error al crear la cooperativa', error);
+        console.log('error al crear la parada');
       } finally {
         setStatus('submitted');
       }
@@ -49,20 +44,20 @@ export const CreateCooperative = () => {
 
   const validateForm = () => {
     if (formValues.name === '') {
-      showAlertDialog('El nombre esta vacio');
+      showAlertDialog('El nombre de la linea esta vacio');
+      return false;
+    }
+
+    if (formValues.coordinate.latitude === '') {
+      showAlertDialog('La latitud es requerida');
+      return false;
+    }
+
+    if (formValues.coordinate.longitude === '') {
+      showAlertDialog('La longitud es requerida');
       return false;
     }
     return true;
-  };
-
-  const onChange = (value, selectedDate) => {
-    setShowPicker(Platform.OS === 'ios');
-    if (selectedDate) {
-      const currentDate = selectedDate || date;
-      setDate(currentDate);
-      const formattedDate = currentDate.toLocaleDateString('es-ES');
-      setFormValues({ ...formValues, date_foundation: formattedDate });
-    }
   };
 
   return (
@@ -99,40 +94,35 @@ export const CreateCooperative = () => {
                 }}
               />
             </View>
-
+            <Label textAlign='center'>Coordenadas</Label>
             <View>
-              <View>
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowPicker(!showPicker);
-                  }}>
-                  <Label margin='$1'>Fecha de creacion:</Label>
-                  <FormInput
-                    editable={false}
-                    placeholder='Seleccione una fecha'
-                    value={formValues.date_foundation}
-                    onChangeText={(text) => {
-                      setFormValues({ ...formValues, date_foundation: text });
-                    }}
-                  />
-                </TouchableOpacity>
-              </View>
-              {showPicker && (
-                <DateTimePicker value={date} mode='date' display='calendar' onChange={onChange} />
-              )}
-            </View>
-
-            <View>
-              <Label>Alias:</Label>
+              <Label>Latitud:</Label>
               <FormInput
                 placeholder='Nombre'
-                value={formValues.alias}
+                type={'numeric'}
+                value={formValues.coordinate.latitude}
                 onChangeText={(text) => {
-                  setFormValues({ ...formValues, alias: text });
+                  setFormValues({
+                    ...formValues,
+                    coordinate: { ...formValues.coordinate, latitude: text },
+                  });
                 }}
               />
             </View>
-
+            <View>
+              <Label>Latitud:</Label>
+              <FormInput
+                placeholder='Nombre'
+                type={'numeric'}
+                value={formValues.coordinate.longitude}
+                onChangeText={(text) => {
+                  setFormValues({
+                    ...formValues,
+                    coordinate: { ...formValues.coordinate, longitude: text },
+                  });
+                }}
+              />
+            </View>
             <XStack space='$5' mt='$3'>
               <Button
                 w={'$10'}
@@ -143,7 +133,7 @@ export const CreateCooperative = () => {
                   await create();
                 }}>
                 <SizableText color={'$color'} fontWeight={'bold'}>
-                  {status === 'submitting' ? 'Creando..' : 'Crear'}
+                  {status === 'submitting' ? 'Creando' : 'Crear'}
                 </SizableText>
               </Button>
 
@@ -152,7 +142,7 @@ export const CreateCooperative = () => {
                 bg={status === 'submitting' ? '$gray10' : '$red9'}
                 disabled={status === 'submitting'}
                 onPress={() => {
-                  navigation.navigate('cooperative-list' as never);
+                  navigation.goBack();
                 }}
                 size='$3'>
                 <SizableText color={'$color'} fontWeight={'bold'}>

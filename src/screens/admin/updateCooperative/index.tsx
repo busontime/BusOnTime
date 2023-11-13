@@ -31,6 +31,7 @@ export const UpdateCooperative = () => {
 
   const update = async () => {
     if (validateForm()) {
+      setStatus('submitting');
       try {
         const data = {
           alias: formValues.alias,
@@ -42,6 +43,8 @@ export const UpdateCooperative = () => {
         navigation.goBack();
       } catch (error) {
         console.log('Error al crear la cooperativa', error);
+      } finally {
+        setStatus('submitted');
       }
     }
   };
@@ -156,7 +159,7 @@ export const UpdateCooperative = () => {
                   await update();
                 }}>
                 <SizableText color={'$color'} fontWeight={'bold'}>
-                  {status === 'submitting' ? 'Actualizando...' : 'Actualizar'}
+                  Actualizar
                 </SizableText>
               </Button>
 

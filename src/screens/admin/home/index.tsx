@@ -68,7 +68,9 @@ export const AdminHomeScreen = () => {
         icon={<BusFront size={40} />}
         variant='outlined'
         backgroundColor='$blue6'
-        onPress={() => {}}>
+        onPress={() => {
+          navigation.navigate('stop-menu' as never);
+        }}>
         Paradas
       </Button>
     </YStack>
