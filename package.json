@@ -40,6 +40,7 @@
     "react": "18.2.0",
     "react-native": "0.72.4",
     "react-native-alert-notification": "0.3.5",
+    "react-native-color-picker": "0.6.0",
     "react-native-config": "1.5.1",
     "react-native-gesture-handler": "2.12.1",
     "react-native-maps": "^1.7.1",
@@ -49,6 +50,7 @@
     "react-native-screens": "3.25.0",
     "react-native-svg": "13.14.0",
     "react-native-vector-icons": "10.0.0",
+    "react-native-wheel-color-picker": "1.2.0",
     "tamagui": "1.74.3"
   },
   "devDependencies": {
