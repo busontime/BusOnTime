@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Label, ScrollView, SizableText, Spinner, View, XStack } from 'tamagui';
+import {
+  Button,
+  Form,
+  Label,
+  ScrollView,
+  SizableText,
+  Spinner,
+  View,
+  XStack,
+  YStack,
+} from 'tamagui';
 import {
   Keyboard,
   KeyboardAvoidingView,
   Modal,
   Platform,
-  TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -17,7 +26,7 @@ import { showAlertDialog, showErrorDialog, showSuccessDialog } from '@/utils/dia
 
 import { busStopService } from '@/services/busStop';
 import { stylesMap } from '../createStop/styles';
-import { MapPin, X } from 'lucide-react-native';
+import { Check, MapPin, X } from 'lucide-react-native';
 
 const initForm = {
   name: '',
@@ -186,18 +195,6 @@ export const UpdateStops = () => {
 
             {showModal && (
               <Modal animationType='slide' visible={true}>
-                <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    top: 10,
-                    left: 10,
-                    zIndex: 2,
-                  }}
-                  onPress={() => {
-                    setShowModal(false);
-                  }}>
-                  <X size={35} color='#ff0a0a' />
-                </TouchableOpacity>
                 <MapView
                   mapType='standard'
                   customMapStyle={stylesMap.styles}
@@ -217,6 +214,37 @@ export const UpdateStops = () => {
                     />
                   )}
                 </MapView>
+                <YStack justifyContent='flex-end' alignItems='center'>
+                  <XStack position='absolute' space={'$2'} padding='$2' zIndex={2}>
+                    <Button
+                      w={'$14'}
+                      borderColor={'$red9'}
+                      onPress={() => {
+                        setStartMarker(null);
+                      }}
+                      icon={<X size={20} color='#ff0a0a' />}>
+                      <SizableText color={'$color'} fontWeight={'bold'}>
+                        Cancelar
+                      </SizableText>
+                    </Button>
+
+                    <Button
+                      w={'$14'}
+                      borderColor='$green8'
+                      onPress={() => {
+                        if (startMarker === null) {
+                          showAlertDialog('Debe seleccionar una parada antes de cerrar el mapa');
+                          return;
+                        }
+                        setShowModal(false);
+                      }}
+                      icon={<Check size={20} color='#0eff0a' />}>
+                      <SizableText color={'$color'} fontWeight={'bold'}>
+                        Aceptar
+                      </SizableText>
+                    </Button>
+                  </XStack>
+                </YStack>
               </Modal>
             )}
             <XStack space='$5' mt='$3'>
