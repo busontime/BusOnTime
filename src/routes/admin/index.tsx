@@ -2,14 +2,14 @@ import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import { AdminHomeStack } from './home';
-import { AdminProfileStack } from './profiles';
+import { AdminCooperativeStack } from './cooperative';
 import { AdminDriverStack } from './driver';
-import { AdminCooperativeStack } from './cooperatives';
+import { AdminBusStack } from './bus';
+import { AdminLineStack } from './line';
+import { AdminBusStopStack } from './busStop';
+import { AdminProfileStack } from './profile';
 
 import { Sidebar } from '@/components/sidebar';
-
-import { AdminStopStack } from './stops';
-import { AdminLineStack } from './line';
 
 const Drawer = createDrawerNavigator();
 
@@ -36,7 +36,7 @@ export const AdminRouter = (props) => {
         component={AdminCooperativeStack}
         options={{
           drawerLabel: 'Cooperativas',
-          title: 'maps-home-work',
+          title: 'apartment',
         }}
       />
 
@@ -45,7 +45,16 @@ export const AdminRouter = (props) => {
         component={AdminDriverStack}
         options={{
           drawerLabel: 'Conductores',
-          title: 'airline-seat-recline-normal',
+          title: 'assignment-ind',
+        }}
+      />
+
+      <Drawer.Screen
+        name='bus-menu'
+        component={AdminBusStack}
+        options={{
+          drawerLabel: 'Buses',
+          title: 'directions-bus',
         }}
       />
 
@@ -54,16 +63,16 @@ export const AdminRouter = (props) => {
         component={AdminLineStack}
         options={{
           drawerLabel: 'Lineas',
-          title: 'linear-scale',
+          title: 'route',
         }}
       />
-                 
-                   <Drawer.Screen
-        name='stop-menu'
-        component={AdminStopStack}
+
+      <Drawer.Screen
+        name='bus-stop-menu'
+        component={AdminBusStopStack}
         options={{
           drawerLabel: 'Paradas',
-          title: 'dangerous',
+          title: 'bus-alert',
         }}
       />
 
