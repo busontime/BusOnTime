@@ -46,7 +46,9 @@ export const AdminHomeScreen = () => {
         icon={<Bus size={40} />}
         variant='outlined'
         backgroundColor='$blue6'
-        onPress={() => {}}>
+        onPress={() => {
+          navigation.navigate('bus-menu' as never);
+        }}>
         Buses
       </Button>
 
@@ -69,7 +71,7 @@ export const AdminHomeScreen = () => {
         variant='outlined'
         backgroundColor='$blue6'
         onPress={() => {
-          navigation.navigate('stop-menu' as never);
+          navigation.navigate('bus-stop-menu' as never);
         }}>
         Paradas
       </Button>
