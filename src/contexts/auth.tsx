@@ -6,7 +6,9 @@ import Config from 'react-native-config';
 import { userService } from '@/services/user';
 
 import { type ChildrenProps } from '@/interfaces';
+
 import { validateAuthError } from '@/utils/error';
+import { showErrorDialog } from '@/utils/dialog';
 
 GoogleSignin.configure({ webClientId: Config.WEB_CLIENT_ID });
 
@@ -55,6 +57,13 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     try {
       await auth().signInWithEmailAndPassword(email, password);
+
+      const data = await userService.getById(auth().currentUser.uid);
+
+      if (!data) {
+        await deleteAccount();
+        showErrorDialog('Esta cuenta ha sido eliminada por el administrador!');
+      }
     } catch (error) {
       validateAuthError(error, 'No puede iniciar Sesión.!');
     }
@@ -80,6 +89,15 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
       return data;
     } catch (error) {
       validateAuthError(error, 'No puede registrarse, Intentelo más tarde.!');
+    }
+  };
+
+  const deleteAccount = async () => {
+    try {
+      await auth().currentUser.delete();
+    } catch (error) {
+      console.log('err', error);
+      validateAuthError(error, 'No se puede eliminar, Intentelo más tarde.!');
     }
   };
 
@@ -120,6 +138,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     createAccount,
     updateProfile,
     createDriver,
+    deleteAccount,
   };
 
   return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;
