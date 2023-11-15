@@ -29,7 +29,15 @@ export const userService = {
     try {
       return await bdService.updateById(COLLECTION_NAME, userId, data);
     } catch (err) {
-      console.error('Ocurrio un error al actualizar el usuario: ' + userId, err);
+      console.error('Ocurrió un error al actualizar el usuario: ' + userId, err);
+    }
+  },
+
+  deleteById: async (userId) => {
+    try {
+      return await bdService.deleteById(COLLECTION_NAME, userId);
+    } catch (error) {
+      console.log('Ocurrió un error al eliminar el usuario: ' + userId, error);
     }
   },
 
@@ -37,7 +45,16 @@ export const userService = {
     try {
       const data = await bdService.getAll(COLLECTION_NAME);
       const { _docs } = data;
-      return _docs.filter((item) => item?._data?.roleId === ROLES_ID.driver);
+
+      const documents = _docs
+        .map((doc) => {
+          const documentData = doc.data();
+          return { id: doc.id, ...documentData };
+        })
+        .filter((item) => item.roleId === ROLES_ID.driver)
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      return documents;
     } catch (error) {
       console.error('Error al recuperar los conductores: ', error);
     }

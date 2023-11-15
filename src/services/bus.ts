@@ -1,13 +1,13 @@
 import { bdService } from '@/utils/bd';
 
-const COLLECTION_NAME = 'lines';
+const COLLECTION_NAME = 'buses';
 
-export const lineService = {
+export const busService = {
   create: async (data) => {
     try {
       return await bdService.createDocument(COLLECTION_NAME, data);
     } catch (error) {
-      console.log('Error al crear linea', error);
+      console.error('Error al agregar bus', error);
     }
   },
 
@@ -15,7 +15,7 @@ export const lineService = {
     try {
       return await bdService.getById(COLLECTION_NAME, id);
     } catch (error) {
-      console.log('Error al recuperar linea: ' + id, error);
+      console.log('Error al recuperar bus: ' + id, error);
     }
   },
 
@@ -23,7 +23,7 @@ export const lineService = {
     try {
       return await bdService.updateById(COLLECTION_NAME, id, data);
     } catch (error) {
-      console.log('Ocurrio un error al actualizar la linea: ' + id, error);
+      console.log('Ocurrio un error al actualizar el bus: ' + id, error);
     }
   },
 
@@ -31,7 +31,7 @@ export const lineService = {
     try {
       return await bdService.deleteById(COLLECTION_NAME, id);
     } catch (error) {
-      console.log('Ocurrio un error al eliminar la linea: ' + id, error);
+      console.log('Ocurrio un error al eliminar el bus: ' + id, error);
     }
   },
 
@@ -48,7 +48,7 @@ export const lineService = {
 
       return documents;
     } catch (error) {
-      console.log('Error al recuperar todos las lineas', error);
+      console.log('Error al recuperar todos los buses', error);
     }
   },
 };

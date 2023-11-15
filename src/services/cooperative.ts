@@ -1,52 +1,54 @@
 import { bdService } from '@/utils/bd';
 
-const NAME_COLLECTION = 'cooperatives';
+const COLLECTION_NAME = 'cooperatives';
 
 export const cooperativeService = {
-  createCooperative: async (data) => {
+  create: async (data) => {
     try {
-      return await bdService.createDocument(NAME_COLLECTION, data);
+      return await bdService.createDocument(COLLECTION_NAME, data);
     } catch (error) {
-      console.error('Error al agregar cooperativa:', error);
+      console.error('Error al agregar cooperativa', error);
     }
   },
 
-  getCooperativeById: async (coopId) => {
+  getById: async (id) => {
     try {
-      const cooperativa = await bdService.getById(NAME_COLLECTION, coopId);
-      return cooperativa;
+      return await bdService.getById(COLLECTION_NAME, id);
     } catch (error) {
-      console.log('no se encontro el id de la cooperativa', error, coopId);
+      console.log('Error al recuperar la cooperativa: ' + id, error);
     }
   },
 
-  updateCooperativeById: async (coopId, data) => {
+  updateById: async (id, data) => {
     try {
-      return await bdService.updateById(NAME_COLLECTION, coopId, data);
+      return await bdService.updateById(COLLECTION_NAME, id, data);
     } catch (error) {
-      console.log('error al obtener el id de la cooperativa', error, coopId);
+      console.log('Ocurrio un error al actualizar la cooperativa: ' + id, error);
     }
   },
 
-  deleteCooperativeById: async (coopId) => {
+  deleteById: async (id) => {
     try {
-      return await bdService.deleteById(NAME_COLLECTION, coopId);
+      return await bdService.deleteById(COLLECTION_NAME, id);
     } catch (error) {
-      console.log('error al eliminar la cooperativa', error, coopId);
+      console.log('Ocurrio un error al eliminar la cooperativa: ' + id, error);
     }
   },
 
-  getAllCooperative: async () => {
+  getAll: async () => {
     try {
-      const data = await bdService.getAll(NAME_COLLECTION);
-      const documents = data._docs.map((doc) => {
-        const documentId = doc.id;
-        const documentData = doc.data();
-        return { id: documentId, ...documentData };
-      });
+      const data = await bdService.getAll(COLLECTION_NAME);
+
+      const documents = data._docs
+        .map((doc) => {
+          const documentData = doc.data();
+          return { id: doc.id, ...documentData };
+        })
+        .sort((a, b) => a.name.localeCompare(b.name));
+
       return documents;
     } catch (error) {
-      console.log('error al obtener todas las cooperativas', error);
+      console.log('Error al recuperar todas las cooperativas', error);
     }
   },
 };

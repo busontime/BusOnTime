@@ -3,44 +3,52 @@ import { bdService } from '@/utils/bd';
 const COLLECTION_NAME = 'bus_stops';
 
 export const busStopService = {
-  getAllStops: async () => {
+  getAll: async () => {
     try {
       const data = await bdService.getAll(COLLECTION_NAME);
-      return data._docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      const documents = data._docs
+        .map((doc) => {
+          const documentData = doc.data();
+          return { id: doc.id, ...documentData };
+        })
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      return documents;
     } catch (error) {
-      console.error('Error al recuperar las paradas de buses: ', error);
+      console.error('Error al recuperar todas las paradas de buses: ', error);
     }
   },
 
-  createStop: async (data) => {
+  create: async (data) => {
     try {
       return await bdService.createDocument(COLLECTION_NAME, data);
     } catch (error) {
-      console.log('error al crear la parada', error);
+      console.log('Error al crear parada', error);
     }
   },
 
-  updateStopById: async (stopId, data) => {
+  updateById: async (id, data) => {
     try {
-      return await bdService.updateById(COLLECTION_NAME, stopId, data);
+      return await bdService.updateById(COLLECTION_NAME, id, data);
     } catch (error) {
-      console.log('error al actualizar la parada', error);
+      console.log('Ocurrio un error al actualizar la parada: ' + id, error);
     }
   },
 
-  deleteStopById: async (stopId) => {
+  deleteById: async (id) => {
     try {
-      return await bdService.deleteById(COLLECTION_NAME, stopId);
+      return await bdService.deleteById(COLLECTION_NAME, id);
     } catch (error) {
-      console.log('error al eliminar la parada', error);
+      console.log('Ocurrio un error al eliminar la parada: ' + id, error);
     }
   },
 
-  getStopById: async (stopId) => {
+  getById: async (id) => {
     try {
-      return await bdService.getById(COLLECTION_NAME, stopId);
+      return await bdService.getById(COLLECTION_NAME, id);
     } catch (error) {
-      console.log('error al obtener el id del documento');
+      console.log('Error al recuperar parada: ' + id, error);
     }
   },
 };
