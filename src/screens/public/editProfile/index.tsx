@@ -19,6 +19,8 @@ import { userService } from '@/services/user';
 import { showAlertDialog } from '@/utils/dialog';
 import { validateEmail } from '@/utils/validate';
 import moment from 'moment';
+import { FormSelect } from '@/components/formSelect';
+import { cooperativeService } from '@/services/cooperative';
 
 const initForm = {
   birthdate: '',
@@ -26,13 +28,15 @@ const initForm = {
   lastname: '',
   name: '',
   phone: '',
-  cedula: '',
+  ci: '',
+  cooperativeId: '',
 };
 
 export const EditProfile = () => {
   const { profile, updateProfile, updateEmail } = useAuthContext();
   const [status, setStatus] = useState<'off' | 'submitting' | 'submitted'>('off');
   const [updateForm, setUpdateForm] = useState({ ...initForm, ...profile.person });
+  const [cooperatives, setCooperatives] = useState([]);
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const { isDark } = useThemeContext();
@@ -55,11 +59,12 @@ export const EditProfile = () => {
           lastname: updateForm.lastname,
           name: updateForm.name,
           phone: updateForm.phone,
-          cedula: updateForm.cedula,
+          ci: updateForm.ci,
+          cooperativeId: updateForm.cooperativeId,
         };
 
         if (!profile?.person?.cedula) {
-          delete data.cedula;
+          delete data.ci;
         }
         if (updateForm.email !== profile.person.email) {
           const updateEmailUser = await updateEmail(updateForm.email);
@@ -140,6 +145,19 @@ export const EditProfile = () => {
 
     return true;
   };
+
+  const getCooperatives = async () => {
+    try {
+      const data = await cooperativeService.getAll();
+      setCooperatives(data);
+    } catch (error) {
+      console.log('Error al recuperar todas las cooperativas', error);
+    }
+  };
+
+  useEffect(() => {
+    getCooperatives();
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -233,7 +251,7 @@ export const EditProfile = () => {
               )}
             </View>
 
-            {profile?.person?.cedula && (
+            {profile?.person?.ci && (
               <View>
                 <Label margin='$1'>Cédula:</Label>
                 <FormInput
@@ -245,6 +263,16 @@ export const EditProfile = () => {
                 />
               </View>
             )}
+
+            <FormSelect
+              label='Cooperativa:'
+              placeholder='Selecciona una cooperativa'
+              value={updateForm?.cooperativeId}
+              options={cooperatives}
+              onValueChange={(value) => {
+                setUpdateForm({ ...updateForm, cooperativeId: value });
+              }}
+            />
 
             <XStack gap='$5'>
               <Button

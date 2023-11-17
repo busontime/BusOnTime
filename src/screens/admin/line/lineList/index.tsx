@@ -70,7 +70,7 @@ export const LineList = () => {
             <CardItem label='Nombre:' value={item?.name} />
 
             <XStack space='$3'>
-              <CardItem label='Color:' value={item?.lineColor} />
+              <CardItem label='Color:' color={item?.lineColor} value={item?.lineColor} />
               <Stack bg={item?.lineColor} height={'$1'} width={'$1'} borderRadius={'$1'} />
             </XStack>
 
