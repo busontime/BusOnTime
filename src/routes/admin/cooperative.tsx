@@ -12,7 +12,18 @@ export const AdminCooperativeStack = (props) => {
     <Stack.Navigator
       {...props}
       initialRouteName='cooperative-list'
-      screenOptions={{ headerShown: false }}>
+      screenOptions={{
+        headerShown: false,
+        transitionSpec: {
+          open: { animation: 'spring', config: { duration: 500 } },
+          close: { animation: 'spring', config: { duration: 500 } },
+        },
+        cardStyleInterpolator: ({ current }) => ({
+          cardStyle: {
+            opacity: current.progress,
+          },
+        }),
+      }}>
       <Stack.Screen name='cooperative-list' component={CooperativeList} />
       <Stack.Screen name='create-cooperative' component={CreateCooperative} />
       <Stack.Screen name='update-cooperative' component={UpdateCooperative} />

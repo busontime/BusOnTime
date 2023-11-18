@@ -1,6 +1,6 @@
 import React from 'react';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
-import { YStack, XStack, Text } from 'tamagui';
+import { YStack, XStack, Text, Image } from 'tamagui';
 
 import { useAuthContext } from '@/contexts/auth';
 
@@ -15,7 +15,19 @@ export const Sidebar = (props) => {
   return (
     <YStack bg={'$backgroundFocus'} f={1}>
       <DrawerContentScrollView {...props}>
-        <XStack bg={'$blue8'} jc='space-between' padding='$2' ai='center' mt='$-1.5'>
+        <XStack bg={'$blue8'} jc='space-around' padding='$2' ai='center' mt='$-1.5'>
+          {profile?.person?.photo && (
+            <Image
+              source={{ uri: profile?.person?.photo }}
+              style={{
+                height: 30,
+                width: 30,
+                borderRadius: 50,
+                borderColor: 'whitesmoke',
+                borderWidth: 0.2,
+              }}
+            />
+          )}
           <Text color={'$gray12'} fontWeight={'$true'} f={1} ta='center'>
             {profile?.person?.name || profile?.user?.email}
           </Text>

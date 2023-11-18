@@ -35,3 +35,12 @@ export const initBusStopForm = {
     longitude: '',
   },
 };
+
+export const initProfile = {
+  birthdate: new Date(),
+  email: '',
+  lastname: '',
+  name: '',
+  phone: '',
+  ci: '',
+};
