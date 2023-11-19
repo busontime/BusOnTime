@@ -8,7 +8,7 @@ import { userService } from '@/services/user';
 import { type ChildrenProps } from '@/interfaces';
 
 import { validateAuthError } from '@/utils/error';
-import { showErrorDialog } from '@/utils/dialog';
+// import { showErrorDialog } from '@/utils/dialog';
 
 GoogleSignin.configure({ webClientId: Config.WEB_CLIENT_ID });
 
@@ -35,12 +35,14 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     }
   };
 
-  const updateProfile = async (updatedPerson) => {
+  const updateProfile = async () => {
+    const personData = await userService.getById(auth().currentUser.uid);
+
     setProfile((prevProfile) => ({
       ...prevProfile,
       person: {
         ...prevProfile.person,
-        ...updatedPerson,
+        ...personData,
       },
     }));
   };
@@ -58,12 +60,12 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     try {
       await auth().signInWithEmailAndPassword(email, password);
 
-      const data = await userService.getById(auth().currentUser.uid);
+      // const data = await userService.getById(auth().currentUser.uid);
 
-      if (!data) {
-        await deleteAccount();
-        showErrorDialog('Esta cuenta ha sido eliminada por el administrador!');
-      }
+      // if (!data) {
+      //   await deleteAccount();
+      //   showErrorDialog('Esta cuenta ha sido eliminada por el administrador!');
+      // }
     } catch (error) {
       validateAuthError(error, 'No puede iniciar Sesión.!');
     }
@@ -73,7 +75,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     try {
       const data = await auth().createUserWithEmailAndPassword(email, password);
       logout();
-      login('admin@bot.com', '123456');
+      login('gato@dev.com', '123456');
       return data;
     } catch (error) {
       validateAuthError(error, 'No se pudo registrar, Intentelo más tarde.!');
