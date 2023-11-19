@@ -113,13 +113,12 @@ export const PickLocation = ({ selectLocation = (val) => {}, coordinate = null }
             provider={PROVIDER_GOOGLE}
             loadingEnabled
             mapType='standard'
-            minZoomLevel={18}
             customMapStyle={styles}
             initialRegion={{
               latitude: marker ? marker?.latitude : currentLocation?.latitude,
               longitude: marker ? marker?.longitude : currentLocation?.longitude,
-              latitudeDelta: 0.05,
-              longitudeDelta: 0.05,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
             }}
             onPress={handlerMapPress}
             style={{ flex: 1 }}>

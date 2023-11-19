@@ -99,9 +99,9 @@ export const Map = () => {
         {lines.map((item, index) => (
           <MapViewDirections
             key={index}
-            origin={item.origin}
-            destination={item.destination}
-            waypoints={item.stops}
+            origin={item?.origin?.coordinate}
+            destination={item?.destination?.coordinate}
+            waypoints={item.stops.map((item) => item.coordinate)}
             strokeColor={item.lineColor}
             strokeWidth={1}
             apikey={Config.GOOGLE_MAPS_API_KEY}

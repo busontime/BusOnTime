@@ -22,8 +22,7 @@ export const MapProvider: React.FC<ChildrenProps> = ({ children }) => {
   const getLines = async () => {
     try {
       const data = await lineService.getAll();
-      const _data = data.map((element) => element._data);
-      setLines(_data ?? []);
+      setLines(data ?? []);
     } catch (error) {
       console.log('error get lines', error);
     }
@@ -32,8 +31,7 @@ export const MapProvider: React.FC<ChildrenProps> = ({ children }) => {
   const getBusStops = async () => {
     try {
       const data = await busStopService.getAll();
-      const _data = data.map((element) => element._data);
-      setBusStops(_data ?? []);
+      setBusStops(data ?? []);
     } catch (error) {
       console.log('error get bus stops', error);
     }
