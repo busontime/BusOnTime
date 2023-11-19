@@ -11,7 +11,18 @@ export const AdminBusStopStack = (props) => {
     <Stack.Navigator
       {...props}
       initialRouteName='bus-stop-list'
-      screenOptions={{ headerShown: false }}>
+      screenOptions={{
+        headerShown: false,
+        transitionSpec: {
+          open: { animation: 'spring', config: { duration: 500 } },
+          close: { animation: 'spring', config: { duration: 500 } },
+        },
+        cardStyleInterpolator: ({ current }) => ({
+          cardStyle: {
+            opacity: current.progress,
+          },
+        }),
+      }}>
       <Stack.Screen name='bus-stop-list' component={BusStopList} />
       <Stack.Screen name='bus-stop-form' component={BusStopForm} />
     </Stack.Navigator>

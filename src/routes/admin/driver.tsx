@@ -11,8 +11,29 @@ export const AdminDriverStack = (props) => {
     <Stack.Navigator
       {...props}
       initialRouteName='driver-list'
-      screenOptions={{ headerShown: false }}>
-      <Stack.Screen name='driver-list' component={DriverList} />
+      screenOptions={{
+        headerShown: false,
+        transitionSpec: {
+          open: { animation: 'spring', config: { duration: 500 } },
+          close: { animation: 'spring', config: { duration: 500 } },
+        },
+        cardStyleInterpolator: ({ current }) => ({
+          cardStyle: {
+            opacity: current.progress,
+          },
+        }),
+      }}>
+      <Stack.Screen
+        name='driver-list'
+        options={{
+          cardStyleInterpolator: ({ current }) => ({
+            cardStyle: {
+              opacity: current.progress,
+            },
+          }),
+        }}
+        component={DriverList}
+      />
       <Stack.Screen name='driver-form' component={DriverForm} />
     </Stack.Navigator>
   );

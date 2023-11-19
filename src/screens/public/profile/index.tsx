@@ -1,17 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { UserCircle2 } from 'lucide-react-native';
-import { useThemeContext } from '@/contexts/theme';
-import { COLORS } from '@/constants/styles';
-import { Button, SizableText, YStack, View, Label, ScrollView } from 'tamagui';
-import { FormInput } from '@/components/formInput';
-import { useAuthContext } from '@/contexts/auth';
+import { UserCircle } from 'lucide-react-native';
+import { Button, SizableText, YStack, ScrollView, Image, H4 } from 'tamagui';
 import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
+
+import { FormInput } from '@/components/formInput';
+
+import { useAuthContext } from '@/contexts/auth';
+import { useThemeContext } from '@/contexts/theme';
+
+import { cooperativeService } from '@/services/cooperative';
+
+import { convertFirestoreDateToDate, convertFirestoreDateToString } from '@/utils/helpers';
+
+import { COLORS } from '@/constants/styles';
 
 export const ProfileScreen = () => {
   const navigation = useNavigation();
-  const { isDark } = useThemeContext();
   const { profile } = useAuthContext();
+  const { isDark } = useThemeContext();
+
+  const [cooperatives, setCooperatives] = useState([]);
+
+  const getCooperatives = async () => {
+    try {
+      const data = await cooperativeService.getAll();
+      setCooperatives(data);
+    } catch (error) {
+      console.log('Error al recuperar todas las cooperativas', error);
+    }
+  };
+
+  const getCooperativeName = (coopId) => {
+    const cooperative = cooperatives.find((coop) => coop?.id === coopId);
+    return cooperative?.name || 'N/A';
+  };
+
+  const formattedProfile = {
+    ...profile?.person,
+    displayDate: convertFirestoreDateToString(profile?.person?.birthdate),
+    birthdate: convertFirestoreDateToDate(profile?.person?.birthdate),
+  };
+
+  useEffect(() => {
+    getCooperatives();
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -22,6 +55,7 @@ export const ProfileScreen = () => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView
           bg={'$backgroundFocus'}
+          showsVerticalScrollIndicator={false}
           f={1}
           space='$3'
           contentContainerStyle={{
@@ -35,51 +69,77 @@ export const ProfileScreen = () => {
             width='100%'
             gap='$3'
             padding='$9'>
-            <UserCircle2 color={isDark ? COLORS.light : COLORS.dark} size={70} />
+            <H4 color={'$color'}>Perfil de usuario</H4>
 
-            <View>
-              <Label margin='$1'>Nombres:</Label>
-              <FormInput value={profile?.person?.name} placeholder='Nombre' editable={false} />
-            </View>
+            {profile?.person?.photo ? (
+              <Image
+                source={{ uri: profile?.person?.photo }}
+                style={{
+                  height: 100,
+                  width: 100,
+                  borderRadius: 50,
+                }}
+              />
+            ) : (
+              <UserCircle color={isDark ? COLORS.light : COLORS.dark} size={70} />
+            )}
 
-            <View>
-              <Label margin='$1'>Apellidos:</Label>
+            <FormInput
+              label='Nombres'
+              value={profile?.person?.name}
+              placeholder='Escriba sus nombres'
+              editable={false}
+            />
+
+            <FormInput
+              label='Apellidos:'
+              value={profile?.person?.lastname}
+              placeholder='Escriba sus apellidos'
+              editable={false}
+            />
+
+            <FormInput
+              label='Email:'
+              value={profile?.person?.email}
+              placeholder='Escriba su email'
+              editable={false}
+            />
+
+            <FormInput
+              label='Telefono:'
+              value={profile?.person?.phone}
+              placeholder='Escriba su telefono'
+              editable={false}
+            />
+
+            <FormInput
+              label='Fecha de nacimiento:'
+              value={formattedProfile?.displayDate}
+              placeholder='Fecha de nacimiento'
+              editable={false}
+            />
+
+            {formattedProfile?.ci && (
               <FormInput
-                value={profile?.person?.lastname}
-                placeholder='Apellido'
+                label='Cédula:'
+                value={formattedProfile?.ci}
+                placeholder='Escriba su cédula'
                 editable={false}
               />
-            </View>
+            )}
 
-            <View>
-              <Label margin='$1'>Email:</Label>
-              <FormInput value={profile?.person?.email} placeholder='Email' editable={false} />
-            </View>
-
-            <View>
-              <Label margin='$1'>Telefono:</Label>
-              <FormInput value={profile?.person?.phone} placeholder='Telefono' editable={false} />
-            </View>
-
-            <View>
-              <Label margin='$1'>Fecha de nacimiento:</Label>
+            {profile?.person?.cooperativeId && (
               <FormInput
-                value={profile?.person?.birthdate}
-                placeholder='Fecha de nacimiento'
+                label='Seleccione una cooperativa:'
+                value={getCooperativeName(profile?.person?.cooperativeId)}
+                placeholder='Cooperativa'
                 editable={false}
               />
-            </View>
-
-            {profile?.person?.cedula && (
-              <View>
-                <Label margin='$1'>Cédula:</Label>
-                <FormInput value={profile?.person?.cedula} placeholder='Cedula' editable={false} />
-              </View>
             )}
 
             <Button
               onPress={() => {
-                navigation.navigate('edit-profile' as never);
+                navigation.navigate('edit-profile', formattedProfile);
               }}
               backgroundColor='$green8'>
               <SizableText color={'$color'} fontWeight={'bold'}>
