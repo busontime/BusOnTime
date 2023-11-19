@@ -4,40 +4,71 @@ on:
   push:
     branches:
       - prod
-
 jobs:
-  build:
-    name: Generate APK
+  install-and-test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Check Working Directory
+      - uses: actions/checkout@v3
+      - name: Install npm dependencies
         run: |
-          ls -la
-          ls -la android
+          npm install
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Set up Java
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-
-      - name: Install dependencies
-        run: npm install
-
+  build-android:
+    needs: install-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install npm dependencies
+        run: |
+          npm install
       - name: Build Android Release
-        run: npm run android-release
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v2
+        run: |
+          cd android && ./gradlew assembleRelease
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
         with:
-          name: app-release
-          path: dev/apks
+          name: app-release.apk
+          path: android/app/build/outputs/apk/release/
+# name: CI CD
+
+# on:
+#   push:
+#     branches:
+#       - prod
+
+# jobs:
+#   build:
+#     name: Generate APK
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Check Working Directory
+#         run: |
+#           ls -la
+#           ls -la android
+
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '18'
+
+#       - name: Set up Java
+#         uses: actions/setup-java@v2
+#         with:
+#           distribution: 'adopt'
+#           java-version: '11'
+
+#       - name: Install dependencies
+#         run: npm install
+
+#       - name: Build Android Release
+#         run: npm run android-release
+
+#       - name: Upload APK
+#         uses: actions/upload-artifact@v2
+#         with:
+#           name: app-release
+#           path: dev/apks
