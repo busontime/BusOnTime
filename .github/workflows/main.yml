@@ -14,6 +14,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Check Working Directory
+        run: |
+          ls -la
+          ls -la android
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
