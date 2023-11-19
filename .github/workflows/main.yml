@@ -4,29 +4,31 @@ on:
   push:
     branches:
       - prod
-
 jobs:
-  build:
+  build-android:
     name: Generate APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm install
+      - uses: actions/checkout@v3
+      - name: Install npm dependencies
+        run: |
+          npm install
 
       - name: Build Android Release
-        run: npm run android-release
+        run: |
+          cd android && chmod +x ./gradlew && ./gradlew assembleRelease
 
       - name: Upload APK
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v1
         with:
-          name: app-release
-          path: dev/apks
+          name: bus-on-time
+          path: android/app/build/outputs/apk/release/app-release.apk
+
+      - name: Upload Artifact to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{secrets.FIREBASE_APP_ID}}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          groups: testers
+          file: android/app/build/outputs/apk/release/app-release.apk
