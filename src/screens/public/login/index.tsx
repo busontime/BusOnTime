@@ -118,7 +118,7 @@ export const LoginScreen = () => {
             <TogleTheme />
           </Stack>
 
-          <H2 mt='$15'>Inicia Sesión en Bus On Time</H2>
+          <H2 mt='$15'>Inicia Sesión</H2>
 
           <Logo />
 
