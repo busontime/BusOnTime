@@ -1,60 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { H4, Image, ScrollView, View } from 'tamagui';
+import { H4, Image, ScrollView } from 'tamagui';
 import { KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { Camera } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import moment from 'moment';
+import { Camera } from 'lucide-react-native';
 
 import { useAuthContext } from '@/contexts/auth';
 import { useThemeContext } from '@/contexts/theme';
 
+import { userService } from '@/services/user';
+import { uploadImage } from '@/services/storage';
+
 import { FormInput } from '@/components/formInput';
 import { FormButtons } from '@/components/formButtons';
 
-import { userService } from '@/services/user';
-
 import { showAlertDialog } from '@/utils/dialog';
-import { validateCi, validateEmail } from '@/utils/validate';
 import { showSuccessToast } from '@/utils/toast';
+import { validateCi, validateEmail } from '@/utils/validate';
+import { convertFirestoreDateToDate, getDiffYears, pickerImage } from '@/utils/helpers';
 
 import { COLORS } from '@/constants/styles';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { pickerImage } from '@/utils/helpers';
-import { uploadImage } from '@/services/storage';
+import { ROLES_ID } from '@/constants/bd';
 
-export const EditProfile = () => {
-  const { profile, updateProfile, updateEmail } = useAuthContext();
-  const [updateForm, setUpdateForm] = useState(null);
-  const { isDark } = useThemeContext();
+export const EditProfileScreen = () => {
   const navigation = useNavigation();
-  const route = useRoute();
-  const formattedProfile = route.params;
+  const { profile, updateProfile, updateEmail } = useAuthContext();
+  const { isDark } = useThemeContext();
 
-  useEffect(() => {
-    if (formattedProfile) {
-      setUpdateForm(formattedProfile);
-    }
-  }, [formattedProfile]);
+  const { person, user } = profile;
+
+  const [updateForm, setUpdateForm] = useState(null);
 
   const update = async () => {
     if (validateForm()) {
       try {
-        let photoUri = null;
-        if (updateForm?.photo && updateForm?.photo !== '') {
+        let photoUri = updateForm?.photo;
+
+        if (photoUri && photoUri !== '' && !photoUri.includes('firebasestorage')) {
           try {
-            photoUri = await uploadImage(
-              updateForm?.photo,
-              profile?.user?.uid + '/' + 'profile.png'
-            );
+            photoUri = await uploadImage(photoUri, user?.uid + '/' + 'profile.png');
           } catch (error) {
             showAlertDialog('Error al subir la imagen');
           }
         }
 
         const data = {
-          birthdate: updateForm?.birthdate,
-          email: updateForm?.email,
+          birthdate: updateForm.birthdate,
+          email: updateForm?.email.trim().toLowerCase(),
           lastname: updateForm?.lastname,
           name: updateForm?.name,
           phone: updateForm?.phone,
@@ -65,87 +58,104 @@ export const EditProfile = () => {
         if (!updateForm?.ci) {
           delete data.ci;
         }
-        if (updateForm?.email !== profile?.person?.email) {
-          const updateEmailUser = await updateEmail(updateForm?.email);
+
+        if (data.email !== person?.email) {
+          const updateEmailUser = await updateEmail(data.email);
           if (!updateEmailUser) {
             return;
           }
         }
-        await userService.updateById(profile?.user?.uid, data);
-        updateProfile(data);
+
+        await userService.updateById(user?.uid, data);
+
+        updateProfile();
+
         showSuccessToast('Perfil Actualizado!');
-        navigation.goBack();
+
+        goBack();
       } catch (error) {
         console.log('error al  actualizar', error);
-        showAlertDialog('Error al actualizar, Intentelo mas tarde');
+        showAlertDialog('Error al actualizar, Inténtelo mas tarde');
       }
     }
   };
 
   const validateForm = () => {
+    if (person.roleId === ROLES_ID.driver) {
+      if (updateForm.name === '') {
+        showAlertDialog('El nombre no debe estar vacío');
+        return false;
+      }
+
+      if (updateForm.lastname === '') {
+        showAlertDialog('El apellido no debe estar vacío');
+        return false;
+      }
+
+      if (updateForm.phone === '') {
+        showAlertDialog('El teléfono no debe estar vacío');
+        return false;
+      }
+
+      if (updateForm.ci === '') {
+        showAlertDialog('La cédula no debe estar vacía');
+        return false;
+      }
+
+      if (!validateCi(updateForm?.ci)) {
+        showAlertDialog('La cédula debe tener 10 dígitos');
+        return false;
+      }
+
+      if (getDiffYears(updateForm.birthdate) < 18) {
+        showAlertDialog('Debes ser mayor de edad');
+        return false;
+      }
+    }
+
     const email = updateForm?.email.trim().toLowerCase();
+
     if (email === '') {
-      showAlertDialog('El email esta vacio');
+      showAlertDialog('El email no debe estar vacío');
       return false;
     }
 
     if (!validateEmail(email)) {
-      showAlertDialog('el email no es valido');
+      showAlertDialog('El email no es válido');
       return false;
     }
 
-    if (updateForm.name === '') {
-      showAlertDialog('El nombre esta vacio');
-      return false;
-    }
-
-    if (updateForm.lastname === '') {
-      showAlertDialog('El apellido esta vacio');
-      return false;
-    }
-
-    if (updateForm.phone === '') {
-      showAlertDialog('El telefono esta vacio');
-      return false;
-    }
-
-    if (updateForm?.ci && updateForm.ci === '') {
-      showAlertDialog('La cedula esta vacia');
-      return false;
-    }
-
-    if (updateForm?.ci && !validateCi(updateForm?.ci)) {
-      showAlertDialog('La cedula debe contener 10 digitos');
-      return false;
-    }
-
-    const birthDate = moment(updateForm.birthdate);
-    const age = moment().diff(birthDate, 'years');
-
-    if (age < 18) {
-      showAlertDialog('Debes ser mayor de edad');
+    if (getDiffYears(updateForm.birthdate) < 6) {
+      showAlertDialog('Debes tener al menos 6 años');
       return false;
     }
 
     return true;
   };
 
-  const goBack = () => {
-    navigation.goBack();
-  };
-
   const selectImage = async () => {
     try {
       const result = await pickerImage();
-      if (!result) {
-        setUpdateForm({ ...updateForm, photo: '' });
-      } else {
+
+      if (result) {
         setUpdateForm({ ...updateForm, photo: result.uri });
       }
     } catch (error) {
       showAlertDialog('No se pudo seleccionar la imagen');
     }
   };
+
+  const goBack = () => {
+    navigation.goBack();
+  };
+
+  useEffect(() => {
+    setUpdateForm({
+      ...person,
+      birthdate: convertFirestoreDateToDate(person?.birthdate),
+      photo: person?.photo ? person.photo : null,
+    });
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -158,28 +168,27 @@ export const EditProfile = () => {
           bg={'$backgroundFocus'}
           showsVerticalScrollIndicator={false}
           f={1}
-          p='$3'
+          p='$6'
           space='$3'
           contentContainerStyle={{
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <H4 color={'$color'}>Actualizar perfil</H4>
-          <View>
-            <TouchableOpacity
-              onPress={() => {
-                selectImage();
-              }}>
-              {updateForm?.photo ? (
-                <Image
-                  source={{ uri: updateForm?.photo }}
-                  style={{ height: 100, width: 100, borderRadius: 50 }}
-                />
-              ) : (
-                <Camera color={isDark ? COLORS.light : COLORS.dark} size={70} />
-              )}
-            </TouchableOpacity>
-          </View>
+          <H4 color={'$color'}>Actualizar Perfil</H4>
+
+          <TouchableOpacity onPress={selectImage}>
+            {updateForm?.photo ? (
+              <Image
+                resizeMode='contain'
+                source={{ uri: updateForm?.photo }}
+                width={100}
+                height={100}
+                borderRadius={50}
+              />
+            ) : (
+              <Camera color={isDark ? COLORS.light : COLORS.dark} size={70} />
+            )}
+          </TouchableOpacity>
 
           <FormInput
             label='Nombres:'
@@ -201,6 +210,7 @@ export const EditProfile = () => {
 
           <FormInput
             label='Email:'
+            type={'email-address'}
             placeholder='Escriba su email'
             value={updateForm?.email}
             onChangeText={(text) => {
@@ -209,8 +219,8 @@ export const EditProfile = () => {
           />
 
           <FormInput
-            label='Telefono:'
-            placeholder='Escriba su telefono'
+            label='Teléfono:'
+            placeholder='Escriba su teléfono'
             type={'numeric'}
             value={updateForm?.phone}
             onChangeText={(text) => {
@@ -221,29 +231,29 @@ export const EditProfile = () => {
           <FormInput
             isDate
             label='Fecha de nacimiento:'
-            editable={false}
             placeholder='Seleccione una fecha'
+            editable={false}
             dateValue={updateForm?.birthdate}
-            onChangeText={(text) => {
-              setUpdateForm({ ...updateForm, birthdate: text });
+            onChangeText={(val) => {
+              setUpdateForm({ ...updateForm, birthdate: val });
             }}
           />
 
-          {updateForm?.ci && (
+          {person?.ci && (
             <FormInput
               label='Cédula:'
+              placeholder='Escriba su cédula'
               type={'numeric'}
+              value={updateForm?.ci}
               onChangeText={(text) => {
                 setUpdateForm({ ...updateForm, ci: text });
               }}
-              placeholder='Escriba su cédula'
-              value={updateForm?.ci}
             />
           )}
 
           <FormButtons
             firstButtonAction={goBack}
-            secondButtonText='Guardar'
+            secondButtonText='Actualizar'
             secondButtonAction={update}
           />
         </ScrollView>
