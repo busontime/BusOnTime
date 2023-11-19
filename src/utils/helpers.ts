@@ -5,6 +5,7 @@ export const convertFirestoreDateToString = (date) => {
   if (!date) {
     return '';
   }
+
   const time = date.seconds * 1000 + Math.round(date.nanoseconds / 1e6);
 
   return moment(time).format('DD/MM/YYYY');
@@ -14,6 +15,7 @@ export const convertFirestoreDateToDate = (date) => {
   if (!date) {
     return new Date();
   }
+
   const time = date.seconds * 1000 + Math.round(date.nanoseconds / 1e6);
 
   return new Date(time);
@@ -38,4 +40,14 @@ export const pickerImage = async () => {
   } else {
     return null;
   }
+};
+
+export const getDiffYears = (date) => {
+  if (!date) {
+    return 0;
+  }
+
+  const _date = moment(date);
+
+  return moment().diff(_date, 'years');
 };

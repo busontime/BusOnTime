@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import { ScrollView, H4 } from 'tamagui';
-import moment from 'moment';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { useAuthContext } from '@/contexts/auth';
@@ -16,6 +15,7 @@ import { FormButtons } from '@/components/formButtons';
 import { showAlertDialog, showErrorDialog, showSuccessDialog } from '@/utils/dialog';
 import { showSuccessToast } from '@/utils/toast';
 import { validateCi, validateEmail } from '@/utils/validate';
+import { getDiffYears } from '@/utils/helpers';
 
 import { ROLES_ID } from '@/constants/bd';
 import { initDriverForm } from '@/constants/forms';
@@ -92,7 +92,7 @@ export const DriverForm = () => {
     }
 
     if (email === '') {
-      showAlertDialog('El email esta vacío');
+      showAlertDialog('El email no debe estar vacío');
       return false;
     }
 
@@ -102,14 +102,11 @@ export const DriverForm = () => {
     }
 
     if (formValues.phone === '') {
-      showAlertDialog('El telefono no debe estar vacío');
+      showAlertDialog('El teléfono no debe estar vacío');
       return false;
     }
 
-    const birthDate = moment(formValues.birthdate);
-    const age = moment().diff(birthDate, 'years');
-
-    if (age < 18) {
+    if (getDiffYears(formValues.birthdate) < 18) {
       showAlertDialog('El conductor debe ser mayor de edad');
       return false;
     }
