@@ -1,7 +1,8 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { EditProfile } from '@/screens/public/editProfile';
+
 import { ProfileScreen } from '@/screens/public/profile';
+import { EditProfileScreen } from '@/screens/public/editProfile';
 
 const Stack = createStackNavigator();
 
@@ -23,7 +24,7 @@ export const AdminProfileStack = (props) => {
         }),
       }}>
       <Stack.Screen name='profile' component={ProfileScreen} />
-      <Stack.Screen name='edit-profile' component={EditProfile} />
+      <Stack.Screen name='edit-profile' component={EditProfileScreen} />
     </Stack.Navigator>
   );
 };
