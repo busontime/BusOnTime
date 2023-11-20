@@ -10,3 +10,9 @@ export const ROUTERS = {
   admin: 'admin',
   public: 'public',
 };
+
+export const TRAVEL_STATUS = {
+  active: 'active',
+  finalized: 'finalized',
+  cancelled: 'cancelled',
+};

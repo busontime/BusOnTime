@@ -41,3 +41,9 @@ export const initProfile = {
   phone: '',
   ci: '',
 };
+
+export const initTravelForm = {
+  line: null,
+  bus: null,
+  cancellation_message: '',
+};
