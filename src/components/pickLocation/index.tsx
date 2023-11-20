@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, PermissionsAndroid } from 'react-native';
+import { Modal } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import Geolocation from '@react-native-community/geolocation';
 import { XStack, YStack, SizableText } from 'tamagui';
 
 import { MapPin } from 'lucide-react-native';
@@ -16,8 +15,8 @@ import { COLORS } from '@/constants/styles';
 
 import { styles } from './styles';
 
-export const PickLocation = ({ selectLocation = (val) => {}, coordinate = null }) => {
-  const { setCurrentLocation, currentLocation } = useMapContext();
+export const PickLocation = ({ changeValue = (val) => {}, coordinate = null, markerName = '' }) => {
+  const { currentLocation } = useMapContext();
 
   const [showModal, setShowModal] = useState(false);
   const [marker, setMarker] = useState(null);
@@ -38,55 +37,12 @@ export const PickLocation = ({ selectLocation = (val) => {}, coordinate = null }
       return;
     }
 
-    selectLocation(marker);
+    changeValue(marker);
     closeModal();
   };
 
-  const requestLocationPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Permiso de ubicación',
-          message: 'La aplicación necesita acceso a su ubicación.',
-          buttonNeutral: 'Pregúntame Luego',
-          buttonNegative: 'Cancelar',
-          buttonPositive: 'Aceptar',
-        }
-      );
-
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Location permission granted');
-
-        Geolocation.getCurrentPosition((info) => {
-          setCurrentLocation({
-            // latitude: -0.945576,
-            // longitude: -80.723126,
-            latitude: info.coords.latitude,
-            longitude: info.coords.longitude,
-          });
-        });
-      } else {
-        console.log('permission denied');
-
-        setCurrentLocation({
-          latitude: -0.952515,
-          longitude: -80.744904,
-        });
-
-        showAlertDialog('Permiso de Ubicación Denegado');
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-
   useEffect(() => {
-    requestLocationPermission();
-  }, []);
-
-  useEffect(() => {
-    if (coordinate?.latitude !== '' && coordinate?.longitude !== '') {
+    if (coordinate) {
       setMarker(coordinate);
     }
   }, [coordinate]);
@@ -115,14 +71,23 @@ export const PickLocation = ({ selectLocation = (val) => {}, coordinate = null }
             mapType='standard'
             customMapStyle={styles}
             initialRegion={{
-              latitude: marker ? marker?.latitude : currentLocation?.latitude,
-              longitude: marker ? marker?.longitude : currentLocation?.longitude,
+              latitude: marker ? Number(marker?.latitude) : currentLocation?.latitude,
+              longitude: marker ? Number(marker?.longitude) : currentLocation?.longitude,
               latitudeDelta: 0.01,
               longitudeDelta: 0.01,
             }}
             onPress={handlerMapPress}
             style={{ flex: 1 }}>
-            {marker && <Marker title='Parada' coordinate={marker} pinColor={COLORS.secondary} />}
+            {marker && (
+              <Marker
+                title={markerName !== '' ? markerName : 'Parada'}
+                coordinate={{
+                  latitude: Number(marker?.latitude),
+                  longitude: Number(marker?.longitude),
+                }}
+                pinColor={COLORS.secondary}
+              />
+            )}
           </MapView>
 
           <ModalButtons firstButtonAction={closeModal} secondButtonAction={handlerAccept} />

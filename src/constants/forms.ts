@@ -30,10 +30,7 @@ export const initLineForm = {
 
 export const initBusStopForm = {
   name: '',
-  coordinate: {
-    latitude: '',
-    longitude: '',
-  },
+  coordinate: null,
 };
 
 export const initProfile = {

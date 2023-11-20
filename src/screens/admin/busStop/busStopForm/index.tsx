@@ -54,13 +54,8 @@ export const BusStopForm = () => {
       return false;
     }
 
-    if (formValues.coordinate.latitude === '') {
-      showAlertDialog('Seleccione la ubicaciónde de la parada');
-      return false;
-    }
-
-    if (formValues.coordinate.longitude === '') {
-      showAlertDialog('Seleccione la ubicaciónde de la parada');
+    if (!formValues.coordinate) {
+      showAlertDialog('Seleccione la ubicación de de la parada');
       return false;
     }
 
@@ -69,16 +64,6 @@ export const BusStopForm = () => {
 
   const goBack = () => {
     navigation.goBack();
-  };
-
-  const selectLocation = (coordinate) => {
-    setFormValues({
-      ...formValues,
-      coordinate: {
-        latitude: String(coordinate.latitude),
-        longitude: String(coordinate.longitude),
-      },
-    });
   };
 
   useEffect(() => {
@@ -123,7 +108,6 @@ export const BusStopForm = () => {
           <FormInput
             label='Latitud:'
             placeholder='Latitud de la ubicación'
-            type={'numeric'}
             editable={false}
             value={formValues?.coordinate?.latitude.toString()}
           />
@@ -132,11 +116,16 @@ export const BusStopForm = () => {
             label='Longitud:'
             placeholder='Longitud de la ubicación'
             editable={false}
-            type={'numeric'}
             value={formValues?.coordinate?.longitude.toString()}
           />
 
-          <PickLocation selectLocation={selectLocation} coordinate={formValues?.coordinate} />
+          <PickLocation
+            changeValue={(value) => {
+              setFormValues({ ...formValues, coordinate: value });
+            }}
+            coordinate={formValues?.coordinate}
+            markerName={formValues?.name}
+          />
 
           <FormButtons
             firstButtonAction={goBack}

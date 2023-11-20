@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { PermissionsAndroid } from 'react-native';
+
 import { YStack, XStack, Stack } from 'tamagui';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import Geolocation from '@react-native-community/geolocation';
+
 import Config from 'react-native-config';
 
 import { CarFront, Footprints } from 'lucide-react-native';
 
 import { useMapContext } from '@/contexts/map';
-
-import { showAlertDialog } from '@/utils/dialog';
 
 import LocationImg from '@/assets/images/location.png';
 import BusStopImg from '@/assets/images/bus_stop.png';
@@ -24,49 +22,6 @@ export const Map = () => {
 
   const [destination, setDestination] = useState(null);
   const [directionMode, setDirectionMode] = useState('WALKING');
-
-  const requestLocationPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Permiso de ubicación',
-          message: 'La aplicación necesita acceso a su ubicación.',
-          buttonNeutral: 'Pregúntame Luego',
-          buttonNegative: 'Cancelar',
-          buttonPositive: 'Aceptar',
-        }
-      );
-
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Location permission granted');
-
-        Geolocation.getCurrentPosition((info) => {
-          setCurrentLocation({
-            // latitude: -0.945576,
-            // longitude: -80.723126,
-            latitude: info.coords.latitude,
-            longitude: info.coords.longitude,
-          });
-        });
-      } else {
-        console.log('permission denied');
-
-        setCurrentLocation({
-          latitude: -0.952515,
-          longitude: -80.744904,
-        });
-
-        showAlertDialog('Permiso de Ubicación Denegado');
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-
-  useEffect(() => {
-    requestLocationPermission();
-  }, []);
 
   useEffect(() => {
     if (busStopSelected) {
