@@ -1,23 +1,41 @@
 import React from 'react';
-import { View, Text, Button } from 'react-native';
+import { Button, YStack, H3, Text } from 'tamagui';
 import { useNavigation } from '@react-navigation/native';
+
+import { Logo } from '@/components/logo';
+
+import { BusIcon } from 'lucide-react-native';
 
 export const DriverHomeScreen = () => {
   const navigation = useNavigation();
 
   return (
-    <View
-      style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{ color: 'cyan', textAlign: 'center', fontWeight: 'bold', fontSize: 40 }}>
-        Home Driver
-      </Text>
+    <YStack bg={'$backgroundFocus'} f={1} jc='center' ai='center' space='$6'>
+      <Logo />
 
-      <Button
-        title='Profile'
-        onPress={() => {
-          navigation.navigate('profile-menu' as never);
-        }}
-      />
-    </View>
+      <YStack jc='center' ai='center'>
+        <H3 ta='center' color={'$color'}>
+          ¡Bienvenido a Bus On Time!
+        </H3>
+
+        <Text color={'$color'}>La App que gestiona el transporte público de Manta</Text>
+      </YStack>
+
+      <YStack jc='center' ai='center' space='$3'>
+        <Text color={'$color'}>Inicia tu recorrido cuando estés listo.</Text>
+
+        <Button
+          w={'$20'}
+          size={'$5'}
+          icon={<BusIcon size={40} strokeWidth={1} />}
+          variant='outlined'
+          backgroundColor='$blue8'
+          onPress={() => {
+            navigation.navigate('travel-menu' as never);
+          }}>
+          Iniciar Recorrido
+        </Button>
+      </YStack>
+    </YStack>
   );
 };
