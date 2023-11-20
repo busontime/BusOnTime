@@ -2,6 +2,7 @@ import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import { DriverHomeStack } from './home';
+import { DriverTravelStack } from './travel';
 import { DriverProfileStack } from './profile';
 
 import { Sidebar } from '@/components/sidebar';
@@ -23,6 +24,15 @@ export const DriverRouter = (props) => {
         options={{
           drawerLabel: 'Inicio',
           title: 'home-filled',
+        }}
+      />
+
+      <Drawer.Screen
+        name='travel-menu'
+        component={DriverTravelStack}
+        options={{
+          drawerLabel: 'Recorridos',
+          title: 'directions-bus',
         }}
       />
 
