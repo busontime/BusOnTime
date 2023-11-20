@@ -104,11 +104,6 @@ export const MapProvider: React.FC<ChildrenProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    getLines();
-    getBusStops();
-  }, []);
-
-  useEffect(() => {
     orderBusStops();
   }, [currentLocation]);
 
@@ -116,6 +111,8 @@ export const MapProvider: React.FC<ChildrenProps> = ({ children }) => {
     if (profile?.person) {
       requestLocationPermission();
     }
+    getLines();
+    getBusStops();
   }, [profile]);
 
   const data = {

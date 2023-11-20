@@ -11,9 +11,7 @@ import { ModalButtons } from '../modalButtons';
 
 import { showAlertDialog } from '@/utils/dialog';
 
-import { COLORS } from '@/constants/styles';
-
-import { styles } from './styles';
+import { COLORS, MAP_STYLES } from '@/constants/styles';
 
 export const PickLocation = ({ changeValue = (val) => {}, coordinate = null, markerName = '' }) => {
   const { currentLocation } = useMapContext();
@@ -69,7 +67,7 @@ export const PickLocation = ({ changeValue = (val) => {}, coordinate = null, mar
             provider={PROVIDER_GOOGLE}
             loadingEnabled
             mapType='standard'
-            customMapStyle={styles}
+            customMapStyle={MAP_STYLES}
             initialRegion={{
               latitude: marker ? Number(marker?.latitude) : currentLocation?.latitude,
               longitude: marker ? Number(marker?.longitude) : currentLocation?.longitude,

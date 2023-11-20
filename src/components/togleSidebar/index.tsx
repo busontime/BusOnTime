@@ -13,7 +13,7 @@ export const TogleSidebar = () => {
 
   return (
     <XStack bg='$colorTransparent' pos='absolute' zi={10} w={'$3.5'} m='$1.5' onPress={openDrawer}>
-      <Menu size={40} color={COLORS.dark} />
+      <Menu size={40} color={COLORS.light} />
     </XStack>
   );
 };

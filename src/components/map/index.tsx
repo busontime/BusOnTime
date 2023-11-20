@@ -10,12 +10,9 @@ import { CarFront, Footprints } from 'lucide-react-native';
 
 import { useMapContext } from '@/contexts/map';
 
-import LocationImg from '@/assets/images/location.png';
 import BusStopImg from '@/assets/images/bus_stop.png';
 
-import { COLORS } from '@/constants/styles';
-
-import { styles } from './styles';
+import { COLORS, MAP_STYLES } from '@/constants/styles';
 
 export const Map = () => {
   const { lines, busStops, busStopSelected, setCurrentLocation, currentLocation } = useMapContext();
@@ -34,7 +31,9 @@ export const Map = () => {
       <MapView
         provider={PROVIDER_GOOGLE}
         loadingEnabled
-        style={styles.f1}
+        mapType='standard'
+        customMapStyle={MAP_STYLES}
+        style={{ flex: 1 }}
         region={{
           latitude: currentLocation?.latitude,
           longitude: currentLocation?.longitude,
@@ -43,7 +42,7 @@ export const Map = () => {
         }}>
         <Marker
           draggable
-          image={LocationImg}
+          pinColor={COLORS.green}
           coordinate={currentLocation}
           title={'Mi Ubicación'}
           onDragEnd={(direcction) => {
