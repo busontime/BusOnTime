@@ -6,9 +6,10 @@ export const FormButtons = ({
   firstButtonAction = () => {},
   secondButtonText = 'Aceptar',
   secondButtonAction = () => {},
+  mb = '$10',
 }) => {
   return (
-    <XStack space='$5' mt='$3' mb='$10'>
+    <XStack space='$5' mt='$3' mb={mb}>
       <Button w={'$10'} bg={'$red8'} onPress={firstButtonAction} size='$3'>
         <SizableText color={'$color'} fontWeight={'bold'}>
           {firstButtonText}
