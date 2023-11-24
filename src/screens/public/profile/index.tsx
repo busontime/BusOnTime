@@ -63,7 +63,7 @@ export const ProfileScreen = () => {
 
       {person?.photo ? (
         <Image
-          resizeMode='contain'
+          resizeMode='cover'
           source={{ uri: person?.photo }}
           width={100}
           height={100}

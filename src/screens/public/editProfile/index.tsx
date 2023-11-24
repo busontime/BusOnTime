@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { H4, Image, ScrollView } from 'tamagui';
 import { KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-
-import { Camera } from 'lucide-react-native';
 
 import { useAuthContext } from '@/contexts/auth';
 import { useThemeContext } from '@/contexts/theme';
@@ -18,10 +15,12 @@ import { FormButtons } from '@/components/formButtons';
 import { showAlertDialog } from '@/utils/dialog';
 import { showSuccessToast } from '@/utils/toast';
 import { validateCi, validateEmail } from '@/utils/validate';
-import { convertFirestoreDateToDate, getDiffYears, pickerImage } from '@/utils/helpers';
+import { convertFirestoreDateToDate, getDiffYears, picture } from '@/utils/helpers';
 
 import { COLORS } from '@/constants/styles';
 import { ROLES_ID } from '@/constants/bd';
+import { ImagePickerDialog } from '@/components/dialog';
+import { Camera } from 'lucide-react-native';
 
 export const EditProfileScreen = () => {
   const navigation = useNavigation();
@@ -133,15 +132,14 @@ export const EditProfileScreen = () => {
     return true;
   };
 
-  const selectImage = async () => {
+  const openCameraOrGalety = async (openCamera = false) => {
     try {
-      const result = await pickerImage();
-
+      const result = await picture(openCamera);
       if (result) {
         setUpdateForm({ ...updateForm, photo: result.uri });
       }
     } catch (error) {
-      showAlertDialog('No se pudo seleccionar la imagen');
+      showAlertDialog('No se pudo abrir la camara');
     }
   };
 
@@ -176,7 +174,16 @@ export const EditProfileScreen = () => {
           }}>
           <H4 color={'$color'}>Actualizar Perfil</H4>
 
-          <TouchableOpacity onPress={selectImage}>
+          <ImagePickerDialog
+            title='Que desea abrir?'
+            descriptionOne='Galeria'
+            descriptionTwo='Cámara'
+            openCamera={() => {
+              openCameraOrGalety(true);
+            }}
+            openGallery={() => {
+              openCameraOrGalety(false);
+            }}>
             {updateForm?.photo ? (
               <Image
                 resizeMode='contain'
@@ -188,7 +195,7 @@ export const EditProfileScreen = () => {
             ) : (
               <Camera color={isDark ? COLORS.light : COLORS.dark} size={70} />
             )}
-          </TouchableOpacity>
+          </ImagePickerDialog>
 
           <FormInput
             label='Nombres:'

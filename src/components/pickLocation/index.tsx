@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { XStack, YStack, SizableText } from 'tamagui';
-
 import { MapPin } from 'lucide-react-native';
 
 import { useMapContext } from '@/contexts/map';
