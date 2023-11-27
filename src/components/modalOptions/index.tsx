@@ -4,7 +4,9 @@ import { AlertDialog, Button, YStack, Text, XStack } from 'tamagui';
 export const ModalOptions = ({
   children,
   title = 'Está seguro de realizar esta acción?',
-  cancelColor = '$blue8',
+  primaryButtonText = 'Cancelar',
+  primaryButtonColor = '$blue8',
+  primaryButtonAction = () => {},
   secondButtonText = 'Eliminar',
   secondButtonColor = '$red8',
   secondButtonAction = () => {},
@@ -45,9 +47,9 @@ export const ModalOptions = ({
             </Text>
 
             <XStack space='$3' jc='center'>
-              <AlertDialog.Cancel asChild>
-                <Button bg={cancelColor} color={'$color'}>
-                  Cancelar
+              <AlertDialog.Cancel asChild onPress={primaryButtonAction}>
+                <Button bg={primaryButtonColor} color={'$color'}>
+                  {primaryButtonText}
                 </Button>
               </AlertDialog.Cancel>
 
