@@ -2,6 +2,7 @@ import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import { AdminHomeStack } from './home';
+import { AdminTravelStack } from './travel';
 import { AdminCooperativeStack } from './cooperative';
 import { AdminDriverStack } from './driver';
 import { AdminBusStack } from './bus';
@@ -28,6 +29,15 @@ export const AdminRouter = (props) => {
         options={{
           drawerLabel: 'Inicio',
           title: 'home-filled',
+        }}
+      />
+
+      <Drawer.Screen
+        name='travel-menu'
+        component={AdminTravelStack}
+        options={{
+          drawerLabel: 'Recorridos',
+          title: 'alt-route',
         }}
       />
 
