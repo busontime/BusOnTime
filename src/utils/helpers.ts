@@ -1,6 +1,9 @@
 import moment from 'moment';
 import { launchImageLibrary } from 'react-native-image-picker';
 
+import { TRAVEL_STATUS } from '@/constants/bd';
+import { COLORS } from '@/constants/styles';
+
 export const convertFirestoreDateToString = (date) => {
   if (!date) {
     return '';
@@ -50,4 +53,27 @@ export const getDiffYears = (date) => {
   const _date = moment(date);
 
   return moment().diff(_date, 'years');
+};
+
+export const getTravelStatus = (status) => {
+  let data = { label: '', color: COLORS.light };
+
+  switch (status) {
+    case TRAVEL_STATUS.active:
+      data = { label: 'Activo', color: COLORS.green };
+      break;
+
+    case TRAVEL_STATUS.finalized:
+      data = { label: 'Finalizado', color: COLORS.secondary };
+      break;
+
+    case TRAVEL_STATUS.cancelled:
+      data = { label: 'Cancelado', color: COLORS.red };
+      break;
+
+    default:
+      break;
+  }
+
+  return data;
 };
