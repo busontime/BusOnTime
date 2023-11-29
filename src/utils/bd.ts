@@ -47,4 +47,15 @@ export const bdService = {
       .then((res) => res)
       .catch((err) => err);
   },
+
+  getAllWithFilter: async (collection, filter) => {
+    const { field, condition, value } = filter;
+
+    return await firestore()
+      .collection(collection)
+      .where(field, condition, value)
+      .get()
+      .then((res) => res)
+      .catch((err) => err);
+  },
 };

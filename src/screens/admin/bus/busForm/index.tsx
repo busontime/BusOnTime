@@ -30,6 +30,7 @@ export const BusForm = () => {
           name: formValues.name,
           license_plate: formValues.license_plate,
           cooperativeId: formValues.cooperativeId,
+          inUse: formValues.inUse,
         };
 
         bus ? await busService.updateById(bus.id, data) : await busService.create(data);

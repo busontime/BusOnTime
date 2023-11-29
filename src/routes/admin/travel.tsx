@@ -1,17 +1,15 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { TravelForm } from '@/screens/driver/travel/travelForm';
-import { TravelList } from '@/screens/driver/travel/travelList';
-import { TravelMap } from '@/screens/driver/travel/travelMap';
+import { TravelList } from '@/screens/admin/travel/travelList';
 
 const Stack = createStackNavigator();
 
-export const DriverTravelStack = (props) => {
+export const AdminTravelStack = (props) => {
   return (
     <Stack.Navigator
       {...props}
-      initialRouteName='travel-form'
+      initialRouteName='travel-list'
       screenOptions={{
         headerShown: false,
         transitionSpec: {
@@ -24,9 +22,7 @@ export const DriverTravelStack = (props) => {
           },
         }),
       }}>
-      <Stack.Screen name='travel-form' component={TravelForm} />
       <Stack.Screen name='travel-list' component={TravelList} />
-      <Stack.Screen name='travel-map' component={TravelMap} />
     </Stack.Navigator>
   );
 };

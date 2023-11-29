@@ -1,31 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView, Card, YStack } from 'tamagui';
+import { ScrollView, Card, Stack, YStack, Button, H4, Text } from 'tamagui';
 
-import { useAuthContext } from '@/contexts/auth';
+import { Trash2 } from 'lucide-react-native';
 
 import { travelService } from '@/services/travel';
 
-import { HeaderList } from '@/components/admin/headerList';
 import { CardItem } from '@/components/admin/cardItem';
+import { ModalOptions } from '@/components/modalOptions';
 
-import { TogleSidebar } from '@/components/togleSidebar';
+import { showSuccessToast } from '@/utils/toast';
 import { convertFirestoreDateToString, getTravelStatus } from '@/utils/helpers';
+import { TogleSidebar } from '@/components/togleSidebar';
 
 export const TravelList = () => {
   const navigation = useNavigation();
-  const { profile } = useAuthContext();
-  const { user } = profile;
 
   const [travels, setTravels] = useState([]);
 
   const getTravels = async () => {
     try {
-      const data = await travelService.getAllByDriverId(user.uid);
-
+      const data = await travelService.getAll();
       setTravels(data);
     } catch (error) {
       console.log('Error al recuperar todos los recorridos', error);
+    }
+  };
+
+  const deleteTravel = async (id: string) => {
+    try {
+      await travelService.deleteById(id);
+      showSuccessToast('Recorrido Eliminado Exitosamente!');
+    } catch (error) {
+      console.log(error);
+    } finally {
+      await getTravels();
     }
   };
 
@@ -42,15 +51,11 @@ export const TravelList = () => {
   }, [navigation]);
 
   return (
-    <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3' pos='relative'>
+    <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3'>
       <TogleSidebar />
-      <HeaderList
-        title='Historial de Recorridos'
-        buttonText='Atrás'
-        onPress={() => {
-          navigation.navigate('travel-form' as never);
-        }}
-      />
+      <H4 color={'$color'} textAlign='center'>
+        Lista de Recorridos
+      </H4>
 
       <ScrollView
         f={1}
@@ -69,6 +74,11 @@ export const TravelList = () => {
             size={'$3.5'}
             w={'$20'}
             mb='$4'>
+            <CardItem
+              label='Conductor:'
+              value={item?.driver?.name + ' ' + item?.driver?.lastname}
+            />
+
             <CardItem label='Fecha:' value={convertFirestoreDateToString(item?.date)} />
 
             <CardItem label='Hora de Inicio:' value={item?.startTime} />
@@ -88,6 +98,18 @@ export const TravelList = () => {
             {item.cancellation_message && (
               <CardItem label='Motivo de cancelación' value={item?.cancellation_message} />
             )}
+
+            <Stack mt='$2'>
+              <ModalOptions
+                title={`Está seguro que desea eliminar el recorrido?`}
+                secondButtonAction={async () => {
+                  await deleteTravel(item?.id);
+                }}>
+                <Button size={'$3'} icon={<Trash2 />} variant='outlined' bg={'$red8'}>
+                  <Text color={'$color'}>Eliminar Recorrido</Text>
+                </Button>
+              </ModalOptions>
+            </Stack>
           </Card>
         ))}
       </ScrollView>

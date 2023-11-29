@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, YStack, H3 } from 'tamagui';
 import { useNavigation } from '@react-navigation/native';
 
-import { BusFront, User, Bus, TrainTrack, Building2 } from 'lucide-react-native';
+import { BusFront, User, Bus, TrainTrack, Building2, ArrowLeftRight } from 'lucide-react-native';
 
 import { useAuthContext } from '@/contexts/auth';
 import { TogleSidebar } from '@/components/togleSidebar';
@@ -18,6 +18,29 @@ export const AdminHomeScreen = () => {
         <H3 ta='center' color={'$color'}>
           Bienvenido {profile?.person?.name}
         </H3>
+
+        <Button
+          w={'$15'}
+          size={'$5'}
+          icon={<Building2 size={40} />}
+          variant='outlined'
+          backgroundColor='$blue6'
+          onPress={() => {
+            navigation.navigate('cooperative-menu' as never);
+          }}>
+          Cooperativas
+        </Button>
+        <Button
+          w={'$15'}
+          size={'$5'}
+          icon={<ArrowLeftRight size={40} />}
+          variant='outlined'
+          backgroundColor='$blue8'
+          onPress={() => {
+            navigation.navigate('travel-menu' as never);
+          }}>
+          Recorridos
+        </Button>
 
         <Button
           w={'$15'}

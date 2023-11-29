@@ -1,4 +1,5 @@
 import { bdService } from '@/utils/bd';
+import { convertFirestoreDateToDate } from '@/utils/helpers';
 
 const COLLECTION_NAME = 'travels';
 
@@ -39,15 +40,47 @@ export const travelService = {
     try {
       const data = await bdService.getAll(COLLECTION_NAME);
 
-      const documents = data._docs.map((doc) => {
-        const documentData = doc.data();
-        return { id: doc.id, ...documentData };
-      });
-      // .sort((a, b) => a.name.localeCompare(b.name));
+      const documents = data._docs
+        .map((doc) => {
+          const documentData = doc.data();
+          return { id: doc.id, ...documentData };
+        })
+        .sort(
+          (a, b) =>
+            convertFirestoreDateToDate(b.date).getTime() -
+            convertFirestoreDateToDate(a.date).getTime()
+        );
 
       return documents;
     } catch (error) {
       console.log('Error al recuperar todos los recorridos', error);
+    }
+  },
+
+  getAllByDriverId: async (id) => {
+    try {
+      const filter = {
+        field: 'driver.id',
+        condition: '==',
+        value: id,
+      };
+
+      const data = await bdService.getAllWithFilter(COLLECTION_NAME, filter);
+
+      const documents = data._docs
+        .map((doc) => {
+          const documentData = doc.data();
+          return { id: doc.id, ...documentData };
+        })
+        .sort(
+          (a, b) =>
+            convertFirestoreDateToDate(b.date).getTime() -
+            convertFirestoreDateToDate(a.date).getTime()
+        );
+
+      return documents;
+    } catch (error) {
+      console.log('Error al recuperar todos los recorridos del conductor ' + id, error);
     }
   },
 };

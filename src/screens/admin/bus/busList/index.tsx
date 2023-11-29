@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView, Card, XStack, YStack, Button } from 'tamagui';
+import { ScrollView, Card, XStack, YStack, Button, Text } from 'tamagui';
 
 import { Pencil, Trash2 } from 'lucide-react-native';
 
@@ -87,24 +87,32 @@ export const BusList = () => {
 
               <CardItem label='Cooperativa:' value={item?.cooperative} />
 
-              <XStack jc='flex-end' space='$2' mt='$2'>
-                <ModalOptions
-                  title={`Está seguro que desea eliminar el bus ${item?.name}?`}
-                  secondButtonAction={async () => {
-                    await deleteBus(item?.id);
-                  }}>
-                  <Button size={'$3'} icon={<Trash2 />} variant='outlined' bg={'$red8'} />
-                </ModalOptions>
+              <XStack jc={item.inUse ? 'space-between' : 'flex-end'} ai='center' mt='$2'>
+                {item.inUse && (
+                  <Text color={'$green8'} fontWeight={'$true'} fontSize={'$6'} fontStyle='italic'>
+                    Activo
+                  </Text>
+                )}
 
-                <Button
-                  size={'$3'}
-                  icon={<Pencil />}
-                  variant='outlined'
-                  bg={'$green8'}
-                  onPress={() => {
-                    navigation.navigate('bus-form', item);
-                  }}
-                />
+                <XStack space='$2'>
+                  <ModalOptions
+                    title={`Está seguro que desea eliminar el bus ${item?.name}?`}
+                    secondButtonAction={async () => {
+                      await deleteBus(item?.id);
+                    }}>
+                    <Button size={'$3'} icon={<Trash2 />} variant='outlined' bg={'$red8'} />
+                  </ModalOptions>
+
+                  <Button
+                    size={'$3'}
+                    icon={<Pencil />}
+                    variant='outlined'
+                    bg={'$green8'}
+                    onPress={() => {
+                      navigation.navigate('bus-form', item);
+                    }}
+                  />
+                </XStack>
               </XStack>
             </Card>
           ))}

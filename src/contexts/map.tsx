@@ -122,6 +122,7 @@ export const MapProvider: React.FC<ChildrenProps> = ({ children }) => {
     changeBusStop,
     currentLocation,
     setCurrentLocation,
+    getMapLines: getLines,
   };
 
   return <MapContext.Provider value={data}>{children}</MapContext.Provider>;

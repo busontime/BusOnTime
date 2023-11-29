@@ -18,6 +18,7 @@ export const initBusForm = {
   name: '',
   license_plate: '',
   cooperativeId: null,
+  inUse: false,
 };
 
 export const initLineForm = {
