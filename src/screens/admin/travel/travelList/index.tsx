@@ -11,6 +11,7 @@ import { ModalOptions } from '@/components/modalOptions';
 
 import { showSuccessToast } from '@/utils/toast';
 import { convertFirestoreDateToString, getTravelStatus } from '@/utils/helpers';
+import { TogleSidebar } from '@/components/togleSidebar';
 
 export const TravelList = () => {
   const navigation = useNavigation();
@@ -51,6 +52,7 @@ export const TravelList = () => {
 
   return (
     <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3'>
+      <TogleSidebar />
       <H4 color={'$color'} textAlign='center'>
         Lista de Recorridos
       </H4>

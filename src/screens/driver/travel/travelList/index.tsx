@@ -9,6 +9,7 @@ import { travelService } from '@/services/travel';
 import { HeaderList } from '@/components/admin/headerList';
 import { CardItem } from '@/components/admin/cardItem';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { convertFirestoreDateToString, getTravelStatus } from '@/utils/helpers';
 
 export const TravelList = () => {
@@ -42,6 +43,7 @@ export const TravelList = () => {
 
   return (
     <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3' pos='relative'>
+      <TogleSidebar />
       <HeaderList
         title='Historial de Recorridos'
         buttonText='Atrás'

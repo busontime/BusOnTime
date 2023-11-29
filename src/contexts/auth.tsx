@@ -56,6 +56,18 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     }
   };
 
+  const updatePassword = async (password: string) => {
+    try {
+      await auth().currentUser.updatePassword(password);
+      console.log(password);
+    } catch (error) {
+      validateAuthError(
+        error,
+        'debe cerrar session y iniciar session de nuevo para cambiar la contraseña'
+      );
+    }
+  };
+
   const login = async (email: string, password: string) => {
     try {
       await auth().signInWithEmailAndPassword(email, password);
@@ -125,6 +137,16 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     setProfile(_profile);
   };
 
+  const resetPassword = async (email: string) => {
+    try {
+      await auth().sendPasswordResetEmail(email);
+      return true;
+    } catch (error) {
+      validateAuthError(error, 'Error al resetear la contrasña');
+      console.log(error, 'error al resetear la contrasña');
+    }
+  };
+
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
 
@@ -141,6 +163,8 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     updateProfile,
     createDriver,
     deleteAccount,
+    resetPassword,
+    updatePassword,
   };
 
   return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;

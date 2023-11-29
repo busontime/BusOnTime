@@ -12,6 +12,7 @@ import { ModalOptions } from '@/components/modalOptions';
 
 import { showSuccessToast } from '@/utils/toast';
 import { convertFirestoreDateToDate, convertFirestoreDateToString } from '@/utils/helpers';
+import { TogleSidebar } from '@/components/togleSidebar';
 
 export const CooperativeList = () => {
   const navigation = useNavigation();
@@ -58,51 +59,54 @@ export const CooperativeList = () => {
   }, [navigation]);
 
   return (
-    <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3' pos='relative'>
-      <HeaderList
-        title='Lista de Cooperativas'
-        onPress={() => {
-          navigation.navigate('create-cooperative' as never);
-        }}
-      />
+    <YStack f={1}>
+      <TogleSidebar />
+      <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3' pos='relative'>
+        <HeaderList
+          title='Lista de Cooperativas'
+          onPress={() => {
+            navigation.navigate('create-cooperative' as never);
+          }}
+        />
 
-      <ScrollView
-        f={1}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        {cooperatives.map((item, index) => (
-          <Card key={index} elevate bordered p='$3' size={'$3.5'} w={'$20'} mb='$4'>
-            <CardItem label='Nombre:' value={item?.name} />
+        <ScrollView
+          f={1}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          {cooperatives.map((item, index) => (
+            <Card key={index} elevate bordered p='$3' size={'$3.5'} w={'$20'} mb='$4'>
+              <CardItem label='Nombre:' value={item?.name} />
 
-            <CardItem label='Alias:' value={item?.alias} />
+              <CardItem label='Alias:' value={item?.alias} />
 
-            <CardItem label='Fecha de fundación:' value={item?.displayDate} />
+              <CardItem label='Fecha de fundación:' value={item?.displayDate} />
 
-            <XStack jc='flex-end' space='$2' mt='$2'>
-              <ModalOptions
-                title={`Está seguro que desea eliminar la Cooperativa ${item?.name}?`}
-                secondButtonAction={async () => {
-                  await deleteCooperative(item?.id);
-                }}>
-                <Button size={'$3'} icon={<Trash2 />} variant='outlined' bg={'$red8'} />
-              </ModalOptions>
+              <XStack jc='flex-end' space='$2' mt='$2'>
+                <ModalOptions
+                  title={`Está seguro que desea eliminar la Cooperativa ${item?.name}?`}
+                  secondButtonAction={async () => {
+                    await deleteCooperative(item?.id);
+                  }}>
+                  <Button size={'$3'} icon={<Trash2 />} variant='outlined' bg={'$red8'} />
+                </ModalOptions>
 
-              <Button
-                size={'$3'}
-                icon={<Pencil />}
-                variant='outlined'
-                bg={'$green8'}
-                onPress={() => {
-                  navigation.navigate('update-cooperative', item);
-                }}
-              />
-            </XStack>
-          </Card>
-        ))}
-      </ScrollView>
+                <Button
+                  size={'$3'}
+                  icon={<Pencil />}
+                  variant='outlined'
+                  bg={'$green8'}
+                  onPress={() => {
+                    navigation.navigate('update-cooperative', item);
+                  }}
+                />
+              </XStack>
+            </Card>
+          ))}
+        </ScrollView>
+      </YStack>
     </YStack>
   );
 };

@@ -15,3 +15,12 @@ export const validateCi = (ci) => {
   const ciRegex = /^\d{10}$/;
   return ciRegex.test(ci);
 };
+
+export const validatePassword = (password) => {
+  const longitude = password.length >= 6;
+  const Upper = /[A-Z]/.test(password);
+  const Number = /[0-9]/.test(password);
+  const Special = /[$@#&!]/.test(password);
+
+  return longitude && Upper && Number && Special;
+};

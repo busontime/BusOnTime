@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { H4, Image, ScrollView } from 'tamagui';
+import { H4, ScrollView } from 'tamagui';
 import { KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-
-import { Camera } from 'lucide-react-native';
 
 import { useAuthContext } from '@/contexts/auth';
-import { useThemeContext } from '@/contexts/theme';
 
 import { userService } from '@/services/user';
 import { uploadImage } from '@/services/storage';
@@ -18,15 +14,14 @@ import { FormButtons } from '@/components/formButtons';
 import { showAlertDialog } from '@/utils/dialog';
 import { showSuccessToast } from '@/utils/toast';
 import { validateCi, validateEmail } from '@/utils/validate';
-import { convertFirestoreDateToDate, getDiffYears, pickerImage } from '@/utils/helpers';
+import { convertFirestoreDateToDate, getDiffYears } from '@/utils/helpers';
 
-import { COLORS } from '@/constants/styles';
 import { ROLES_ID } from '@/constants/bd';
+import { ImagePickerDialog } from '@/components/imagePickerDialog';
 
 export const EditProfileScreen = () => {
   const navigation = useNavigation();
   const { profile, updateProfile, updateEmail } = useAuthContext();
-  const { isDark } = useThemeContext();
 
   const { person, user } = profile;
 
@@ -68,7 +63,7 @@ export const EditProfileScreen = () => {
 
         await userService.updateById(user?.uid, data);
 
-        updateProfile();
+        await updateProfile();
 
         showSuccessToast('Perfil Actualizado!');
 
@@ -133,18 +128,6 @@ export const EditProfileScreen = () => {
     return true;
   };
 
-  const selectImage = async () => {
-    try {
-      const result = await pickerImage();
-
-      if (result) {
-        setUpdateForm({ ...updateForm, photo: result.uri });
-      }
-    } catch (error) {
-      showAlertDialog('No se pudo seleccionar la imagen');
-    }
-  };
-
   const goBack = () => {
     navigation.goBack();
   };
@@ -176,19 +159,12 @@ export const EditProfileScreen = () => {
           }}>
           <H4 color={'$color'}>Actualizar Perfil</H4>
 
-          <TouchableOpacity onPress={selectImage}>
-            {updateForm?.photo ? (
-              <Image
-                resizeMode='contain'
-                source={{ uri: updateForm?.photo }}
-                width={100}
-                height={100}
-                borderRadius={50}
-              />
-            ) : (
-              <Camera color={isDark ? COLORS.light : COLORS.dark} size={70} />
-            )}
-          </TouchableOpacity>
+          <ImagePickerDialog
+            picture={updateForm?.photo}
+            changePicture={(picture) => {
+              setUpdateForm({ ...updateForm, photo: picture ? picture.uri : null });
+            }}
+          />
 
           <FormInput
             label='Nombres:'

@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 
 import { TRAVEL_STATUS } from '@/constants/bd';
 import { COLORS } from '@/constants/styles';
@@ -24,15 +24,13 @@ export const convertFirestoreDateToDate = (date) => {
   return new Date(time);
 };
 
-export const pickerImage = async () => {
+export const selectPicture = async (isCamera = false) => {
   const options = {
-    selectionLimit: 1,
     mediaType: 'photo',
     includeBase64: true,
   };
 
-  const response = await launchImageLibrary(options);
-
+  const response = isCamera ? await launchCamera(options) : await launchImageLibrary(options);
   if (!response.didCancel && !response.errorCode && response.assets.length > 0) {
     return {
       uri: response.assets[0].uri,

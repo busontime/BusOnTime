@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { KeyboardAvoidingView, TouchableWithoutFeedback, Platform, Keyboard } from 'react-native';
-import { Button, Stack, H2, ScrollView, SizableText, XStack } from 'tamagui';
+import { Button, Stack, H2, ScrollView, SizableText, XStack, YStack, Label } from 'tamagui';
 
 import { Pen, LogIn } from 'lucide-react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -15,7 +15,7 @@ import { FormInput } from '@/components/formInput';
 import { useAuthContext } from '@/contexts/auth';
 import { useThemeContext } from '@/contexts/theme';
 
-import { showAlertDialog, showErrorDialog } from '@/utils/dialog';
+import { showAlertDialog, showErrorDialog, showSuccessDialog } from '@/utils/dialog';
 import { validateEmail } from '@/utils/validate';
 
 import { COLORS } from '@/constants/styles';
@@ -29,9 +29,11 @@ const initForm = {
 export const LoginScreen = () => {
   const navigation = useNavigation();
   const { isDark } = useThemeContext();
-  const { loginWithGoogle, login } = useAuthContext();
+  const { loginWithGoogle, login, resetPassword } = useAuthContext();
 
   const [formValues, setFormValues] = useState(initForm);
+  const [formValue, setFormValue] = useState({});
+  const [showForgotPassWordInput, setShowForgotPassWordInput] = useState(false);
 
   const handlerLogin = async () => {
     if (validateForm()) {
@@ -99,6 +101,38 @@ export const LoginScreen = () => {
     }
   };
 
+  const validateEmailToReset = () => {
+    const email = formValue.email.trim().toLowerCase();
+    if (email === '') {
+      showAlertDialog('Debe escribir su email');
+      return false;
+    }
+
+    if (!validateEmail(email)) {
+      showAlertDialog('El email no es válido');
+      return false;
+    }
+
+    return true;
+  };
+
+  const sendResetPasswordEmail = async () => {
+    if (validateEmailToReset()) {
+      try {
+        const email = formValue.email.trim().toLowerCase();
+        const data = await resetPassword(email);
+        if (data === true) {
+          showSuccessDialog('Correo enviado, por favor revisar su bandeja de entrada o spam');
+          setFormValue({});
+          setShowForgotPassWordInput(!showForgotPassWordInput);
+          return;
+        }
+      } catch (error) {
+        showAlertDialog('Error al enviar la contraseña a su correo');
+      }
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -122,60 +156,110 @@ export const LoginScreen = () => {
 
           <Logo />
 
-          <FormInput
-            placeholder='Correo electrónico'
-            type={'email-address'}
-            value={formValues.email}
-            onChangeText={(text) => {
-              setFormValues({ ...formValues, email: text });
-            }}
-          />
+          {!showForgotPassWordInput && (
+            <YStack space='$3' alignItems='center'>
+              <FormInput
+                placeholder='Correo electrónico'
+                type={'email-address'}
+                value={formValues.email}
+                onChangeText={(text) => {
+                  setFormValues({ ...formValues, email: text });
+                }}
+              />
 
-          <FormInput
-            placeholder='Contraseña'
-            isSecure
-            value={formValues.password}
-            onChangeText={(text) => {
-              setFormValues({ ...formValues, password: text });
-            }}
-          />
+              <FormInput
+                placeholder='Contraseña'
+                isSecure
+                value={formValues.password}
+                onChangeText={(text) => {
+                  setFormValues({ ...formValues, password: text });
+                }}
+              />
 
-          <XStack space='$5'>
-            <Button
-              w='$11'
-              iconAfter={<LogIn />}
-              backgroundColor='$blue8'
-              size='$4'
-              onPress={handlerLogin}>
-              Login
-            </Button>
+              <XStack space='$5'>
+                <Button
+                  w='$11'
+                  iconAfter={<LogIn />}
+                  backgroundColor='$blue8'
+                  size='$4'
+                  onPress={handlerLogin}>
+                  Login
+                </Button>
 
-            <Button
-              w='$11'
-              iconAfter={<Pen />}
-              backgroundColor='$blue3'
-              borderColor={'$blue8'}
-              borderWidth={'$1'}
-              size='$4'
-              onPress={goToRegisterScreen}>
-              Registro
-            </Button>
-          </XStack>
+                <Button
+                  w='$11'
+                  iconAfter={<Pen />}
+                  backgroundColor='$blue3'
+                  borderColor={'$blue8'}
+                  borderWidth={'$1'}
+                  size='$4'
+                  onPress={goToRegisterScreen}>
+                  Registro
+                </Button>
+              </XStack>
 
-          <Button
-            iconAfter={
-              <Ionicons name='logo-google' size={25} color={isDark ? COLORS.light : COLORS.dark} />
-            }
-            backgroundColor='$green8'
-            size='$4'
-            w='$20'
-            onPress={loginGoogle}>
-            Inicia Sesión con Google
-          </Button>
+              <Button
+                iconAfter={
+                  <Ionicons
+                    name='logo-google'
+                    size={25}
+                    color={isDark ? COLORS.light : COLORS.dark}
+                  />
+                }
+                backgroundColor='$green8'
+                size='$4'
+                w='$20'
+                onPress={loginGoogle}>
+                Inicia Sesión con Google
+              </Button>
 
-          <SizableText color={'$color'} mb='$5'>
-            Olvidaste tu contraseña?
-          </SizableText>
+              <SizableText
+                color={'$color'}
+                onPress={() => {
+                  setShowForgotPassWordInput(true);
+                }}
+                mb='$5'>
+                Olvidaste tu contraseña?
+              </SizableText>
+            </YStack>
+          )}
+
+          {showForgotPassWordInput && (
+            <YStack space='$3' mb='$3' alignItems='center'>
+              <Label w={'$20'} textAlign='center'>
+                Escriba su correo electrónico para enviar un link, donde podrá cambiar su contraseña
+              </Label>
+              <FormInput
+                label='Correo electrónico:'
+                placeholder='Escribe tu correo electrónico'
+                type={'email-address'}
+                value={formValue.email}
+                onChangeText={(text) => {
+                  setFormValue({ ...formValue, email: text });
+                }}
+              />
+              <XStack space='$4' justifyContent='center'>
+                <Button
+                  backgroundColor='$blue8'
+                  size='$4'
+                  w='$11'
+                  onPress={() => {
+                    sendResetPasswordEmail();
+                  }}>
+                  Restaurar
+                </Button>
+                <Button
+                  backgroundColor='$red8'
+                  size='$4'
+                  w='$11'
+                  onPress={() => {
+                    setShowForgotPassWordInput(false);
+                  }}>
+                  Cerrar
+                </Button>
+              </XStack>
+            </YStack>
+          )}
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

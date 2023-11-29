@@ -12,6 +12,7 @@ import { CardItem } from '@/components/admin/cardItem';
 import { ModalOptions } from '@/components/modalOptions';
 
 import { showSuccessToast } from '@/utils/toast';
+import { TogleSidebar } from '@/components/togleSidebar';
 
 export const BusList = () => {
   const navigation = useNavigation();
@@ -61,59 +62,62 @@ export const BusList = () => {
   }, [navigation]);
 
   return (
-    <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3' pos='relative'>
-      <HeaderList
-        title='Lista de Buses'
-        onPress={() => {
-          navigation.navigate('bus-form' as never);
-        }}
-      />
+    <YStack f={1}>
+      <TogleSidebar />
+      <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3' pos='relative'>
+        <HeaderList
+          title='Lista de Buses'
+          onPress={() => {
+            navigation.navigate('bus-form' as never);
+          }}
+        />
 
-      <ScrollView
-        f={1}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        {buses.map((item, index) => (
-          <Card key={index} elevate bordered p='$3' size={'$3.5'} w={'$20'} mb='$4'>
-            <CardItem label='Nombre:' value={item?.name} />
+        <ScrollView
+          f={1}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          {buses.map((item, index) => (
+            <Card key={index} elevate bordered p='$3' size={'$3.5'} w={'$20'} mb='$4'>
+              <CardItem label='Nombre:' value={item?.name} />
 
-            <CardItem label='Placa:' value={item?.license_plate} />
+              <CardItem label='Placa:' value={item?.license_plate} />
 
-            <CardItem label='Cooperativa:' value={item?.cooperative} />
+              <CardItem label='Cooperativa:' value={item?.cooperative} />
 
-            <XStack jc={item.inUse ? 'space-between' : 'flex-end'} ai='center' mt='$2'>
-              {item.inUse && (
-                <Text color={'$green8'} fontWeight={'$true'} fontSize={'$6'} fontStyle='italic'>
-                  Activo
-                </Text>
-              )}
+              <XStack jc={item.inUse ? 'space-between' : 'flex-end'} ai='center' mt='$2'>
+                {item.inUse && (
+                  <Text color={'$green8'} fontWeight={'$true'} fontSize={'$6'} fontStyle='italic'>
+                    Activo
+                  </Text>
+                )}
 
-              <XStack space='$2'>
-                <ModalOptions
-                  title={`Está seguro que desea eliminar el bus ${item?.name}?`}
-                  secondButtonAction={async () => {
-                    await deleteBus(item?.id);
-                  }}>
-                  <Button size={'$3'} icon={<Trash2 />} variant='outlined' bg={'$red8'} />
-                </ModalOptions>
+                <XStack space='$2'>
+                  <ModalOptions
+                    title={`Está seguro que desea eliminar el bus ${item?.name}?`}
+                    secondButtonAction={async () => {
+                      await deleteBus(item?.id);
+                    }}>
+                    <Button size={'$3'} icon={<Trash2 />} variant='outlined' bg={'$red8'} />
+                  </ModalOptions>
 
-                <Button
-                  size={'$3'}
-                  icon={<Pencil />}
-                  variant='outlined'
-                  bg={'$green8'}
-                  onPress={() => {
-                    navigation.navigate('bus-form', item);
-                  }}
-                />
+                  <Button
+                    size={'$3'}
+                    icon={<Pencil />}
+                    variant='outlined'
+                    bg={'$green8'}
+                    onPress={() => {
+                      navigation.navigate('bus-form', item);
+                    }}
+                  />
+                </XStack>
               </XStack>
-            </XStack>
-          </Card>
-        ))}
-      </ScrollView>
+            </Card>
+          ))}
+        </ScrollView>
+      </YStack>
     </YStack>
   );
 };
