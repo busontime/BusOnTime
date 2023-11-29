@@ -21,34 +21,13 @@ export const convertFirestoreDateToDate = (date) => {
   return new Date(time);
 };
 
-export const picture = async (openCamera = false) => {
+export const selectPicture = async (isCamera = false) => {
   const options = {
     mediaType: 'photo',
     includeBase64: true,
   };
 
-  const response = openCamera ? await launchCamera(options) : await launchImageLibrary(options);
-  if (!response.didCancel && !response.errorCode && response.assets.length > 0) {
-    return {
-      uri: response.assets[0].uri,
-      fileSize: (Number(response.assets[0].fileSize) / 1024 / 1024).toFixed(2),
-      fileName: response.assets[0].fileName,
-      type: response.assets[0].type,
-    };
-  } else {
-    return null;
-  }
-};
-
-export const pickerImage = async () => {
-  const options = {
-    selectionLimit: 1,
-    mediaType: 'photo',
-    includeBase64: true,
-  };
-
-  const response = await launchImageLibrary(options);
-
+  const response = isCamera ? await launchCamera(options) : await launchImageLibrary(options);
   if (!response.didCancel && !response.errorCode && response.assets.length > 0) {
     return {
       uri: response.assets[0].uri,

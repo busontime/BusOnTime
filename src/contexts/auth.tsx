@@ -56,6 +56,18 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     }
   };
 
+  const updatePassword = async (password: string) => {
+    try {
+      await auth().currentUser.updatePassword(password);
+      console.log(password);
+    } catch (error) {
+      validateAuthError(
+        error,
+        'debe cerrar session y iniciar session de nuevo para cambiar la contraseña'
+      );
+    }
+  };
+
   const login = async (email: string, password: string) => {
     try {
       await auth().signInWithEmailAndPassword(email, password);
@@ -152,6 +164,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     createDriver,
     deleteAccount,
     resetPassword,
+    updatePassword,
   };
 
   return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;

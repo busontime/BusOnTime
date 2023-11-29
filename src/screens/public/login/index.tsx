@@ -156,70 +156,78 @@ export const LoginScreen = () => {
 
           <Logo />
 
-          <FormInput
-            placeholder='Correo electrónico'
-            type={'email-address'}
-            value={formValues.email}
-            onChangeText={(text) => {
-              setFormValues({ ...formValues, email: text });
-            }}
-          />
+          {!showForgotPassWordInput && (
+            <YStack space='$3' alignItems='center'>
+              <FormInput
+                placeholder='Correo electrónico'
+                type={'email-address'}
+                value={formValues.email}
+                onChangeText={(text) => {
+                  setFormValues({ ...formValues, email: text });
+                }}
+              />
 
-          <FormInput
-            placeholder='Contraseña'
-            isSecure
-            value={formValues.password}
-            onChangeText={(text) => {
-              setFormValues({ ...formValues, password: text });
-            }}
-          />
+              <FormInput
+                placeholder='Contraseña'
+                isSecure
+                value={formValues.password}
+                onChangeText={(text) => {
+                  setFormValues({ ...formValues, password: text });
+                }}
+              />
 
-          <XStack space='$5'>
-            <Button
-              w='$11'
-              iconAfter={<LogIn />}
-              backgroundColor='$blue8'
-              size='$4'
-              onPress={handlerLogin}>
-              Login
-            </Button>
+              <XStack space='$5'>
+                <Button
+                  w='$11'
+                  iconAfter={<LogIn />}
+                  backgroundColor='$blue8'
+                  size='$4'
+                  onPress={handlerLogin}>
+                  Login
+                </Button>
 
-            <Button
-              w='$11'
-              iconAfter={<Pen />}
-              backgroundColor='$blue3'
-              borderColor={'$blue8'}
-              borderWidth={'$1'}
-              size='$4'
-              onPress={goToRegisterScreen}>
-              Registro
-            </Button>
-          </XStack>
+                <Button
+                  w='$11'
+                  iconAfter={<Pen />}
+                  backgroundColor='$blue3'
+                  borderColor={'$blue8'}
+                  borderWidth={'$1'}
+                  size='$4'
+                  onPress={goToRegisterScreen}>
+                  Registro
+                </Button>
+              </XStack>
 
-          <Button
-            iconAfter={
-              <Ionicons name='logo-google' size={25} color={isDark ? COLORS.light : COLORS.dark} />
-            }
-            backgroundColor='$green8'
-            size='$4'
-            w='$20'
-            onPress={loginGoogle}>
-            Inicia Sesión con Google
-          </Button>
+              <Button
+                iconAfter={
+                  <Ionicons
+                    name='logo-google'
+                    size={25}
+                    color={isDark ? COLORS.light : COLORS.dark}
+                  />
+                }
+                backgroundColor='$green8'
+                size='$4'
+                w='$20'
+                onPress={loginGoogle}>
+                Inicia Sesión con Google
+              </Button>
 
-          <SizableText
-            color={'$color'}
-            onPress={() => {
-              setShowForgotPassWordInput(!showForgotPassWordInput);
-            }}
-            mb='$5'>
-            Olvidaste tu contraseña?
-          </SizableText>
+              <SizableText
+                color={'$color'}
+                onPress={() => {
+                  setShowForgotPassWordInput(true);
+                }}
+                mb='$5'>
+                Olvidaste tu contraseña?
+              </SizableText>
+            </YStack>
+          )}
 
           {showForgotPassWordInput && (
             <YStack space='$3' mb='$3' alignItems='center'>
-              <Label w={'$20'}>
-                Escriba su correo para enviar un link para recuperar la contraseña
+              <Label w={'$20'} textAlign='center'>
+                Escriba su correo electrónico para enviar un link, donde podrá cambiar su contraseña
               </Label>
               <FormInput
                 label='Correo electrónico:'
@@ -245,7 +253,7 @@ export const LoginScreen = () => {
                   size='$4'
                   w='$11'
                   onPress={() => {
-                    setShowForgotPassWordInput(!showForgotPassWordInput);
+                    setShowForgotPassWordInput(false);
                   }}>
                   Cerrar
                 </Button>

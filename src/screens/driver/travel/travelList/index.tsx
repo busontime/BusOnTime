@@ -11,6 +11,7 @@ import { convertFirestoreDateToString } from '@/utils/helpers';
 
 import { TRAVEL_STATUS } from '@/constants/bd';
 import { COLORS } from '@/constants/styles';
+import { TogleSidebar } from '@/components/togleSidebar';
 
 export const TravelList = () => {
   const navigation = useNavigation();
@@ -61,6 +62,7 @@ export const TravelList = () => {
 
   return (
     <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3' pos='relative'>
+      <TogleSidebar />
       <HeaderList
         title='Historial de Recorridos'
         buttonText='Atrás'
