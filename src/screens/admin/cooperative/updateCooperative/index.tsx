@@ -10,9 +10,11 @@ import { FormButtons } from '@/components/formButtons';
 
 import { showAlertDialog, showErrorDialog } from '@/utils/dialog';
 import { showSuccessToast } from '@/utils/toast';
+import { useLoader } from '@/contexts/loading';
 
 export const UpdateCooperative = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
   const route = useRoute();
   const cooperative = route.params;
 
@@ -20,6 +22,7 @@ export const UpdateCooperative = () => {
 
   const update = async () => {
     if (validateForm()) {
+      showLoader();
       try {
         const data = {
           name: formValues.name,
@@ -35,6 +38,8 @@ export const UpdateCooperative = () => {
         showErrorDialog('Ocurrió un error inténtelo más tarde');
 
         console.log('Error al actualizar la cooperativa', error);
+      } finally {
+        hiddenLoader();
       }
     }
   };

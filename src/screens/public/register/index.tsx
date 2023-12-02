@@ -17,6 +17,7 @@ import { showAlertDialog, showErrorDialog } from '@/utils/dialog';
 import { validateEmail } from '@/utils/validate';
 
 import { ROLES_ID } from '@/constants/bd';
+import { useLoader } from '@/contexts/loading';
 
 const initForm = {
   email: '',
@@ -26,12 +27,15 @@ const initForm = {
 
 export const RegisterScreen = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
+
   const { createAccount } = useAuthContext();
 
   const [formValues, setFormValues] = useState(initForm);
 
   const register = async () => {
     if (validateForm()) {
+      showLoader();
       const email = formValues.email.trim().toLowerCase();
 
       try {
@@ -56,6 +60,8 @@ export const RegisterScreen = () => {
       } catch (error) {
         console.log('error', error);
         showErrorDialog(error?.message ?? 'Ocurrio un problema!');
+      } finally {
+        hiddenLoader();
       }
     }
   };

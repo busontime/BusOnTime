@@ -11,21 +11,27 @@ import { CardItem } from '@/components/admin/cardItem';
 
 import { TogleSidebar } from '@/components/togleSidebar';
 import { convertFirestoreDateToString, getTravelStatus } from '@/utils/helpers';
+import { useLoader } from '@/contexts/loading';
 
 export const TravelList = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
+
   const { profile } = useAuthContext();
   const { user } = profile;
 
   const [travels, setTravels] = useState([]);
 
   const getTravels = async () => {
+    showLoader();
     try {
       const data = await travelService.getAllByDriverId(user.uid);
 
       setTravels(data);
     } catch (error) {
       console.log('Error al recuperar todos los recorridos', error);
+    } finally {
+      hiddenLoader();
     }
   };
 

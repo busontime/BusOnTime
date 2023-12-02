@@ -25,11 +25,14 @@ import { convertFirestoreDateToString } from '@/utils/helpers';
 
 import { initTravelForm } from '@/constants/forms';
 import { TRAVEL_STATUS } from '@/constants/bd';
+import { useLoader } from '@/contexts/loading';
 
 const route = [];
 
 export const TravelForm = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
+
   const { currentTravel, changeCurrentTravel } = useTravelContext();
   const { currentLocation, getMapLines, setCurrentLocation } = useMapContext();
   const { profile } = useAuthContext();
@@ -43,6 +46,7 @@ export const TravelForm = () => {
 
   const initTravel = async () => {
     if (validateForm()) {
+      showLoader();
       try {
         const data = {
           driver: { ...person, id: user.uid },
@@ -86,6 +90,8 @@ export const TravelForm = () => {
       } catch (error) {
         showErrorDialog('Ocurrió un error al iniciar el recorrido, inténtelo nuevamente');
         console.log(error, 'error al iniciar el recorrido');
+      } finally {
+        hiddenLoader();
       }
     }
   };
@@ -149,6 +155,7 @@ export const TravelForm = () => {
 
   const updateTravel = async () => {
     if (validateForm()) {
+      showLoader();
       try {
         const data = {
           line: formValues.line,
@@ -173,6 +180,8 @@ export const TravelForm = () => {
       } catch (error) {
         showErrorDialog('Ocurrió un error al actualizar el recorrido, inténtelo nuevamente');
         console.log(error, 'error al actualizar el recorrido');
+      } finally {
+        hiddenLoader();
       }
     }
   };

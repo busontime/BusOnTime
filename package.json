@@ -36,6 +36,7 @@
     "@tamagui/theme-builder": "1.74.3",
     "babel-plugin-transform-inline-environment-variables": "0.4.4",
     "geolib": "3.3.4",
+    "lottie-react-native": "6.4.1",
     "lucide-react-native": "0.279.0",
     "moment": "2.29.4",
     "react": "18.2.0",

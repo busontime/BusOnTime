@@ -14,13 +14,16 @@ import { ModalOptions } from '@/components/modalOptions';
 import { showSuccessToast } from '@/utils/toast';
 import { convertFirestoreDateToDate, convertFirestoreDateToString } from '@/utils/helpers';
 import { TogleSidebar } from '@/components/togleSidebar';
+import { useLoader } from '@/contexts/loading';
 
 export const DriverList = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
 
   const [drivers, setDrivers] = useState([]);
 
   const getDrivers = async () => {
+    showLoader();
     try {
       const cooperatives = await cooperativeService.getAll();
       const data = await userService.getAllDrivers();
@@ -41,10 +44,13 @@ export const DriverList = () => {
       setDrivers(_data);
     } catch (error) {
       console.log('Error al recuperar todos los conductores', error);
+    } finally {
+      hiddenLoader();
     }
   };
 
   const deleteDriver = async (id: string) => {
+    showLoader();
     try {
       await userService.deleteById(id);
       showSuccessToast('Conductor Eliminado Exitosamente!');
@@ -52,6 +58,7 @@ export const DriverList = () => {
       console.log(error);
     } finally {
       await getDrivers();
+      hiddenLoader();
     }
   };
 

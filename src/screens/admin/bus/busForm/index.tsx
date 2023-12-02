@@ -14,9 +14,11 @@ import { showAlertDialog, showErrorDialog, showSuccessDialog } from '@/utils/dia
 import { showSuccessToast } from '@/utils/toast';
 
 import { initBusForm } from '@/constants/forms';
+import { useLoader } from '@/contexts/loading';
 
 export const BusForm = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
   const route = useRoute();
   const bus = route.params;
 
@@ -25,6 +27,7 @@ export const BusForm = () => {
 
   const handlerService = async () => {
     if (validateForm()) {
+      showLoader();
       try {
         const data = {
           name: formValues.name,
@@ -41,6 +44,8 @@ export const BusForm = () => {
       } catch (error) {
         showErrorDialog('ocurrió un error inténtelo más tarde');
         console.log(error, 'error en el handler service');
+      } finally {
+        hiddenLoader();
       }
     }
   };

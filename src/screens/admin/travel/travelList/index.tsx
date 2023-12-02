@@ -12,22 +12,28 @@ import { ModalOptions } from '@/components/modalOptions';
 import { showSuccessToast } from '@/utils/toast';
 import { convertFirestoreDateToString, getTravelStatus } from '@/utils/helpers';
 import { TogleSidebar } from '@/components/togleSidebar';
+import { useLoader } from '@/contexts/loading';
 
 export const TravelList = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
 
   const [travels, setTravels] = useState([]);
 
   const getTravels = async () => {
+    showLoader();
     try {
       const data = await travelService.getAll();
       setTravels(data);
     } catch (error) {
       console.log('Error al recuperar todos los recorridos', error);
+    } finally {
+      hiddenLoader();
     }
   };
 
   const deleteTravel = async (id: string) => {
+    showLoader();
     try {
       await travelService.deleteById(id);
       showSuccessToast('Recorrido Eliminado Exitosamente!');
@@ -35,6 +41,7 @@ export const TravelList = () => {
       console.log(error);
     } finally {
       await getTravels();
+      hiddenLoader();
     }
   };
 

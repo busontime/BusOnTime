@@ -18,9 +18,12 @@ import { convertFirestoreDateToDate, getDiffYears } from '@/utils/helpers';
 
 import { ROLES_ID } from '@/constants/bd';
 import { ImagePickerDialog } from '@/components/imagePickerDialog';
+import { useLoader } from '@/contexts/loading';
 
 export const EditProfileScreen = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
+
   const { profile, updateProfile, updateEmail } = useAuthContext();
 
   const { person, user } = profile;
@@ -29,6 +32,7 @@ export const EditProfileScreen = () => {
 
   const update = async () => {
     if (validateForm()) {
+      showLoader();
       try {
         let photoUri = updateForm?.photo;
 
@@ -71,6 +75,8 @@ export const EditProfileScreen = () => {
       } catch (error) {
         console.log('error al  actualizar', error);
         showAlertDialog('Error al actualizar, Inténtelo mas tarde');
+      } finally {
+        hiddenLoader();
       }
     }
   };
