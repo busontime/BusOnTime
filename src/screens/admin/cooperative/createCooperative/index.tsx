@@ -11,14 +11,17 @@ import { FormButtons } from '@/components/formButtons';
 import { showAlertDialog, showErrorDialog, showSuccessDialog } from '@/utils/dialog';
 
 import { initCooperativeForm } from '@/constants/forms';
+import { useLoader } from '@/contexts/loading';
 
 export const CreateCooperative = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
 
   const [formValues, setFormValues] = useState(initCooperativeForm);
 
   const create = async () => {
     if (validateForm()) {
+      showLoader();
       try {
         const data = {
           name: formValues.name,
@@ -33,6 +36,8 @@ export const CreateCooperative = () => {
       } catch (error) {
         showErrorDialog('Ocurrió un error inténtelo más tarde');
         console.log('Error al crear la cooperativa', error);
+      } finally {
+        hiddenLoader();
       }
     }
   };

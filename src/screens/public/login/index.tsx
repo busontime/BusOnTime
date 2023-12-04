@@ -20,6 +20,7 @@ import { validateEmail } from '@/utils/validate';
 
 import { COLORS } from '@/constants/styles';
 import { ROLES_ID } from '@/constants/bd';
+import { useLoader } from '@/contexts/loading';
 
 const initForm = {
   email: '',
@@ -28,6 +29,8 @@ const initForm = {
 
 export const LoginScreen = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
+
   const { isDark } = useThemeContext();
   const { loginWithGoogle, login, resetPassword } = useAuthContext();
 
@@ -37,6 +40,7 @@ export const LoginScreen = () => {
 
   const handlerLogin = async () => {
     if (validateForm()) {
+      showLoader();
       const email = formValues.email.trim().toLowerCase();
 
       try {
@@ -44,6 +48,8 @@ export const LoginScreen = () => {
       } catch (error) {
         console.log('error', error);
         showErrorDialog(error?.message ?? 'Ocurrio un problema!');
+      } finally {
+        hiddenLoader();
       }
     }
   };
@@ -79,6 +85,7 @@ export const LoginScreen = () => {
   };
 
   const loginGoogle = async () => {
+    showLoader();
     try {
       const res = await loginWithGoogle();
 
@@ -98,6 +105,8 @@ export const LoginScreen = () => {
       }
     } catch (error) {
       console.log('error', error);
+    } finally {
+      hiddenLoader();
     }
   };
 
@@ -118,6 +127,7 @@ export const LoginScreen = () => {
 
   const sendResetPasswordEmail = async () => {
     if (validateEmailToReset()) {
+      showLoader();
       try {
         const email = formValue.email.trim().toLowerCase();
         const data = await resetPassword(email);
@@ -129,6 +139,8 @@ export const LoginScreen = () => {
         }
       } catch (error) {
         showAlertDialog('Error al enviar la contraseña a su correo');
+      } finally {
+        hiddenLoader();
       }
     }
   };

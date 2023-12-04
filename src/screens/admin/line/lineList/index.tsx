@@ -12,22 +12,28 @@ import { ModalOptions } from '@/components/modalOptions';
 
 import { showSuccessToast } from '@/utils/toast';
 import { TogleSidebar } from '@/components/togleSidebar';
+import { useLoader } from '@/contexts/loading';
 
 export const LineList = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
 
   const [lines, setLines] = useState([]);
 
   const getLines = async () => {
+    showLoader();
     try {
       const data = await lineService.getAll();
       setLines(data);
     } catch (error) {
       console.log('Error al recuperar todas las lineas', error);
+    } finally {
+      hiddenLoader();
     }
   };
 
   const deleteLine = async (id) => {
+    showLoader();
     try {
       await lineService.deleteById(id);
       showSuccessToast('Linea Eliminada Exitosamente!');
@@ -35,6 +41,7 @@ export const LineList = () => {
       console.log(error);
     } finally {
       await getLines();
+      hiddenLoader();
     }
   };
 

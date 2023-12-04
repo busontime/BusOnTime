@@ -19,10 +19,12 @@ import { getDiffYears } from '@/utils/helpers';
 
 import { ROLES_ID } from '@/constants/bd';
 import { initDriverForm } from '@/constants/forms';
+import { useLoader } from '@/contexts/loading';
 
 export const DriverForm = () => {
   const { createDriver } = useAuthContext();
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
   const route = useRoute();
   const driver = route.params;
 
@@ -31,6 +33,7 @@ export const DriverForm = () => {
 
   const handlerService = async () => {
     if (validateForm()) {
+      showLoader();
       const email = formValues.email.trim().toLowerCase();
 
       try {
@@ -74,6 +77,8 @@ export const DriverForm = () => {
       } catch (error) {
         showErrorDialog('ocurrió un error inténtelo más tarde');
         console.log(error, 'error en el handler service');
+      } finally {
+        hiddenLoader();
       }
     }
   };

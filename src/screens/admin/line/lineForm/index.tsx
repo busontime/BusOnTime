@@ -20,9 +20,12 @@ import { showSuccessToast } from '@/utils/toast';
 
 import { initLineForm } from '@/constants/forms';
 import { COLORS } from '@/constants/styles';
+import { useLoader } from '@/contexts/loading';
 
 export const LineForm = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
+
   const route = useRoute();
   const line = route.params;
 
@@ -33,6 +36,7 @@ export const LineForm = () => {
 
   const handlerService = async () => {
     if (validateForm()) {
+      showLoader();
       try {
         const data = {
           name: formValues.name,
@@ -52,6 +56,8 @@ export const LineForm = () => {
       } catch (error) {
         showErrorDialog('ocurrió un error inténtelo más tarde');
         console.log(error, 'error en el handler service');
+      } finally {
+        hiddenLoader();
       }
     }
   };

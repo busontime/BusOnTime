@@ -13,13 +13,16 @@ import { ModalOptions } from '@/components/modalOptions';
 
 import { showSuccessToast } from '@/utils/toast';
 import { TogleSidebar } from '@/components/togleSidebar';
+import { useLoader } from '@/contexts/loading';
 
 export const BusList = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
 
   const [buses, setBuses] = useState([]);
 
   const getBuses = async () => {
+    showLoader();
     try {
       const cooperatives = await cooperativeService.getAll();
       const data = await busService.getAll();
@@ -35,10 +38,13 @@ export const BusList = () => {
       setBuses(_data);
     } catch (error) {
       console.log('Error al recuperar todos los buses', error);
+    } finally {
+      hiddenLoader();
     }
   };
 
   const deleteBus = async (id: string) => {
+    showLoader();
     try {
       await busService.deleteById(id);
       showSuccessToast('Bus Eliminado Exitosamente!');
@@ -46,6 +52,7 @@ export const BusList = () => {
       console.log(error);
     } finally {
       await getBuses();
+      hiddenLoader();
     }
   };
 

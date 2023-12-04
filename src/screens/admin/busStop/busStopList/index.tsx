@@ -12,22 +12,27 @@ import { ModalOptions } from '@/components/modalOptions';
 
 import { showSuccessToast } from '@/utils/toast';
 import { TogleSidebar } from '@/components/togleSidebar';
+import { useLoader } from '@/contexts/loading';
 
 export const BusStopList = () => {
   const navigation = useNavigation();
-
+  const { showLoader, hiddenLoader } = useLoader();
   const [busStops, setBusStops] = useState([]);
 
   const getData = async () => {
+    showLoader();
     try {
       const response = await busStopService.getAll();
       setBusStops(response);
     } catch (error) {
       console.log('Error al recuperar todas las paradas de buses', error);
+    } finally {
+      hiddenLoader();
     }
   };
 
   const deleteBusStop = async (id: string) => {
+    showLoader();
     try {
       await busStopService.deleteById(id);
       showSuccessToast('Parada Eliminada Exitosamente!');
@@ -35,6 +40,7 @@ export const BusStopList = () => {
       console.log(error);
     } finally {
       await getData();
+      hiddenLoader();
     }
   };
 

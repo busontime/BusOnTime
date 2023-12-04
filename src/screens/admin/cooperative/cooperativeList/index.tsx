@@ -13,13 +13,16 @@ import { ModalOptions } from '@/components/modalOptions';
 import { showSuccessToast } from '@/utils/toast';
 import { convertFirestoreDateToDate, convertFirestoreDateToString } from '@/utils/helpers';
 import { TogleSidebar } from '@/components/togleSidebar';
+import { useLoader } from '@/contexts/loading';
 
 export const CooperativeList = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
 
   const [cooperatives, setCooperatives] = useState([]);
 
   const getCooperatives = async () => {
+    showLoader();
     try {
       const data = await cooperativeService.getAll();
 
@@ -32,10 +35,13 @@ export const CooperativeList = () => {
       setCooperatives(_data);
     } catch (error) {
       console.log('Error al recuperar todas las cooperativas', error);
+    } finally {
+      hiddenLoader();
     }
   };
 
   const deleteCooperative = async (id: string) => {
+    showLoader();
     try {
       await cooperativeService.deleteById(id);
       showSuccessToast('Cooperativa Eliminada Exitosamente!');
@@ -43,6 +49,7 @@ export const CooperativeList = () => {
       console.log(error);
     } finally {
       await getCooperatives();
+      hiddenLoader();
     }
   };
 

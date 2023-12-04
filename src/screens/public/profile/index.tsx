@@ -17,9 +17,12 @@ import { uploadImage } from '@/services/storage';
 import { showSuccessToast } from '@/utils/toast';
 import { userService } from '@/services/user';
 import { TogleSidebar } from '@/components/togleSidebar';
+import { useLoader } from '@/contexts/loading';
 
 export const ProfileScreen = () => {
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
+
   const { profile, updateProfile } = useAuthContext();
 
   const { person, user } = profile;
@@ -36,6 +39,7 @@ export const ProfileScreen = () => {
   };
 
   const updateProfilePicture = async (picture) => {
+    showLoader();
     try {
       const photoUri = picture?.uri;
       if (photoUri && photoUri !== '') {
@@ -46,6 +50,8 @@ export const ProfileScreen = () => {
       }
     } catch (error) {
       showAlertDialog('Error al subir la imagen');
+    } finally {
+      hiddenLoader();
     }
   };
 

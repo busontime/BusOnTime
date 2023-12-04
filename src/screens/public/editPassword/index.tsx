@@ -11,10 +11,13 @@ import { useAuthContext } from '@/contexts/auth';
 import { showSuccessToast } from '@/utils/toast';
 import { showAlertDialog } from '@/utils/dialog';
 import { validatePassword } from '@/utils/validate';
+import { useLoader } from '@/contexts/loading';
 
 export const EditPassword = () => {
   const [updateForm, setupdateForm] = useState({});
   const navigation = useNavigation();
+  const { showLoader, hiddenLoader } = useLoader();
+
   const { updatePassword } = useAuthContext();
 
   const goToProfile = () => {
@@ -22,6 +25,7 @@ export const EditPassword = () => {
   };
 
   const newPassword = async () => {
+    showLoader();
     try {
       const { password } = updateForm;
 
@@ -42,8 +46,11 @@ export const EditPassword = () => {
       goToProfile();
     } catch (error) {
       showAlertDialog('Error al actualizar la contraseña');
+    } finally {
+      hiddenLoader();
     }
   };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
