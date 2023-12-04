@@ -9,23 +9,20 @@ import config from './tamagui.config';
 import { Providers } from '@/contexts';
 import { ConfigApp } from './src';
 import { AppRouter } from '@/routes';
-import { LoadingProvider } from '@/contexts/loading';
 
 LogBox.ignoreLogs(['']);
 // LogBox.ignoreAllLogs();
 
 export const App = (props) => {
   return (
-    <LoadingProvider>
-      <TamaguiProvider config={config}>
-        <NavigationContainer {...props}>
-          <Providers>
-            <ConfigApp>
-              <AppRouter />
-            </ConfigApp>
-          </Providers>
-        </NavigationContainer>
-      </TamaguiProvider>
-    </LoadingProvider>
+    <TamaguiProvider config={config}>
+      <NavigationContainer {...props}>
+        <Providers>
+          <ConfigApp>
+            <AppRouter />
+          </ConfigApp>
+        </Providers>
+      </NavigationContainer>
+    </TamaguiProvider>
   );
 };

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { H4, ScrollView } from 'tamagui';
+import { H4, ScrollView, YStack } from 'tamagui';
 import { KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import { useAuthContext } from '@/contexts/auth';
+import { useLoader } from '@/contexts/loader';
 
 import { userService } from '@/services/user';
 import { uploadImage } from '@/services/storage';
 
+import { TogleSidebar } from '@/components/togleSidebar';
+import { ImagePickerDialog } from '@/components/imagePickerDialog';
 import { FormInput } from '@/components/formInput';
 import { FormButtons } from '@/components/formButtons';
 
@@ -17,15 +20,11 @@ import { validateCi, validateEmail } from '@/utils/validate';
 import { convertFirestoreDateToDate, getDiffYears } from '@/utils/helpers';
 
 import { ROLES_ID } from '@/constants/bd';
-import { ImagePickerDialog } from '@/components/imagePickerDialog';
-import { useLoader } from '@/contexts/loading';
 
 export const EditProfileScreen = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
-
+  const { showLoader, hideLoader } = useLoader();
   const { profile, updateProfile, updateEmail } = useAuthContext();
-
   const { person, user } = profile;
 
   const [updateForm, setUpdateForm] = useState(null);
@@ -33,6 +32,7 @@ export const EditProfileScreen = () => {
   const update = async () => {
     if (validateForm()) {
       showLoader();
+
       try {
         let photoUri = updateForm?.photo;
 
@@ -59,8 +59,8 @@ export const EditProfileScreen = () => {
         }
 
         if (data.email !== person?.email) {
-          const updateEmailUser = await updateEmail(data.email);
-          if (!updateEmailUser) {
+          const res = await updateEmail(data.email);
+          if (!res) {
             return;
           }
         }
@@ -74,9 +74,9 @@ export const EditProfileScreen = () => {
         goBack();
       } catch (error) {
         console.log('error al  actualizar', error);
-        showAlertDialog('Error al actualizar, Inténtelo mas tarde');
+        showAlertDialog('Error al actualizar, Inténtelo más tarde');
       } finally {
-        hiddenLoader();
+        hideLoader();
       }
     }
   };
@@ -153,92 +153,96 @@ export const EditProfileScreen = () => {
         flex: 1,
       }}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView
-          bg={'$backgroundFocus'}
-          showsVerticalScrollIndicator={false}
-          f={1}
-          p='$6'
-          space='$3'
-          contentContainerStyle={{
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <H4 color={'$color'}>Actualizar Perfil</H4>
+        <YStack f={1}>
+          <TogleSidebar />
 
-          <ImagePickerDialog
-            picture={updateForm?.photo}
-            changePicture={(picture) => {
-              setUpdateForm({ ...updateForm, photo: picture ? picture.uri : null });
-            }}
-          />
+          <ScrollView
+            bg={'$backgroundFocus'}
+            showsVerticalScrollIndicator={false}
+            f={1}
+            p='$6'
+            space='$3'
+            contentContainerStyle={{
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <H4 color={'$color'}>Edición de Perfil</H4>
 
-          <FormInput
-            label='Nombres:'
-            placeholder='Escriba sus nombres'
-            value={updateForm?.name}
-            onChangeText={(text) => {
-              setUpdateForm({ ...updateForm, name: text });
-            }}
-          />
-
-          <FormInput
-            label='Apellidos:'
-            placeholder='Escriba sus apellidos'
-            value={updateForm?.lastname}
-            onChangeText={(text) => {
-              setUpdateForm({ ...updateForm, lastname: text });
-            }}
-          />
-
-          <FormInput
-            label='Email:'
-            type={'email-address'}
-            placeholder='Escriba su email'
-            value={updateForm?.email}
-            onChangeText={(text) => {
-              setUpdateForm({ ...updateForm, email: text });
-            }}
-          />
-
-          <FormInput
-            label='Teléfono:'
-            placeholder='Escriba su teléfono'
-            type={'numeric'}
-            value={updateForm?.phone}
-            onChangeText={(text) => {
-              setUpdateForm({ ...updateForm, phone: text });
-            }}
-          />
-
-          <FormInput
-            isDate
-            label='Fecha de nacimiento:'
-            placeholder='Seleccione una fecha'
-            editable={false}
-            dateValue={updateForm?.birthdate}
-            onChangeText={(val) => {
-              setUpdateForm({ ...updateForm, birthdate: val });
-            }}
-          />
-
-          {person?.ci && (
-            <FormInput
-              label='Cédula:'
-              placeholder='Escriba su cédula'
-              type={'numeric'}
-              value={updateForm?.ci}
-              onChangeText={(text) => {
-                setUpdateForm({ ...updateForm, ci: text });
+            <ImagePickerDialog
+              picture={updateForm?.photo}
+              changePicture={(picture) => {
+                setUpdateForm({ ...updateForm, photo: picture ? picture.uri : null });
               }}
             />
-          )}
 
-          <FormButtons
-            firstButtonAction={goBack}
-            secondButtonText='Actualizar'
-            secondButtonAction={update}
-          />
-        </ScrollView>
+            <FormInput
+              label='Nombres:'
+              placeholder='Escriba sus nombres'
+              value={updateForm?.name}
+              onChangeText={(text) => {
+                setUpdateForm({ ...updateForm, name: text });
+              }}
+            />
+
+            <FormInput
+              label='Apellidos:'
+              placeholder='Escriba sus apellidos'
+              value={updateForm?.lastname}
+              onChangeText={(text) => {
+                setUpdateForm({ ...updateForm, lastname: text });
+              }}
+            />
+
+            <FormInput
+              label='Email:'
+              type={'email-address'}
+              placeholder='Escriba su email'
+              value={updateForm?.email}
+              onChangeText={(text) => {
+                setUpdateForm({ ...updateForm, email: text });
+              }}
+            />
+
+            <FormInput
+              label='Teléfono:'
+              placeholder='Escriba su teléfono'
+              type={'numeric'}
+              value={updateForm?.phone}
+              onChangeText={(text) => {
+                setUpdateForm({ ...updateForm, phone: text });
+              }}
+            />
+
+            <FormInput
+              isDate
+              label='Fecha de nacimiento:'
+              placeholder='Seleccione una fecha'
+              editable={false}
+              dateValue={updateForm?.birthdate}
+              onChangeText={(val) => {
+                setUpdateForm({ ...updateForm, birthdate: val });
+              }}
+            />
+
+            {person?.ci && (
+              <FormInput
+                label='Cédula:'
+                placeholder='Escriba su cédula'
+                type={'numeric'}
+                value={updateForm?.ci}
+                onChangeText={(text) => {
+                  setUpdateForm({ ...updateForm, ci: text });
+                }}
+              />
+            )}
+
+            <FormButtons
+              firstButtonAction={goBack}
+              secondButtonText='Actualizar'
+              secondButtonAction={update}
+            />
+          </ScrollView>
+        </YStack>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );

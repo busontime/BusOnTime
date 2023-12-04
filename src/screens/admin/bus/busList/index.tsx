@@ -4,25 +4,27 @@ import { ScrollView, Card, XStack, YStack, Button, Text } from 'tamagui';
 
 import { Pencil, Trash2 } from 'lucide-react-native';
 
+import { useLoader } from '@/contexts/loader';
+
 import { cooperativeService } from '@/services/cooperative';
 import { busService } from '@/services/bus';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { HeaderList } from '@/components/admin/headerList';
 import { CardItem } from '@/components/admin/cardItem';
 import { ModalOptions } from '@/components/modalOptions';
 
 import { showSuccessToast } from '@/utils/toast';
-import { TogleSidebar } from '@/components/togleSidebar';
-import { useLoader } from '@/contexts/loading';
 
 export const BusList = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
+  const { showLoader, hideLoader } = useLoader();
 
   const [buses, setBuses] = useState([]);
 
   const getBuses = async () => {
     showLoader();
+
     try {
       const cooperatives = await cooperativeService.getAll();
       const data = await busService.getAll();
@@ -39,12 +41,13 @@ export const BusList = () => {
     } catch (error) {
       console.log('Error al recuperar todos los buses', error);
     } finally {
-      hiddenLoader();
+      hideLoader();
     }
   };
 
   const deleteBus = async (id: string) => {
     showLoader();
+
     try {
       await busService.deleteById(id);
       showSuccessToast('Bus Eliminado Exitosamente!');
@@ -52,7 +55,7 @@ export const BusList = () => {
       console.log(error);
     } finally {
       await getBuses();
-      hiddenLoader();
+      hideLoader();
     }
   };
 
@@ -71,6 +74,7 @@ export const BusList = () => {
   return (
     <YStack f={1}>
       <TogleSidebar />
+
       <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3' pos='relative'>
         <HeaderList
           title='Lista de Buses'

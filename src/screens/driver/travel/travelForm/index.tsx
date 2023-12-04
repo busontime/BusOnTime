@@ -8,11 +8,13 @@ import moment from 'moment';
 import { useAuthContext } from '@/contexts/auth';
 import { useTravelContext } from '@/contexts/travel';
 import { useMapContext } from '@/contexts/map';
+import { useLoader } from '@/contexts/loader';
 
 import { lineService } from '@/services/line';
 import { busService } from '@/services/bus';
 import { travelService } from '@/services/travel';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { FormSelect } from '@/components/formSelect';
 import { FormButtons } from '@/components/formButtons';
 import { CardItem } from '@/components/admin/cardItem';
@@ -25,13 +27,12 @@ import { convertFirestoreDateToString } from '@/utils/helpers';
 
 import { initTravelForm } from '@/constants/forms';
 import { TRAVEL_STATUS } from '@/constants/bd';
-import { useLoader } from '@/contexts/loading';
 
 const route = [];
 
 export const TravelForm = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
+  const { showLoader, hideLoader } = useLoader();
 
   const { currentTravel, changeCurrentTravel } = useTravelContext();
   const { currentLocation, getMapLines, setCurrentLocation } = useMapContext();
@@ -47,6 +48,7 @@ export const TravelForm = () => {
   const initTravel = async () => {
     if (validateForm()) {
       showLoader();
+
       try {
         const data = {
           driver: { ...person, id: user.uid },
@@ -91,7 +93,7 @@ export const TravelForm = () => {
         showErrorDialog('Ocurrió un error al iniciar el recorrido, inténtelo nuevamente');
         console.log(error, 'error al iniciar el recorrido');
       } finally {
-        hiddenLoader();
+        hideLoader();
       }
     }
   };
@@ -181,7 +183,7 @@ export const TravelForm = () => {
         showErrorDialog('Ocurrió un error al actualizar el recorrido, inténtelo nuevamente');
         console.log(error, 'error al actualizar el recorrido');
       } finally {
-        hiddenLoader();
+        hideLoader();
       }
     }
   };
@@ -253,161 +255,16 @@ export const TravelForm = () => {
   }, []);
 
   return (
-    <YStack f={1} bg={'$backgroundFocus'} space='$4' ai='center' jc='center'>
-      {currentTravel && (
-        <YStack ai='center' jc='center' space='$3'>
-          <H4 color={'$color'}>Recorrido Actual</H4>
-
-          <Card
-            elevate
-            bordered
-            paddingVertical='$3'
-            paddingHorizontal='$5'
-            size={'$3.5'}
-            w={'$20'}>
-            <CardItem label='Linea:' value={currentTravel?.line?.name} />
-
-            <CardItem label='Bus:' value={currentTravel?.bus?.name} />
-
-            <CardItem label='Fecha:' value={convertFirestoreDateToString(currentTravel?.date)} />
-
-            <CardItem label='Hora de Salida:' value={currentTravel?.startTime} />
-          </Card>
-
-          {showCancel && (
-            <YStack ai='center' jc='center' space='$3'>
-              <FormInput
-                label='Motivo de cancelación'
-                placeholder='Escriba el motivo de Cancelación'
-                value={formValues.cancellation_message}
-                onChangeText={(text) => {
-                  setFormValues({ ...formValues, cancellation_message: text });
-                }}
-              />
-
-              <FormButtons
-                firstButtonAction={() => {
-                  setShowCancel(false);
-                }}
-                secondButtonText={'Aceptar'}
-                secondButtonAction={cancelTravel}
-                mb='$3'
-              />
-            </YStack>
-          )}
-
-          {showEdit && (
-            <YStack ai='center' jc='center' space='$3'>
-              <FormSelect
-                label='Linea:'
-                placeholder='Selecciona una linea'
-                value={formValues?.line?.id}
-                options={lines}
-                onValueChange={changelineSelect}
-              />
-
-              <FormSelect
-                label='Bus:'
-                placeholder='Selecciona un bus'
-                value={formValues?.bus?.id}
-                options={buses}
-                onValueChange={changeBusSelect}
-              />
-
-              <FormButtons
-                firstButtonAction={() => {
-                  setShowEdit(false);
-                }}
-                secondButtonText={'Aceptar'}
-                secondButtonAction={updateTravel}
-                mb='$3'
-              />
-            </YStack>
-          )}
-
-          {!showCancel && !showEdit && (
-            <YStack ai='center' jc='center' space='$3'>
-              <FormButtons
-                firstButtonAction={() => {
-                  setShowCancel(true);
-                }}
-                secondButtonText={'Actualizar'}
-                secondButtonAction={() => {
-                  setFormValues({
-                    ...formValues,
-                    line: currentTravel.line,
-                    bus: currentTravel.bus,
-                  });
-                  setShowEdit(true);
-                }}
-                mb='$3'
-              />
-
-              <ModalOptions
-                title={`Desea actualizar la linea con la ruta recorrida?`}
-                primaryButtonText='Si'
-                primaryButtonAction={async () => {
-                  await updateRouteLine();
-                  await finishTravel();
-                }}
-                secondButtonText='No'
-                secondButtonAction={finishTravel}>
-                <Button w={'$15'} size='$3' bg='$purple8'>
-                  <SizableText color={'$color'} fontWeight={'bold'}>
-                    Finalizar Recorrido
-                  </SizableText>
-                </Button>
-              </ModalOptions>
-
-              <Button
-                w={'$15'}
-                size='$3'
-                bg='$orange8'
-                onPress={() => {
-                  navigation.navigate('travel-map' as never);
-                }}>
-                <SizableText color={'$color'} fontWeight={'bold'}>
-                  Ver Mapa
-                </SizableText>
-              </Button>
-            </YStack>
-          )}
-        </YStack>
-      )}
-
-      {!currentTravel && (
-        <YStack ai='center' jc='center' space='$3'>
-          <H4 color={'$color'}>Nuevo Recorrido</H4>
-
-          <FormSelect
-            label='Linea:'
-            placeholder='Selecciona una linea'
-            value={formValues?.line?.id}
-            options={lines}
-            onValueChange={changelineSelect}
-          />
-
-          <FormSelect
-            label='Bus:'
-            placeholder='Selecciona un bus'
-            value={formValues?.bus?.id}
-            options={buses}
-            onValueChange={changeBusSelect}
-          />
-
-          <FormButtons
-            firstButtonAction={goBack}
-            secondButtonText={'Iniciar'}
-            secondButtonAction={initTravel}
-            mb='$3'
-          />
-        </YStack>
-      )}
+    <YStack f={1} bg={'$backgroundFocus'}>
+      <TogleSidebar />
 
       <Button
-        w={'$15'}
+        pos='absolute'
         size='$3'
         bg='$blue8'
+        top={10}
+        right={20}
+        zi={10}
         onPress={() => {
           navigation.navigate('travel-list' as never);
         }}>
@@ -415,6 +272,158 @@ export const TravelForm = () => {
           Historial de Recorridos
         </SizableText>
       </Button>
+
+      <YStack f={1} bg={'$backgroundFocus'} space='$4' ai='center' jc='center'>
+        {currentTravel && (
+          <YStack ai='center' jc='center' space='$3'>
+            <H4 color={'$color'}>Recorrido Actual</H4>
+
+            <Card
+              elevate
+              bordered
+              paddingVertical='$3'
+              paddingHorizontal='$5'
+              size={'$3.5'}
+              w={'$20'}>
+              <CardItem label='Linea:' value={currentTravel?.line?.name} />
+
+              <CardItem label='Bus:' value={currentTravel?.bus?.name} />
+
+              <CardItem label='Fecha:' value={convertFirestoreDateToString(currentTravel?.date)} />
+
+              <CardItem label='Hora de Salida:' value={currentTravel?.startTime} />
+            </Card>
+
+            {showCancel && (
+              <YStack ai='center' jc='center' space='$3'>
+                <FormInput
+                  label='Motivo de cancelación'
+                  placeholder='Escriba el motivo de Cancelación'
+                  value={formValues.cancellation_message}
+                  onChangeText={(text) => {
+                    setFormValues({ ...formValues, cancellation_message: text });
+                  }}
+                />
+
+                <FormButtons
+                  firstButtonAction={() => {
+                    setShowCancel(false);
+                  }}
+                  secondButtonText={'Aceptar'}
+                  secondButtonAction={cancelTravel}
+                  mb='$3'
+                />
+              </YStack>
+            )}
+
+            {showEdit && (
+              <YStack ai='center' jc='center' space='$3'>
+                <FormSelect
+                  label='Linea:'
+                  placeholder='Selecciona una linea'
+                  value={formValues?.line?.id}
+                  options={lines}
+                  onValueChange={changelineSelect}
+                />
+
+                <FormSelect
+                  label='Bus:'
+                  placeholder='Selecciona un bus'
+                  value={formValues?.bus?.id}
+                  options={buses}
+                  onValueChange={changeBusSelect}
+                />
+
+                <FormButtons
+                  firstButtonAction={() => {
+                    setShowEdit(false);
+                  }}
+                  secondButtonText={'Aceptar'}
+                  secondButtonAction={updateTravel}
+                  mb='$3'
+                />
+              </YStack>
+            )}
+
+            {!showCancel && !showEdit && (
+              <YStack ai='center' jc='center' space='$3'>
+                <FormButtons
+                  firstButtonAction={() => {
+                    setShowCancel(true);
+                  }}
+                  secondButtonText={'Actualizar'}
+                  secondButtonAction={() => {
+                    setFormValues({
+                      ...formValues,
+                      line: currentTravel.line,
+                      bus: currentTravel.bus,
+                    });
+                    setShowEdit(true);
+                  }}
+                  mb='$3'
+                />
+
+                <ModalOptions
+                  title={`Desea actualizar la linea con la ruta recorrida?`}
+                  primaryButtonText='Si'
+                  primaryButtonAction={async () => {
+                    await updateRouteLine();
+                    await finishTravel();
+                  }}
+                  secondButtonText='No'
+                  secondButtonAction={finishTravel}>
+                  <Button w={'$15'} size='$3' bg='$purple8'>
+                    <SizableText color={'$color'} fontWeight={'bold'}>
+                      Finalizar Recorrido
+                    </SizableText>
+                  </Button>
+                </ModalOptions>
+
+                <Button
+                  w={'$15'}
+                  size='$3'
+                  bg='$orange8'
+                  onPress={() => {
+                    navigation.navigate('travel-map' as never);
+                  }}>
+                  <SizableText color={'$color'} fontWeight={'bold'}>
+                    Ver Mapa
+                  </SizableText>
+                </Button>
+              </YStack>
+            )}
+          </YStack>
+        )}
+
+        {!currentTravel && (
+          <YStack ai='center' jc='center' space='$3'>
+            <H4 color={'$color'}>Nuevo Recorrido</H4>
+
+            <FormSelect
+              label='Linea:'
+              placeholder='Selecciona una linea'
+              value={formValues?.line?.id}
+              options={lines}
+              onValueChange={changelineSelect}
+            />
+
+            <FormSelect
+              label='Bus:'
+              placeholder='Selecciona un bus'
+              value={formValues?.bus?.id}
+              options={buses}
+              onValueChange={changeBusSelect}
+            />
+
+            <FormButtons
+              firstButtonAction={goBack}
+              secondButtonText={'Iniciar'}
+              secondButtonAction={initTravel}
+              mb='$3'
+            />
+          </YStack>
+        )}
+      </YStack>
     </YStack>
   );
 };

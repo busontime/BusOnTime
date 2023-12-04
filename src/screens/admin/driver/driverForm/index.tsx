@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
-import { ScrollView, H4 } from 'tamagui';
+import { ScrollView, H4, XStack } from 'tamagui';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { useAuthContext } from '@/contexts/auth';
+import { useLoader } from '@/contexts/loader';
 
 import { userService } from '@/services/user';
 import { cooperativeService } from '@/services/cooperative';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { FormInput } from '@/components/formInput';
 import { FormSelect } from '@/components/formSelect';
 import { FormButtons } from '@/components/formButtons';
@@ -19,12 +21,11 @@ import { getDiffYears } from '@/utils/helpers';
 
 import { ROLES_ID } from '@/constants/bd';
 import { initDriverForm } from '@/constants/forms';
-import { useLoader } from '@/contexts/loading';
 
 export const DriverForm = () => {
   const { createDriver } = useAuthContext();
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
+  const { showLoader, hideLoader } = useLoader();
   const route = useRoute();
   const driver = route.params;
 
@@ -34,6 +35,7 @@ export const DriverForm = () => {
   const handlerService = async () => {
     if (validateForm()) {
       showLoader();
+
       const email = formValues.email.trim().toLowerCase();
 
       try {
@@ -78,7 +80,7 @@ export const DriverForm = () => {
         showErrorDialog('ocurrió un error inténtelo más tarde');
         console.log(error, 'error en el handler service');
       } finally {
-        hiddenLoader();
+        hideLoader();
       }
     }
   };
@@ -139,11 +141,15 @@ export const DriverForm = () => {
   };
 
   const getCooperatives = async () => {
+    showLoader();
+
     try {
       const data = await cooperativeService.getAll();
       setCooperatives(data);
     } catch (error) {
       console.log('Error al recuperar todas las cooperativas', error);
+    } finally {
+      hideLoader();
     }
   };
 
@@ -175,6 +181,10 @@ export const DriverForm = () => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
+          <XStack width={'100%'}>
+            <TogleSidebar />
+          </XStack>
+
           <H4 color={'$color'}>{driver ? 'Actualizar Conductor' : 'Nuevo Conductor'}</H4>
 
           <FormInput

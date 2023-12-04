@@ -6,6 +6,7 @@ import { Button, Stack, H2, ScrollView } from 'tamagui';
 import { Pen, LogIn } from 'lucide-react-native';
 
 import { useAuthContext } from '@/contexts/auth';
+import { useLoader } from '@/contexts/loader';
 
 import { userService } from '@/services/user';
 
@@ -15,27 +16,22 @@ import { FormInput } from '@/components/formInput';
 
 import { showAlertDialog, showErrorDialog } from '@/utils/dialog';
 import { validateEmail } from '@/utils/validate';
+import { showSuccessToast } from '@/utils/toast';
 
 import { ROLES_ID } from '@/constants/bd';
-import { useLoader } from '@/contexts/loading';
-
-const initForm = {
-  email: '',
-  password: '',
-  confirmPassword: '',
-};
+import { registerForm } from '@/constants/forms';
 
 export const RegisterScreen = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
-
+  const { showLoader, hideLoader } = useLoader();
   const { createAccount } = useAuthContext();
 
-  const [formValues, setFormValues] = useState(initForm);
+  const [formValues, setFormValues] = useState(registerForm);
 
   const register = async () => {
     if (validateForm()) {
       showLoader();
+
       const email = formValues.email.trim().toLowerCase();
 
       try {
@@ -56,12 +52,14 @@ export const RegisterScreen = () => {
           await userService.createUser(user.uid, data);
 
           goToLoginScreen();
+
+          showSuccessToast('Registro Exitoso!');
         }
       } catch (error) {
         console.log('error', error);
         showErrorDialog(error?.message ?? 'Ocurrio un problema!');
       } finally {
-        hiddenLoader();
+        hideLoader();
       }
     }
   };
@@ -120,7 +118,7 @@ export const RegisterScreen = () => {
             <TogleTheme />
           </Stack>
 
-          <H2 mt='$14'>Registro</H2>
+          <H2 mt='$15'>Registro</H2>
 
           <Logo />
 

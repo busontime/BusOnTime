@@ -6,13 +6,16 @@ import { ThemeProvider } from './theme';
 import { AuthProvider } from './auth';
 import { MapProvider } from './map';
 import { TravelProvider } from './travel';
+import { LoaderProvider } from './loader';
 
 export const Providers: React.FC<ChildrenProps> = ({ children }) => {
   return (
     <ThemeProvider>
       <AuthProvider>
         <MapProvider>
-          <TravelProvider>{children}</TravelProvider>
+          <TravelProvider>
+            <LoaderProvider>{children}</LoaderProvider>
+          </TravelProvider>
         </MapProvider>
       </AuthProvider>
     </ThemeProvider>

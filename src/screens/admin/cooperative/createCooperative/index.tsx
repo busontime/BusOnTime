@@ -1,27 +1,30 @@
 import React, { useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView, H4 } from 'tamagui';
+import { ScrollView, H4, XStack } from 'tamagui';
+
+import { useLoader } from '@/contexts/loader';
 
 import { cooperativeService } from '@/services/cooperative';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { FormInput } from '@/components/formInput';
 import { FormButtons } from '@/components/formButtons';
 
 import { showAlertDialog, showErrorDialog, showSuccessDialog } from '@/utils/dialog';
 
 import { initCooperativeForm } from '@/constants/forms';
-import { useLoader } from '@/contexts/loading';
 
 export const CreateCooperative = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
+  const { showLoader, hideLoader } = useLoader();
 
   const [formValues, setFormValues] = useState(initCooperativeForm);
 
   const create = async () => {
     if (validateForm()) {
       showLoader();
+
       try {
         const data = {
           name: formValues.name,
@@ -37,7 +40,7 @@ export const CreateCooperative = () => {
         showErrorDialog('Ocurrió un error inténtelo más tarde');
         console.log('Error al crear la cooperativa', error);
       } finally {
-        hiddenLoader();
+        hideLoader();
       }
     }
   };
@@ -71,6 +74,10 @@ export const CreateCooperative = () => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
+          <XStack width={'100%'}>
+            <TogleSidebar />
+          </XStack>
+
           <H4 color={'$color'}>Nueva Cooperativa</H4>
 
           <FormInput

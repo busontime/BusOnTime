@@ -27,7 +27,9 @@ export const validateAuthError = (error, textDefault = 'Ocurrio un error!') => {
       break;
 
     case 'auth/requires-recent-login':
-      showErrorDialog('Para poder modificar el email debe volver a iniciar sesion.!');
+      showErrorDialog(
+        'Para poder modificar la credenciales de acceso debe volver a iniciar sesión.!'
+      );
       break;
 
     default:

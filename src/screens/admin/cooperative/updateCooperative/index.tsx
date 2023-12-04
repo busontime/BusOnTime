@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { H4, ScrollView } from 'tamagui';
+import { H4, ScrollView, XStack } from 'tamagui';
+
+import { useLoader } from '@/contexts/loader';
 
 import { cooperativeService } from '@/services/cooperative';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { FormInput } from '@/components/formInput';
 import { FormButtons } from '@/components/formButtons';
 
 import { showAlertDialog, showErrorDialog } from '@/utils/dialog';
 import { showSuccessToast } from '@/utils/toast';
-import { useLoader } from '@/contexts/loading';
 
 export const UpdateCooperative = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
+  const { showLoader, hideLoader } = useLoader();
   const route = useRoute();
   const cooperative = route.params;
 
@@ -39,7 +41,7 @@ export const UpdateCooperative = () => {
 
         console.log('Error al actualizar la cooperativa', error);
       } finally {
-        hiddenLoader();
+        hideLoader();
       }
     }
   };
@@ -79,6 +81,10 @@ export const UpdateCooperative = () => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
+          <XStack width={'100%'}>
+            <TogleSidebar />
+          </XStack>
+
           <H4 color={'$color'}>Actualizar Cooperativa</H4>
 
           <FormInput

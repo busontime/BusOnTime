@@ -18,9 +18,9 @@ export const validateCi = (ci) => {
 
 export const validatePassword = (password) => {
   const longitude = password.length >= 6;
-  const Upper = /[A-Z]/.test(password);
-  const Number = /[0-9]/.test(password);
-  const Special = /[$@#&!]/.test(password);
+  const upperCase = /[A-Z]/.test(password);
+  const number = /[0-9]/.test(password);
+  const symbol = /[$@#&!-_(){}[\]:;<>,.?~\\^+=*|]/.test(password);
 
-  return longitude && Upper && Number && Special;
+  return longitude && upperCase && number && symbol;
 };

@@ -6,50 +6,52 @@ import { Button, Stack, H2, ScrollView, SizableText, XStack, YStack, Label } fro
 import { Pen, LogIn } from 'lucide-react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import { useAuthContext } from '@/contexts/auth';
+import { useThemeContext } from '@/contexts/theme';
+import { useLoader } from '@/contexts/loader';
+
 import { userService } from '@/services/user';
 
 import { TogleTheme } from '@/components/togleTheme';
 import { Logo } from '@/components/logo';
 import { FormInput } from '@/components/formInput';
-
-import { useAuthContext } from '@/contexts/auth';
-import { useThemeContext } from '@/contexts/theme';
+import { FormButtons } from '@/components/formButtons';
 
 import { showAlertDialog, showErrorDialog, showSuccessDialog } from '@/utils/dialog';
 import { validateEmail } from '@/utils/validate';
+import { showSuccessToast } from '@/utils/toast';
 
 import { COLORS } from '@/constants/styles';
 import { ROLES_ID } from '@/constants/bd';
-import { useLoader } from '@/contexts/loading';
-
-const initForm = {
-  email: '',
-  password: '',
-};
+import { loginForm } from '@/constants/forms';
 
 export const LoginScreen = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
 
   const { isDark } = useThemeContext();
-  const { loginWithGoogle, login, resetPassword } = useAuthContext();
+  const { loginWithGoogle, login, sendPasswordResetEmail } = useAuthContext();
+  const { showLoader, hideLoader } = useLoader();
 
-  const [formValues, setFormValues] = useState(initForm);
-  const [formValue, setFormValue] = useState({});
+  const [formValues, setFormValues] = useState(loginForm);
   const [showForgotPassWordInput, setShowForgotPassWordInput] = useState(false);
 
   const handlerLogin = async () => {
     if (validateForm()) {
       showLoader();
+
       const email = formValues.email.trim().toLowerCase();
 
       try {
-        await login(email, formValues.password);
+        const result = await login(email, formValues.password);
+
+        if (result) {
+          showSuccessToast('Inicio de Sesión Exitoso!');
+        }
       } catch (error) {
         console.log('error', error);
-        showErrorDialog(error?.message ?? 'Ocurrio un problema!');
+        showErrorDialog(error?.message ?? 'Ocurrió un problema!');
       } finally {
-        hiddenLoader();
+        hideLoader();
       }
     }
   };
@@ -86,6 +88,7 @@ export const LoginScreen = () => {
 
   const loginGoogle = async () => {
     showLoader();
+
     try {
       const res = await loginWithGoogle();
 
@@ -105,13 +108,15 @@ export const LoginScreen = () => {
       }
     } catch (error) {
       console.log('error', error);
+      showErrorDialog(error?.message ?? 'Ocurrió un problema!');
     } finally {
-      hiddenLoader();
+      hideLoader();
     }
   };
 
   const validateEmailToReset = () => {
-    const email = formValue.email.trim().toLowerCase();
+    const email = formValues.email.trim().toLowerCase();
+
     if (email === '') {
       showAlertDialog('Debe escribir su email');
       return false;
@@ -129,18 +134,20 @@ export const LoginScreen = () => {
     if (validateEmailToReset()) {
       showLoader();
       try {
-        const email = formValue.email.trim().toLowerCase();
-        const data = await resetPassword(email);
-        if (data === true) {
-          showSuccessDialog('Correo enviado, por favor revisar su bandeja de entrada o spam');
-          setFormValue({});
-          setShowForgotPassWordInput(!showForgotPassWordInput);
-          return;
+        const email = formValues.email.trim().toLowerCase();
+
+        const data = await sendPasswordResetEmail(email);
+
+        if (data) {
+          showSuccessDialog(
+            'Correo electrónico enviado!, por favor revisar su bandeja de entrada o spam'
+          );
+          setShowForgotPassWordInput(false);
         }
       } catch (error) {
-        showAlertDialog('Error al enviar la contraseña a su correo');
+        showAlertDialog('Ocurrió un error al enviar el correo electrónico de cambio de contraseña');
       } finally {
-        hiddenLoader();
+        hideLoader();
       }
     }
   };
@@ -164,7 +171,7 @@ export const LoginScreen = () => {
             <TogleTheme />
           </Stack>
 
-          <H2 mt='$15'>Inicia Sesión</H2>
+          <H2 mt='$15'>{showForgotPassWordInput ? 'Cambia tu contraseña' : 'Inicia Sesión'}</H2>
 
           <Logo />
 
@@ -237,39 +244,29 @@ export const LoginScreen = () => {
           )}
 
           {showForgotPassWordInput && (
-            <YStack space='$3' mb='$3' alignItems='center'>
+            <YStack space='$2.5' alignItems='center'>
               <Label w={'$20'} textAlign='center'>
-                Escriba su correo electrónico para enviar un link, donde podrá cambiar su contraseña
+                Escriba su correo electrónico para poder enviar un link, donde podrá cambiar su
+                contraseña
               </Label>
+
               <FormInput
                 label='Correo electrónico:'
                 placeholder='Escribe tu correo electrónico'
                 type={'email-address'}
-                value={formValue.email}
+                value={formValues.email}
                 onChangeText={(text) => {
-                  setFormValue({ ...formValue, email: text });
+                  setFormValues({ ...formValues, email: text });
                 }}
               />
-              <XStack space='$4' justifyContent='center'>
-                <Button
-                  backgroundColor='$blue8'
-                  size='$4'
-                  w='$11'
-                  onPress={() => {
-                    sendResetPasswordEmail();
-                  }}>
-                  Restaurar
-                </Button>
-                <Button
-                  backgroundColor='$red8'
-                  size='$4'
-                  w='$11'
-                  onPress={() => {
-                    setShowForgotPassWordInput(false);
-                  }}>
-                  Cerrar
-                </Button>
-              </XStack>
+
+              <FormButtons
+                firstButtonAction={() => {
+                  setShowForgotPassWordInput(false);
+                }}
+                secondButtonText={'Enviar'}
+                secondButtonAction={sendResetPasswordEmail}
+              />
             </YStack>
           )}
         </ScrollView>

@@ -4,36 +4,39 @@ import { Button, Card, ScrollView, XStack, YStack, H5, Stack } from 'tamagui';
 
 import { Pencil, Trash2 } from 'lucide-react-native';
 
+import { useLoader } from '@/contexts/loader';
+
 import { lineService } from '@/services/line';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { HeaderList } from '@/components/admin/headerList';
 import { CardItem } from '@/components/admin/cardItem';
 import { ModalOptions } from '@/components/modalOptions';
 
 import { showSuccessToast } from '@/utils/toast';
-import { TogleSidebar } from '@/components/togleSidebar';
-import { useLoader } from '@/contexts/loading';
 
 export const LineList = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
+  const { showLoader, hideLoader } = useLoader();
 
   const [lines, setLines] = useState([]);
 
   const getLines = async () => {
     showLoader();
+
     try {
       const data = await lineService.getAll();
       setLines(data);
     } catch (error) {
       console.log('Error al recuperar todas las lineas', error);
     } finally {
-      hiddenLoader();
+      hideLoader();
     }
   };
 
   const deleteLine = async (id) => {
     showLoader();
+
     try {
       await lineService.deleteById(id);
       showSuccessToast('Linea Eliminada Exitosamente!');
@@ -41,7 +44,7 @@ export const LineList = () => {
       console.log(error);
     } finally {
       await getLines();
-      hiddenLoader();
+      hideLoader();
     }
   };
 
@@ -60,6 +63,7 @@ export const LineList = () => {
   return (
     <YStack f={1}>
       <TogleSidebar />
+
       <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3' pos='relative'>
         <HeaderList
           title='Lista de Lineas'

@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { ProfileScreen } from '@/screens/public/profile';
 import { EditProfileScreen } from '@/screens/public/editProfile';
-import { EditPassword } from '@/screens/public/editPassword';
+import { EditPasswordScreen } from '@/screens/public/editPassword';
 
 const Stack = createStackNavigator();
 
@@ -26,7 +26,7 @@ export const DriverProfileStack = (props) => {
       }}>
       <Stack.Screen name='profile' component={ProfileScreen} />
       <Stack.Screen name='edit-profile' component={EditProfileScreen} />
-      <Stack.Screen name='change-password' component={EditPassword} />
+      <Stack.Screen name='change-password' component={EditPasswordScreen} />
     </Stack.Navigator>
   );
 };
