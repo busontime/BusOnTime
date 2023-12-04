@@ -59,19 +59,16 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
   const updatePassword = async (password: string) => {
     try {
       await auth().currentUser.updatePassword(password);
-      console.log(password);
+      return true;
     } catch (error) {
-      validateAuthError(
-        error,
-        'debe cerrar session y iniciar session de nuevo para cambiar la contraseña'
-      );
+      return validateAuthError(error, 'No se pudo cambiar la contraseña.');
     }
   };
 
   const login = async (email: string, password: string) => {
     try {
       await auth().signInWithEmailAndPassword(email, password);
-
+      return true;
       // const data = await userService.getById(auth().currentUser.uid);
 
       // if (!data) {
@@ -79,7 +76,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
       //   showErrorDialog('Esta cuenta ha sido eliminada por el administrador!');
       // }
     } catch (error) {
-      validateAuthError(error, 'No puede iniciar Sesión.!');
+      return validateAuthError(error, 'No puede iniciar Sesión.!');
     }
   };
 
@@ -137,13 +134,12 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     setProfile(_profile);
   };
 
-  const resetPassword = async (email: string) => {
+  const sendPasswordResetEmail = async (email: string) => {
     try {
       await auth().sendPasswordResetEmail(email);
       return true;
     } catch (error) {
-      validateAuthError(error, 'Error al resetear la contrasña');
-      console.log(error, 'error al resetear la contrasña');
+      return validateAuthError(error, 'Error al enviar el email de cambio de contraseña');
     }
   };
 
@@ -163,7 +159,7 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     updateProfile,
     createDriver,
     deleteAccount,
-    resetPassword,
+    sendPasswordResetEmail,
     updatePassword,
   };
 

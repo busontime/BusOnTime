@@ -14,22 +14,12 @@ export const AdminHomeScreen = () => {
   return (
     <YStack f={1}>
       <TogleSidebar />
+
       <YStack bg={'$backgroundFocus'} f={1} jc='center' ai='center' space='$5'>
         <H3 ta='center' color={'$color'}>
           Bienvenido {profile?.person?.name}
         </H3>
 
-        <Button
-          w={'$15'}
-          size={'$5'}
-          icon={<Building2 size={40} />}
-          variant='outlined'
-          backgroundColor='$blue6'
-          onPress={() => {
-            navigation.navigate('cooperative-menu' as never);
-          }}>
-          Cooperativas
-        </Button>
         <Button
           w={'$15'}
           size={'$5'}

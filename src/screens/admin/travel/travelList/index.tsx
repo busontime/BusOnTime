@@ -4,44 +4,47 @@ import { ScrollView, Card, Stack, YStack, Button, H4, Text } from 'tamagui';
 
 import { Trash2 } from 'lucide-react-native';
 
+import { useLoader } from '@/contexts/loader';
+
 import { travelService } from '@/services/travel';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { CardItem } from '@/components/admin/cardItem';
 import { ModalOptions } from '@/components/modalOptions';
 
 import { showSuccessToast } from '@/utils/toast';
 import { convertFirestoreDateToString, getTravelStatus } from '@/utils/helpers';
-import { TogleSidebar } from '@/components/togleSidebar';
-import { useLoader } from '@/contexts/loading';
 
 export const TravelList = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
+  const { showLoader, hideLoader } = useLoader();
 
   const [travels, setTravels] = useState([]);
 
   const getTravels = async () => {
     showLoader();
+
     try {
       const data = await travelService.getAll();
       setTravels(data);
     } catch (error) {
       console.log('Error al recuperar todos los recorridos', error);
     } finally {
-      hiddenLoader();
+      hideLoader();
     }
   };
 
   const deleteTravel = async (id: string) => {
     showLoader();
+
     try {
       await travelService.deleteById(id);
       showSuccessToast('Recorrido Eliminado Exitosamente!');
     } catch (error) {
       console.log(error);
     } finally {
+      hideLoader();
       await getTravels();
-      hiddenLoader();
     }
   };
 

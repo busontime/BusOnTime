@@ -4,25 +4,27 @@ import { Button, Card, ScrollView, XStack, YStack } from 'tamagui';
 
 import { Pencil, Trash2 } from 'lucide-react-native';
 
+import { useLoader } from '@/contexts/loader';
+
 import { cooperativeService } from '@/services/cooperative';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { HeaderList } from '@/components/admin/headerList';
 import { CardItem } from '@/components/admin/cardItem';
 import { ModalOptions } from '@/components/modalOptions';
 
 import { showSuccessToast } from '@/utils/toast';
 import { convertFirestoreDateToDate, convertFirestoreDateToString } from '@/utils/helpers';
-import { TogleSidebar } from '@/components/togleSidebar';
-import { useLoader } from '@/contexts/loading';
 
 export const CooperativeList = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
+  const { showLoader, hideLoader } = useLoader();
 
   const [cooperatives, setCooperatives] = useState([]);
 
   const getCooperatives = async () => {
     showLoader();
+
     try {
       const data = await cooperativeService.getAll();
 
@@ -36,12 +38,13 @@ export const CooperativeList = () => {
     } catch (error) {
       console.log('Error al recuperar todas las cooperativas', error);
     } finally {
-      hiddenLoader();
+      hideLoader();
     }
   };
 
   const deleteCooperative = async (id: string) => {
     showLoader();
+
     try {
       await cooperativeService.deleteById(id);
       showSuccessToast('Cooperativa Eliminada Exitosamente!');
@@ -49,7 +52,7 @@ export const CooperativeList = () => {
       console.log(error);
     } finally {
       await getCooperatives();
-      hiddenLoader();
+      hideLoader();
     }
   };
 
@@ -68,6 +71,7 @@ export const CooperativeList = () => {
   return (
     <YStack f={1}>
       <TogleSidebar />
+
       <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3' pos='relative'>
         <HeaderList
           title='Lista de Cooperativas'

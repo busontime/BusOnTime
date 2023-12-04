@@ -2,10 +2,10 @@ import React from 'react';
 import { Button, YStack, H3, Text } from 'tamagui';
 import { useNavigation } from '@react-navigation/native';
 
-import { Logo } from '@/components/logo';
-
 import { BusIcon } from 'lucide-react-native';
+
 import { TogleSidebar } from '@/components/togleSidebar';
+import { Logo } from '@/components/logo';
 
 export const DriverHomeScreen = () => {
   const navigation = useNavigation();
@@ -13,6 +13,7 @@ export const DriverHomeScreen = () => {
   return (
     <YStack f={1}>
       <TogleSidebar />
+
       <YStack bg={'$backgroundFocus'} f={1} jc='center' ai='center' space='$6'>
         <Logo />
 

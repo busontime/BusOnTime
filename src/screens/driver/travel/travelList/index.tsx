@@ -3,20 +3,19 @@ import { useNavigation } from '@react-navigation/native';
 import { ScrollView, Card, YStack } from 'tamagui';
 
 import { useAuthContext } from '@/contexts/auth';
+import { useLoader } from '@/contexts/loader';
 
 import { travelService } from '@/services/travel';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { HeaderList } from '@/components/admin/headerList';
 import { CardItem } from '@/components/admin/cardItem';
 
-import { TogleSidebar } from '@/components/togleSidebar';
 import { convertFirestoreDateToString, getTravelStatus } from '@/utils/helpers';
-import { useLoader } from '@/contexts/loading';
 
 export const TravelList = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
-
+  const { showLoader, hideLoader } = useLoader();
   const { profile } = useAuthContext();
   const { user } = profile;
 
@@ -24,6 +23,7 @@ export const TravelList = () => {
 
   const getTravels = async () => {
     showLoader();
+
     try {
       const data = await travelService.getAllByDriverId(user.uid);
 
@@ -31,7 +31,7 @@ export const TravelList = () => {
     } catch (error) {
       console.log('Error al recuperar todos los recorridos', error);
     } finally {
-      hiddenLoader();
+      hideLoader();
     }
   };
 
@@ -50,6 +50,7 @@ export const TravelList = () => {
   return (
     <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3' pos='relative'>
       <TogleSidebar />
+
       <HeaderList
         title='Historial de Recorridos'
         buttonText='Atrás'

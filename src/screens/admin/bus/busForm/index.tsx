@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
-import { ScrollView, H4 } from 'tamagui';
+import { ScrollView, H4, XStack } from 'tamagui';
 import { useNavigation, useRoute } from '@react-navigation/native';
+
+import { useLoader } from '@/contexts/loader';
 
 import { busService } from '@/services/bus';
 import { cooperativeService } from '@/services/cooperative';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { FormInput } from '@/components/formInput';
 import { FormSelect } from '@/components/formSelect';
 import { FormButtons } from '@/components/formButtons';
@@ -14,11 +17,10 @@ import { showAlertDialog, showErrorDialog, showSuccessDialog } from '@/utils/dia
 import { showSuccessToast } from '@/utils/toast';
 
 import { initBusForm } from '@/constants/forms';
-import { useLoader } from '@/contexts/loading';
 
 export const BusForm = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
+  const { showLoader, hideLoader } = useLoader();
   const route = useRoute();
   const bus = route.params;
 
@@ -28,6 +30,7 @@ export const BusForm = () => {
   const handlerService = async () => {
     if (validateForm()) {
       showLoader();
+
       try {
         const data = {
           name: formValues.name,
@@ -45,7 +48,7 @@ export const BusForm = () => {
         showErrorDialog('ocurrió un error inténtelo más tarde');
         console.log(error, 'error en el handler service');
       } finally {
-        hiddenLoader();
+        hideLoader();
       }
     }
   };
@@ -74,11 +77,15 @@ export const BusForm = () => {
   };
 
   const getCooperatives = async () => {
+    showLoader();
+
     try {
       const data = await cooperativeService.getAll();
       setCooperatives(data);
     } catch (error) {
       console.log('Error al recuperar todas las cooperativas', error);
+    } finally {
+      hideLoader();
     }
   };
 
@@ -110,6 +117,10 @@ export const BusForm = () => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
+          <XStack width={'100%'}>
+            <TogleSidebar />
+          </XStack>
+
           <H4 color={'$color'}>{bus ? 'Actualizar Bus' : 'Nuevo Bus'}</H4>
 
           <FormInput

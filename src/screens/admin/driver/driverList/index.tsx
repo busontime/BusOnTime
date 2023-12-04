@@ -4,26 +4,28 @@ import { useNavigation } from '@react-navigation/native';
 
 import { Pencil, Trash2 } from 'lucide-react-native';
 
+import { useLoader } from '@/contexts/loader';
+
 import { cooperativeService } from '@/services/cooperative';
 import { userService } from '@/services/user';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { HeaderList } from '@/components/admin/headerList';
 import { CardItem } from '@/components/admin/cardItem';
 import { ModalOptions } from '@/components/modalOptions';
 
 import { showSuccessToast } from '@/utils/toast';
 import { convertFirestoreDateToDate, convertFirestoreDateToString } from '@/utils/helpers';
-import { TogleSidebar } from '@/components/togleSidebar';
-import { useLoader } from '@/contexts/loading';
 
 export const DriverList = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
+  const { showLoader, hideLoader } = useLoader();
 
   const [drivers, setDrivers] = useState([]);
 
   const getDrivers = async () => {
     showLoader();
+
     try {
       const cooperatives = await cooperativeService.getAll();
       const data = await userService.getAllDrivers();
@@ -45,12 +47,13 @@ export const DriverList = () => {
     } catch (error) {
       console.log('Error al recuperar todos los conductores', error);
     } finally {
-      hiddenLoader();
+      hideLoader();
     }
   };
 
   const deleteDriver = async (id: string) => {
     showLoader();
+
     try {
       await userService.deleteById(id);
       showSuccessToast('Conductor Eliminado Exitosamente!');
@@ -58,7 +61,7 @@ export const DriverList = () => {
       console.log(error);
     } finally {
       await getDrivers();
-      hiddenLoader();
+      hideLoader();
     }
   };
 
@@ -77,6 +80,7 @@ export const DriverList = () => {
   return (
     <YStack f={1}>
       <TogleSidebar />
+
       <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3' pos='relative'>
         <HeaderList
           title='Lista de Conductores'

@@ -1,3 +1,14 @@
+export const registerForm = {
+  email: '',
+  password: '',
+  confirmPassword: '',
+};
+
+export const loginForm = {
+  email: '',
+  password: '',
+};
+
 export const initCooperativeForm = {
   name: '',
   date_foundation: new Date(),

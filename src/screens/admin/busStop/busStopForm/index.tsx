@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
-import { H4, H5, ScrollView } from 'tamagui';
+import { H4, H5, ScrollView, XStack } from 'tamagui';
 import { useNavigation, useRoute } from '@react-navigation/native';
+
+import { useLoader } from '@/contexts/loader';
 
 import { busStopService } from '@/services/busStop';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { FormInput } from '@/components/formInput';
 import { PickLocation } from '@/components/pickLocation';
 import { FormButtons } from '@/components/formButtons';
@@ -13,11 +16,10 @@ import { showAlertDialog, showErrorDialog, showSuccessDialog } from '@/utils/dia
 import { showSuccessToast } from '@/utils/toast';
 
 import { initBusStopForm } from '@/constants/forms';
-import { useLoader } from '@/contexts/loading';
 
 export const BusStopForm = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
+  const { showLoader, hideLoader } = useLoader();
   const route = useRoute();
   const busStop = route.params;
 
@@ -26,6 +28,7 @@ export const BusStopForm = () => {
   const handlerService = async () => {
     if (validateForm()) {
       showLoader();
+
       try {
         const data = {
           name: formValues.name,
@@ -48,7 +51,7 @@ export const BusStopForm = () => {
         showErrorDialog('ocurrió un error inténtelo más tarde');
         console.log(error, 'error en el handler service');
       } finally {
-        hiddenLoader();
+        hideLoader();
       }
     }
   };
@@ -95,6 +98,10 @@ export const BusStopForm = () => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
+          <XStack width={'100%'}>
+            <TogleSidebar />
+          </XStack>
+
           <H4 color={'$color'}>{busStop ? 'Actualizar Parada' : 'Nueva Parada'} </H4>
 
           <FormInput

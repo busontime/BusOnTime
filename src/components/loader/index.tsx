@@ -1,16 +1,10 @@
 import React from 'react';
 import LottieView from 'lottie-react-native';
 import { StyleSheet } from 'react-native';
+import LoaderJson from '@/assets/json/loader.json';
 
 export const Loader = () => {
-  return (
-    <LottieView
-      autoPlay
-      loop
-      style={styles.container}
-      source={require('@/assets/loader/Animation - 1701313780821.json')}
-    />
-  );
+  return <LottieView autoPlay loop style={styles.container} source={LoaderJson} />;
 };
 
 const styles = StyleSheet.create({

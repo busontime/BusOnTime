@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { ScrollView, H4, H5 } from 'tamagui';
+import { ScrollView, H4, H5, XStack } from 'tamagui';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { BusFront } from 'lucide-react-native';
 
 import { useThemeContext } from '@/contexts/theme';
+import { useLoader } from '@/contexts/loader';
 
 import { lineService } from '@/services/line';
 import { busStopService } from '@/services/busStop';
 
+import { TogleSidebar } from '@/components/togleSidebar';
 import { FormInput } from '@/components/formInput';
 import { FormSelect } from '@/components/formSelect';
 import { FormGroup } from '@/components/formGroup';
@@ -20,12 +22,10 @@ import { showSuccessToast } from '@/utils/toast';
 
 import { initLineForm } from '@/constants/forms';
 import { COLORS } from '@/constants/styles';
-import { useLoader } from '@/contexts/loading';
 
 export const LineForm = () => {
   const navigation = useNavigation();
-  const { showLoader, hiddenLoader } = useLoader();
-
+  const { showLoader, hideLoader } = useLoader();
   const route = useRoute();
   const line = route.params;
 
@@ -37,6 +37,7 @@ export const LineForm = () => {
   const handlerService = async () => {
     if (validateForm()) {
       showLoader();
+
       try {
         const data = {
           name: formValues.name,
@@ -57,7 +58,7 @@ export const LineForm = () => {
         showErrorDialog('ocurrió un error inténtelo más tarde');
         console.log(error, 'error en el handler service');
       } finally {
-        hiddenLoader();
+        hideLoader();
       }
     }
   };
@@ -111,11 +112,15 @@ export const LineForm = () => {
   };
 
   const getBusStops = async () => {
+    showLoader();
+
     try {
       const data = await busStopService.getAll();
       setBusStops(data);
     } catch (error) {
       console.log('Error al recuperar todas las paradas', error);
+    } finally {
+      hideLoader();
     }
   };
 
@@ -147,6 +152,10 @@ export const LineForm = () => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
+          <XStack width={'100%'}>
+            <TogleSidebar />
+          </XStack>
+
           <H4 color={'$color'}>{line ? 'Actualizar Linea' : 'Nueva Linea'}</H4>
 
           <FormInput
