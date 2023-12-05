@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView, Card, YStack } from 'tamagui';
+import { ScrollView, Card, YStack, Button, Text } from 'tamagui';
+
+import { MapPin } from 'lucide-react-native';
 
 import { useAuthContext } from '@/contexts/auth';
 import { useLoader } from '@/contexts/loader';
@@ -95,6 +97,18 @@ export const TravelList = () => {
             {item.cancellation_message && (
               <CardItem label='Motivo de cancelación' value={item?.cancellation_message} />
             )}
+
+            <Button
+              mt='$2'
+              size={'$3'}
+              icon={<MapPin />}
+              variant='outlined'
+              bg={'$green8'}
+              onPress={() => {
+                navigation.navigate('travel-route-map', item);
+              }}>
+              <Text color={'$color'}>Ver Recorrido</Text>
+            </Button>
           </Card>
         ))}
       </ScrollView>

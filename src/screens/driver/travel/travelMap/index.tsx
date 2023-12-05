@@ -1,22 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { YStack, Stack } from 'tamagui';
-import { useNavigation } from '@react-navigation/native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import MapViewDirections from 'react-native-maps-directions';
-import Config from 'react-native-config';
-
-import { ChevronLeftCircle } from 'lucide-react-native';
+import { YStack } from 'tamagui';
+import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 
 import { useMapContext } from '@/contexts/map';
 import { useTravelContext } from '@/contexts/travel';
 
-import BusStopImg from '@/assets/images/bus_stop.png';
-import BusImg from '@/assets/images/bus.png';
+import { TogleBack } from '@/components/togleBack';
 
 import { COLORS, MAP_STYLES } from '@/constants/styles';
 
 export const TravelMap = () => {
-  const navigation = useNavigation();
   const { lines, busStops, currentLocation } = useMapContext();
   const { currentTravel } = useTravelContext();
 
@@ -27,10 +20,12 @@ export const TravelMap = () => {
     if (_line) {
       setLine(_line);
     }
-  }, []);
+  }, [lines, currentTravel]);
 
   return (
     <YStack f={1}>
+      <TogleBack disableTheme />
+
       <MapView
         provider={PROVIDER_GOOGLE}
         loadingEnabled
@@ -43,35 +38,28 @@ export const TravelMap = () => {
           latitudeDelta: 0.001,
           longitudeDelta: 0.001,
         }}>
-        <Marker image={BusImg} coordinate={currentLocation} title={'Mi Ubicación'} />
+        {currentLocation && (
+          <Marker pinColor={COLORS.secondary} coordinate={currentLocation} title={'Mi Ubicación'} />
+        )}
 
-        {line && (
-          <MapViewDirections
-            origin={line?.origin?.coordinate}
-            destination={line?.destination?.coordinate}
-            waypoints={line?.route}
-            strokeColor={line.lineColor}
-            strokeWidth={1}
-            apikey={Config.GOOGLE_MAPS_API_KEY}
-            mode={'DRIVING'}
+        {line?.route && (
+          <Polyline
+            coordinates={line.route}
+            strokeWidth={5}
+            strokeColor={COLORS.secondary}
+            geodesic={false}
           />
         )}
 
         {busStops.map((item, index) => (
-          <Marker key={index} coordinate={item.coordinate} title={item.name} image={BusStopImg} />
+          <Marker
+            key={index}
+            coordinate={item.coordinate}
+            title={item.name}
+            pinColor={COLORS.green}
+          />
         ))}
       </MapView>
-
-      <Stack
-        pos='absolute'
-        top={'$2.5'}
-        left={'$2.5'}
-        bg={'$colorTransparent'}
-        onPress={() => {
-          navigation.goBack();
-        }}>
-        <ChevronLeftCircle color={COLORS.light} size={40} />
-      </Stack>
     </YStack>
   );
 };
