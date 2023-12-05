@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView, Card, Stack, YStack, Button, H4, Text } from 'tamagui';
+import { ScrollView, Card, XStack, YStack, Button, H4, Text } from 'tamagui';
 
-import { Trash2 } from 'lucide-react-native';
+import { Trash2, MapPin } from 'lucide-react-native';
 
 import { useLoader } from '@/contexts/loader';
 
@@ -63,6 +63,7 @@ export const TravelList = () => {
   return (
     <YStack f={1} bg={'$backgroundFocus'} padding='$3' space='$3'>
       <TogleSidebar />
+
       <H4 color={'$color'} textAlign='center'>
         Lista de Recorridos
       </H4>
@@ -109,17 +110,29 @@ export const TravelList = () => {
               <CardItem label='Motivo de cancelación' value={item?.cancellation_message} />
             )}
 
-            <Stack mt='$2'>
+            <XStack mt='$2' space='$3' jc='center'>
               <ModalOptions
-                title={`Está seguro que desea eliminar el recorrido?`}
+                title={`Está seguro que desea eliminar este recorrido?`}
                 secondButtonAction={async () => {
                   await deleteTravel(item?.id);
                 }}>
-                <Button size={'$3'} icon={<Trash2 />} variant='outlined' bg={'$red8'}>
-                  <Text color={'$color'}>Eliminar Recorrido</Text>
+                <Button size={'$3'} w='$10' icon={<Trash2 />} variant='outlined' bg={'$red8'}>
+                  <Text color={'$color'}>Eliminar</Text>
                 </Button>
               </ModalOptions>
-            </Stack>
+
+              <Button
+                size={'$3'}
+                w='$10'
+                icon={<MapPin />}
+                variant='outlined'
+                bg={'$green8'}
+                onPress={() => {
+                  navigation.navigate('travel-map', item);
+                }}>
+                <Text color={'$color'}>Ver</Text>
+              </Button>
+            </XStack>
           </Card>
         ))}
       </ScrollView>
