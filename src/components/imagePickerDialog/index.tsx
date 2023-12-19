@@ -15,6 +15,8 @@ export const ImagePickerDialog = ({ picture = null, changePicture = (value) => {
   const [position, setPosition] = useState(0);
 
   const openCameraOrGallery = async (isCamera = false) => {
+    setOpen(false);
+
     try {
       const result = await selectPicture(isCamera);
       changePicture(result);
