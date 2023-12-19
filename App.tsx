@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
@@ -15,20 +15,9 @@ LogBox.ignoreLogs(['']);
 // LogBox.ignoreAllLogs();
 
 export const App = (props) => {
-  async function splash() {
-    try {
-      await new Promise((resolve) => {
-        setTimeout(resolve, 2000);
-      });
-    } catch (e) {
-      console.warn(e);
-    } finally {
-      SplashScreen.hide();
-    }
-  }
-
-  splash();
-
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
   return (
     <TamaguiProvider config={config}>
       <NavigationContainer {...props}>
