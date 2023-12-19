@@ -12,7 +12,6 @@ import { showAlertDialog } from '@/utils/dialog';
 export const ImagePickerDialog = ({ picture = null, changePicture = (value) => {} }) => {
   const { isDark } = useThemeContext();
   const [open, setOpen] = useState(false);
-  const [modal, setModal] = useState(true);
   const [position, setPosition] = useState(0);
 
   const openCameraOrGallery = async (isCamera = false) => {
@@ -31,13 +30,7 @@ export const ImagePickerDialog = ({ picture = null, changePicture = (value) => {
         onPress={() => {
           setOpen(true);
         }}>
-        <YStack
-          position='relative'
-          width={100}
-          height={100}
-          onPress={() => {
-            setModal((x) => !x);
-          }}>
+        <YStack position='relative' width={100} height={100}>
           {picture ? (
             <Image
               source={{ uri: picture }}
@@ -63,6 +56,7 @@ export const ImagePickerDialog = ({ picture = null, changePicture = (value) => {
           </XStack>
         </YStack>
       </TouchableWithoutFeedback>
+
       <Sheet
         forceRemoveScrollEnabled={open}
         onOpenChange={setOpen}
@@ -72,53 +66,51 @@ export const ImagePickerDialog = ({ picture = null, changePicture = (value) => {
         open={open}
         animation={'medium'}
         onPositionChange={setPosition}
-        modal={modal}>
+        modal={open}>
         <Sheet.Overlay animation={'lazy'} enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
+
         <Sheet.Handle />
-        <Sheet.Frame padding='$4' space='$5'>
+
+        <Sheet.Frame padding='$4' space='$3'>
           <Text ta='left' color={isDark ? COLORS.light : COLORS.dark} fontSize={20}>
             Foto de perfil
           </Text>
 
-          <YStack space='$3' flex={1} justifyContent='flex-end'>
-            <XStack jc='space-evenly' space='$4'>
-              <YStack space='$2' alignItems='center'>
-                <Button
-                  borderWidth={0.5}
-                  borderColor={'black'}
-                  onPress={() => {
-                    openCameraOrGallery(false);
-                  }}
-                  icon={<Img color={COLORS.secondary} size={30} />}
-                  height={50}
-                  width={50}
-                  borderRadius={1000}
-                  color={'red'}
-                />
-                <Text color={isDark ? COLORS.light : COLORS.dark} fontSize={14}>
-                  Galeria
-                </Text>
-              </YStack>
+          <XStack jc='space-evenly'>
+            <YStack space='$2' alignItems='center'>
+              <Button
+                borderWidth={'$0.5'}
+                borderColor={COLORS.secondary}
+                onPress={() => {
+                  openCameraOrGallery(true);
+                }}
+                icon={<Camera color={COLORS.secondary} size={30} />}
+                height={50}
+                width={50}
+                borderRadius={50}
+              />
+              <Text color={isDark ? COLORS.light : COLORS.dark} fontSize={14}>
+                Cámara
+              </Text>
+            </YStack>
 
-              <YStack space='$2' alignItems='center'>
-                <Button
-                  borderWidth={0.5}
-                  borderColor={'black'}
-                  onPress={() => {
-                    openCameraOrGallery(true);
-                  }}
-                  icon={<Camera color={COLORS.secondary} size={30} />}
-                  height={50}
-                  width={50}
-                  borderRadius={1000}
-                  color={'red'}
-                />
-                <Text color={isDark ? COLORS.light : COLORS.dark} fontSize={14}>
-                  Camara
-                </Text>
-              </YStack>
-            </XStack>
-          </YStack>
+            <YStack space='$2' alignItems='center'>
+              <Button
+                borderWidth={'$0.5'}
+                borderColor={COLORS.secondary}
+                onPress={() => {
+                  openCameraOrGallery(false);
+                }}
+                icon={<Img color={COLORS.secondary} size={30} />}
+                height={50}
+                width={50}
+                borderRadius={50}
+              />
+              <Text color={isDark ? COLORS.light : COLORS.dark} fontSize={14}>
+                Galería
+              </Text>
+            </YStack>
+          </XStack>
         </Sheet.Frame>
       </Sheet>
     </>
