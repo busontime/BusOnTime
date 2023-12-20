@@ -83,4 +83,19 @@ export const travelService = {
       console.log('Error al recuperar todos los recorridos del conductor ' + id, error);
     }
   },
+
+  getAllInRealTime: (getData = (val) => {}) => {
+    try {
+      bdService.getAllInRealTime(COLLECTION_NAME, (data) => {
+        const documents = data._docs.map((doc) => {
+          const documentData = doc.data();
+          return { id: doc.id, ...documentData };
+        });
+
+        getData(documents.filter((item) => item.state === 'active'));
+      });
+    } catch (error) {
+      console.log('Error al recuperar todos los recorridos en tiempo real', error);
+    }
+  },
 };

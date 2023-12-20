@@ -51,4 +51,21 @@ export const busService = {
       console.log('Error al recuperar todos los buses', error);
     }
   },
+
+  getAllInRealTime: (getData = (val) => {}) => {
+    try {
+      bdService.getAllInRealTime(COLLECTION_NAME, (data) => {
+        const documents = data._docs
+          .map((doc) => {
+            const documentData = doc.data();
+            return { id: doc.id, ...documentData };
+          })
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        getData(documents);
+      });
+    } catch (error) {
+      console.log('Error al recuperar todos los buses en tiempo real', error);
+    }
+  },
 };

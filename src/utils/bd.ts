@@ -58,4 +58,12 @@ export const bdService = {
       .then((res) => res)
       .catch((err) => err);
   },
+
+  getAllInRealTime: (collection, getData = (val) => {}) => {
+    firestore()
+      .collection(collection)
+      .onSnapshot(getData, (err) => {
+        console.log('Erro al obtener todos los datos en tiempo real de: ' + collection, err);
+      });
+  },
 };
