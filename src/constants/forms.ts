@@ -38,6 +38,7 @@ export const initLineForm = {
   origin: null,
   destination: null,
   stops: [],
+  route: [],
 };
 
 export const initBusStopForm = {
@@ -56,6 +57,7 @@ export const initProfile = {
 
 export const initTravelForm = {
   line: null,
+  cooperative: null,
   bus: null,
   cancellation_message: '',
 };

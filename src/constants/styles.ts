@@ -5,11 +5,14 @@ export const COLORS = {
   light: '#fff',
   red: '#ff0a0a',
   green: '#0eff0a',
+  purple: '#5800b0',
 };
 
 export const MAP_STYLES = [
+  { featureType: 'all', elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+  { featureType: 'all', elementType: 'labels.text', stylers: [{ visibility: 'on' }] },
+  { featureType: 'all', elementType: 'labels.text.stroke', stylers: [{ visibility: 'off' }] },
   { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
   { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
   {
     featureType: 'administrative.locality',
