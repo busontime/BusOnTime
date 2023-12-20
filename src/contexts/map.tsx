@@ -20,6 +20,7 @@ export const MapProvider: React.FC<ChildrenProps> = ({ children }) => {
   const { profile } = useAuthContext();
 
   const [lines, setLines] = useState([]);
+  const [lineSelected, setLineSelected] = useState(null);
   const [busStops, setBusStops] = useState([]);
   const [busStopSelected, setBusStopSelected] = useState(null);
   const [currentLocation, setCurrentLocation] = useState({
@@ -89,6 +90,10 @@ export const MapProvider: React.FC<ChildrenProps> = ({ children }) => {
     setBusStopSelected(busStop);
   };
 
+  const changeLine = (line) => {
+    setLineSelected(line);
+  };
+
   const orderBusStops = () => {
     if (currentLocation) {
       busStops.sort((a, b) => {
@@ -117,6 +122,8 @@ export const MapProvider: React.FC<ChildrenProps> = ({ children }) => {
 
   const data = {
     lines,
+    lineSelected,
+    changeLine,
     busStops,
     busStopSelected,
     changeBusStop,
