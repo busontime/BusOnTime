@@ -86,6 +86,8 @@ export const TravelList = () => {
 
             <CardItem label='Linea:' value={item?.line?.name} />
 
+            <CardItem label='Cooperativa:' value={item?.cooperative?.name} />
+
             <CardItem label='Bus:' value={item?.bus?.name} />
 
             <CardItem

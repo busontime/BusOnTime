@@ -11,6 +11,7 @@ import { useMapContext } from '@/contexts/map';
 import { useLoader } from '@/contexts/loader';
 
 import { lineService } from '@/services/line';
+import { cooperativeService } from '@/services/cooperative';
 import { busService } from '@/services/bus';
 import { travelService } from '@/services/travel';
 
@@ -41,7 +42,9 @@ export const TravelForm = () => {
 
   const [formValues, setFormValues] = useState(initTravelForm);
   const [lines, setLines] = useState([]);
+  const [cooperatives, setCooperatives] = useState([]);
   const [buses, setBuses] = useState([]);
+  const [busesCooperative, setBusesCooperative] = useState([]);
   const [showCancel, setShowCancel] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
 
@@ -53,6 +56,7 @@ export const TravelForm = () => {
         const data = {
           driver: { ...person, id: user.uid },
           line: formValues.line,
+          cooperative: formValues.cooperative,
           bus: formValues.bus,
           date: new Date(),
           startTime: moment(new Date()).format('HH:mm:ss A'),
@@ -80,7 +84,7 @@ export const TravelForm = () => {
               latitude: info.coords.latitude,
               longitude: info.coords.longitude,
             };
-
+            console.log('location', location);
             console.log('route.', route.length);
             route.push(location);
 
@@ -162,6 +166,7 @@ export const TravelForm = () => {
         const data = {
           line: formValues.line,
           bus: formValues.bus,
+          cooperative: formValues.cooperative,
         };
 
         await travelService.updateById(currentTravel?.id, data);
@@ -198,6 +203,11 @@ export const TravelForm = () => {
       return false;
     }
 
+    if (!formValues.cooperative) {
+      showAlertDialog('Debe seleccionar una cooperativa');
+      return false;
+    }
+
     if (!formValues.bus) {
       showAlertDialog('Debe seleccionar un bus');
       return false;
@@ -215,10 +225,19 @@ export const TravelForm = () => {
     return true;
   };
 
-  const changelineSelect = (id) => {
+  const changeLineSelect = (id) => {
     const line = lines.find((item) => item.id === id);
 
     setFormValues({ ...formValues, line: line || null });
+  };
+
+  const changeCooperativeSelect = (id) => {
+    const cooperative = cooperatives.find((item) => item.id === id);
+
+    setFormValues({ ...formValues, cooperative: cooperative || null, bus: null });
+
+    const _buses = buses.filter((item) => item.cooperativeId === id);
+    setBusesCooperative(_buses);
   };
 
   const changeBusSelect = (id) => {
@@ -240,10 +259,22 @@ export const TravelForm = () => {
     }
   };
 
+  const getCooperatives = async () => {
+    try {
+      const data = await cooperativeService.getAll();
+      setCooperatives(data);
+    } catch (error) {
+      console.log('Error al recuperar todas las cooperativas', error);
+    }
+  };
+
   const getBuses = async () => {
     try {
       const data = await busService.getAll();
-      setBuses(data);
+
+      const _data = data.map((item) => ({ ...item, name: item.name + ' - ' + item.license_plate }));
+
+      setBuses(_data);
     } catch (error) {
       console.log('Error al recuperar todos los buses', error);
     }
@@ -251,6 +282,7 @@ export const TravelForm = () => {
 
   useEffect(() => {
     getLines();
+    getCooperatives();
     getBuses();
   }, []);
 
@@ -286,6 +318,8 @@ export const TravelForm = () => {
               size={'$3.5'}
               w={'$20'}>
               <CardItem label='Linea:' value={currentTravel?.line?.name} />
+
+              <CardItem label='Cooperativa:' value={currentTravel?.cooperative?.name} />
 
               <CardItem label='Bus:' value={currentTravel?.bus?.name} />
 
@@ -323,14 +357,27 @@ export const TravelForm = () => {
                   placeholder='Selecciona una linea'
                   value={formValues?.line?.id}
                   options={lines}
-                  onValueChange={changelineSelect}
+                  onValueChange={changeLineSelect}
+                />
+
+                <FormSelect
+                  label='Cooperativa:'
+                  placeholder='Selecciona una cooperativa'
+                  value={formValues?.cooperative?.id}
+                  options={cooperatives}
+                  onValueChange={changeCooperativeSelect}
                 />
 
                 <FormSelect
                   label='Bus:'
                   placeholder='Selecciona un bus'
+                  emptyListMessage={
+                    formValues?.cooperative
+                      ? 'Cooperativa seleccionada sin buses disponibles, selecione otra cooperativa'
+                      : 'Debe seleccionar una Cooperativa primero para mostrar los buses disponibles'
+                  }
                   value={formValues?.bus?.id}
-                  options={buses}
+                  options={busesCooperative}
                   onValueChange={changeBusSelect}
                 />
 
@@ -356,6 +403,7 @@ export const TravelForm = () => {
                     setFormValues({
                       ...formValues,
                       line: currentTravel.line,
+                      cooperative: currentTravel.cooperative,
                       bus: currentTravel.bus,
                     });
                     setShowEdit(true);
@@ -372,7 +420,7 @@ export const TravelForm = () => {
                   }}
                   secondButtonText='No'
                   secondButtonAction={finishTravel}>
-                  <Button w={'$15'} size='$3' bg='$purple8'>
+                  <Button w={'$15'} size='$3' bg='$blue6'>
                     <SizableText color={'$color'} fontWeight={'bold'}>
                       Finalizar Recorrido
                     </SizableText>
@@ -382,7 +430,7 @@ export const TravelForm = () => {
                 <Button
                   w={'$15'}
                   size='$3'
-                  bg='$orange8'
+                  bg='$blue8'
                   onPress={() => {
                     navigation.navigate('travel-map' as never);
                   }}>
@@ -404,14 +452,27 @@ export const TravelForm = () => {
               placeholder='Selecciona una linea'
               value={formValues?.line?.id}
               options={lines}
-              onValueChange={changelineSelect}
+              onValueChange={changeLineSelect}
+            />
+
+            <FormSelect
+              label='Cooperativa:'
+              placeholder='Selecciona una cooperativa'
+              value={formValues?.cooperative?.id}
+              options={cooperatives}
+              onValueChange={changeCooperativeSelect}
             />
 
             <FormSelect
               label='Bus:'
               placeholder='Selecciona un bus'
+              emptyListMessage={
+                formValues?.cooperative
+                  ? 'Cooperativa seleccionada sin buses disponibles, selecione otra cooperativa'
+                  : 'Debe seleccionar una Cooperativa primero para mostrar los buses disponibles'
+              }
               value={formValues?.bus?.id}
-              options={buses}
+              options={busesCooperative}
               onValueChange={changeBusSelect}
             />
 
