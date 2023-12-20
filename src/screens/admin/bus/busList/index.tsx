@@ -26,18 +26,19 @@ export const BusList = () => {
     showLoader();
 
     try {
-      const cooperatives = await cooperativeService.getAll();
-      const data = await busService.getAll();
+      busService.getAllInRealTime(async (data) => {
+        const cooperatives = await cooperativeService.getAll();
 
-      const _data = data.map((item) => {
-        const cooperative = cooperatives.find(
-          (cooperative) => cooperative.id === item.cooperativeId
-        );
+        const _data = data.map((item) => {
+          const cooperative = cooperatives.find(
+            (cooperative) => cooperative.id === item.cooperativeId
+          );
 
-        return { ...item, cooperative: cooperative ? cooperative.name : 'N/A' };
+          return { ...item, cooperative: cooperative ? cooperative.name : 'N/A' };
+        });
+
+        setBuses(_data);
       });
-
-      setBuses(_data);
     } catch (error) {
       console.log('Error al recuperar todos los buses', error);
     } finally {
