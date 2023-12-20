@@ -1,24 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 
 import { YStack, XStack, Stack } from 'tamagui';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-
 import Config from 'react-native-config';
 
 import { CarFront, Footprints } from 'lucide-react-native';
 
 import { useMapContext } from '@/contexts/map';
 
-import BusStopImg from '@/assets/images/bus_stop.png';
+import { travelService } from '@/services/travel';
 
 import { COLORS, MAP_STYLES } from '@/constants/styles';
 
 export const Map = () => {
-  const { lines, busStops, busStopSelected, setCurrentLocation, currentLocation } = useMapContext();
+  const { lines, lineSelected, busStops, busStopSelected, setCurrentLocation, currentLocation } =
+    useMapContext();
 
   const [destination, setDestination] = useState(null);
   const [directionMode, setDirectionMode] = useState('WALKING');
+  const [travels, setTravels] = useState([]);
+
+  const getTravels = () => {
+    try {
+      travelService.getAllInRealTime((data) => {
+        setTravels(data);
+      });
+    } catch (error) {
+      console.log('Error al recuperar todos los viajes', error);
+    }
+  };
+
+  useEffect(() => {
+    getTravels();
+  }, []);
 
   useEffect(() => {
     if (busStopSelected) {
@@ -37,7 +52,7 @@ export const Map = () => {
         region={{
           latitude: currentLocation?.latitude,
           longitude: currentLocation?.longitude,
-          latitudeDelta: 0.01,
+          latitudeDelta: 0.001,
           longitudeDelta: 0.01,
         }}>
         <Marker
@@ -50,58 +65,78 @@ export const Map = () => {
           }}
         />
 
-        {lines.map((item, index) => (
-          <MapViewDirections
+        {lineSelected ? (
+          <Polyline
+            coordinates={lineSelected?.route ?? []}
+            strokeColor={lineSelected.lineColor}
+            strokeWidth={3}
+            geodesic={false}
+          />
+        ) : (
+          lines.map((item, index) => (
+            <Polyline
+              key={index}
+              coordinates={item?.route ?? []}
+              strokeColor={item.lineColor}
+              strokeWidth={1}
+              geodesic={false}
+            />
+          ))
+        )}
+
+        {busStops.map((item, index) => (
+          <Marker
             key={index}
-            origin={item?.origin?.coordinate}
-            destination={item?.destination?.coordinate}
-            waypoints={item.stops.map((item) => item.coordinate)}
-            strokeColor={item.lineColor}
-            strokeWidth={1}
-            apikey={Config.GOOGLE_MAPS_API_KEY}
-            mode={'DRIVING'}
+            coordinate={item.coordinate}
+            title={item.name}
+            pinColor={COLORS.secondary}
           />
         ))}
 
-        {busStops.map((item, index) => (
-          <Marker key={index} coordinate={item.coordinate} title={item.name} image={BusStopImg} />
+        {travels.map((item, index) => (
+          <Marker
+            key={index}
+            pinColor={COLORS.purple}
+            coordinate={item?.location}
+            title={item?.line?.name}
+          />
         ))}
 
         {currentLocation && destination && (
-          <MapViewDirections
-            origin={currentLocation}
-            destination={destination}
-            strokeColor={COLORS.secondary}
-            strokeWidth={3}
-            apikey={Config.GOOGLE_MAPS_API_KEY}
-            mode={directionMode}
-          />
+          <Fragment>
+            <MapViewDirections
+              origin={currentLocation}
+              destination={destination}
+              strokeColor={COLORS.secondary}
+              strokeWidth={3}
+              apikey={Config.GOOGLE_MAPS_API_KEY}
+              mode={directionMode}
+            />
+
+            <XStack pos='absolute' top={'$2.5'} right={'$2.5'} space='$2'>
+              <Stack
+                bg={directionMode === 'DRIVING' ? '$gray11Dark' : '$colorTransparent'}
+                borderRadius={'$5'}
+                padding='$1.5'
+                onPress={() => {
+                  setDirectionMode('DRIVING');
+                }}>
+                <CarFront color={COLORS.dark} size={30} />
+              </Stack>
+
+              <Stack
+                bg={directionMode === 'WALKING' ? '$gray11Dark' : '$colorTransparent'}
+                padding='$1.5'
+                borderRadius={'$5'}
+                onPress={() => {
+                  setDirectionMode('WALKING');
+                }}>
+                <Footprints color={COLORS.dark} size={30} />
+              </Stack>
+            </XStack>
+          </Fragment>
         )}
       </MapView>
-
-      {currentLocation && destination && (
-        <XStack pos='absolute' top={'$2.5'} right={'$2.5'} space='$2'>
-          <Stack
-            bg={directionMode === 'DRIVING' ? '$gray11Dark' : '$colorTransparent'}
-            borderRadius={'$5'}
-            padding='$1.5'
-            onPress={() => {
-              setDirectionMode('DRIVING');
-            }}>
-            <CarFront color={COLORS.dark} size={30} />
-          </Stack>
-
-          <Stack
-            bg={directionMode === 'WALKING' ? '$gray11Dark' : '$colorTransparent'}
-            padding='$1.5'
-            borderRadius={'$5'}
-            onPress={() => {
-              setDirectionMode('WALKING');
-            }}>
-            <Footprints color={COLORS.dark} size={30} />
-          </Stack>
-        </XStack>
-      )}
     </YStack>
   );
 };
