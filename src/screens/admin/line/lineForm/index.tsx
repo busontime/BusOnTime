@@ -45,6 +45,7 @@ export const LineForm = () => {
           origin: formValues.origin,
           destination: formValues.destination,
           stops: formValues.stops,
+          route: formValues.route,
         };
 
         line ? await lineService.updateById(line.id, data) : await lineService.create(data);
