@@ -118,7 +118,7 @@ export const RegisterScreen = () => {
             <TogleTheme />
           </Stack>
 
-          <H2 mt='$15'>Registro</H2>
+          <H2 mt='$15'>Registrate!</H2>
 
           <Logo />
 
