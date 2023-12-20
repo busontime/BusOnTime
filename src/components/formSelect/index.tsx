@@ -14,6 +14,7 @@ export const FormSelect = ({
   onValueChange = (val) => {},
   options = [],
   w = '$20',
+  emptyListMessage = 'Lista Vacía',
 }) => {
   const { isDark } = useThemeContext();
 
@@ -65,7 +66,7 @@ export const FormSelect = ({
               minWidth={200}>
               {options.length <= 0 && (
                 <H3 ta='center' p='$6' color={'$color'}>
-                  Lista Vacía
+                  {emptyListMessage}
                 </H3>
               )}
 

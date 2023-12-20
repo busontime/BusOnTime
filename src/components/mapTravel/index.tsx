@@ -5,6 +5,18 @@ import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import { COLORS, MAP_STYLES } from '@/constants/styles';
 
 export const MapTravel = ({ travel = null }) => {
+  // console.log('travel.route', travel.route.length);
+
+  // const demo = new Set();
+  // const demo2 = new Set();
+  // travel?.route.forEach((item) => {
+  //   demo.add(item.latitude);
+  //   demo2.add(item.longitude);
+  // });
+
+  // console.log('demo', demo);
+
+  // console.log('demo2', demo2);
   return (
     <Fragment>
       {travel && (
@@ -14,13 +26,19 @@ export const MapTravel = ({ travel = null }) => {
           mapType='standard'
           customMapStyle={MAP_STYLES}
           region={{
-            latitude: travel.route ? travel?.route[0].latitude : travel?.location?.latitude,
-            longitude: travel.route ? travel?.route[0].longitude : travel?.location?.longitude,
+            latitude:
+              travel.route && travel.route.length > 0
+                ? travel?.route[0].latitude
+                : travel?.location?.latitude,
+            longitude:
+              travel.route && travel.route.length > 0
+                ? travel?.route[0].longitude
+                : travel?.location?.longitude,
             latitudeDelta: 0.001,
             longitudeDelta: 0.001,
           }}
           style={{ flex: 1 }}>
-          {travel?.route && (
+          {travel.route && travel.route.length > 0 && (
             <Fragment>
               <Marker coordinate={travel?.route[0]} title={'Origen'} pinColor={COLORS.primary} />
 

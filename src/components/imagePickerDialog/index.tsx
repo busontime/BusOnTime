@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { Camera, UserCircle, Image as Img } from 'lucide-react-native';
-import { XStack, YStack, Text, Button, Sheet } from 'tamagui';
 import { Image, TouchableWithoutFeedback } from 'react-native';
+import { XStack, YStack, Text, Button, Sheet } from 'tamagui';
+
+import { Camera, UserCircle, Image as Img } from 'lucide-react-native';
+
+import { useThemeContext } from '@/contexts/theme';
 
 import { selectPicture } from '@/utils/helpers';
+import { showAlertDialog } from '@/utils/dialog';
 
 import { COLORS } from '@/constants/styles';
-import { useThemeContext } from '@/contexts/theme';
-import { showAlertDialog } from '@/utils/dialog';
 
 export const ImagePickerDialog = ({ picture = null, changePicture = (value) => {} }) => {
   const { isDark } = useThemeContext();
+
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState(0);
 
