@@ -34,6 +34,7 @@
     "@tamagui/babel-plugin": "1.74.3",
     "@tamagui/config": "1.74.3",
     "@tamagui/theme-builder": "1.74.3",
+    "axios": "1.6.2",
     "babel-plugin-transform-inline-environment-variables": "0.4.4",
     "geolib": "3.3.4",
     "link": "2.1.0",
