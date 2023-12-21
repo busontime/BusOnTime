@@ -8,6 +8,7 @@ export const ROUTERS = {
   passenger: 'passenger',
   driver: 'driver',
   admin: 'admin',
+  adminVerification: 'admin-verification',
   public: 'public',
 };
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react';
 
 import { PublicRouter } from './public';
+import { AdminVerificationRouter } from './verification';
 import { AdminRouter } from './admin';
 import { DriverRouter } from './driver';
 import { PassengerRouter } from './passenger';
@@ -33,7 +34,11 @@ export const AppRouter = () => {
           setRouter(ROUTERS.driver);
           break;
         case ROLES_ID.admin:
-          setRouter(ROUTERS.admin);
+          if (person.verified) {
+            setRouter(ROUTERS.admin);
+          } else {
+            setRouter(ROUTERS.adminVerification);
+          }
           break;
         default:
           setRouter(ROUTERS.public);
@@ -48,7 +53,9 @@ export const AppRouter = () => {
 
   return (
     <Fragment>
-      {router === ROUTERS.admin ? (
+      {router === ROUTERS.adminVerification ? (
+        <AdminVerificationRouter />
+      ) : router === ROUTERS.admin ? (
         <AdminRouter />
       ) : router === ROUTERS.driver ? (
         <DriverRouter />

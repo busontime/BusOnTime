@@ -11,6 +11,7 @@ import { useThemeContext } from '@/contexts/theme';
 import { useLoader } from '@/contexts/loader';
 
 import { userService } from '@/services/user';
+import { adminVerification } from '@/services/functions';
 
 import { TogleTheme } from '@/components/togleTheme';
 import { Logo } from '@/components/logo';
@@ -29,7 +30,7 @@ export const LoginScreen = () => {
   const navigation = useNavigation();
 
   const { isDark } = useThemeContext();
-  const { loginWithGoogle, login, sendPasswordResetEmail } = useAuthContext();
+  const { loginWithGoogle, login, sendPasswordResetEmail, updateProfile } = useAuthContext();
   const { showLoader, hideLoader } = useLoader();
 
   const [formValues, setFormValues] = useState(loginForm);
@@ -46,6 +47,21 @@ export const LoginScreen = () => {
 
         if (result) {
           showSuccessToast('Inicio de Sesión Exitoso!');
+
+          try {
+            const data = await adminVerification(email);
+
+            if (data.admin && data.success) {
+              showSuccessDialog(data.message);
+              await updateProfile();
+            }
+
+            if (data.admin && !data.success) {
+              showErrorDialog(data.message);
+            }
+          } catch (error) {
+            console.log('error al enviar el codigo de verificacion', error);
+          }
         }
       } catch (error) {
         console.log('error', error);
