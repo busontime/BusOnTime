@@ -9,3 +9,12 @@ export const adminVerification = async (email: string) => {
     throw new Error(error);
   }
 };
+
+export const sendMail = async (emailConfig) => {
+  try {
+    const { data } = await axios.post(Config.SEND_MAIL_API, emailConfig);
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
