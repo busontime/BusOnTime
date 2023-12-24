@@ -156,7 +156,7 @@ export const BusStopView = () => {
 
       {!principalTab && (
         <ScrollView>
-          {person?.busStops.map((item, index) => (
+          {person?.busStops?.map((item, index) => (
             <XStack
               key={index}
               bg={

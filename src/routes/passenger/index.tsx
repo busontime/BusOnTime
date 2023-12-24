@@ -4,6 +4,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { PassengerHomeStack } from './home';
 import { PassengerProfileStack } from './profile';
 
+import { SupportAndHelpScreen } from '@/screens/public/supportAndHelp';
+
 import { Sidebar } from '@/components/sidebar';
 
 const Drawer = createDrawerNavigator();
@@ -23,6 +25,15 @@ export const PassengerRouter = (props) => {
         options={{
           drawerLabel: 'Inicio',
           title: 'home-filled',
+        }}
+      />
+
+      <Drawer.Screen
+        name='help-menu'
+        component={SupportAndHelpScreen}
+        options={{
+          drawerLabel: 'Ayuda y Soporte',
+          title: 'help-outline',
         }}
       />
 

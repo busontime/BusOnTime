@@ -5,6 +5,8 @@ import { DriverHomeStack } from './home';
 import { DriverTravelStack } from './travel';
 import { DriverProfileStack } from './profile';
 
+import { SupportAndHelpScreen } from '@/screens/public/supportAndHelp';
+
 import { Sidebar } from '@/components/sidebar';
 
 const Drawer = createDrawerNavigator();
@@ -33,6 +35,15 @@ export const DriverRouter = (props) => {
         options={{
           drawerLabel: 'Recorridos',
           title: 'directions-bus',
+        }}
+      />
+
+      <Drawer.Screen
+        name='help-menu'
+        component={SupportAndHelpScreen}
+        options={{
+          drawerLabel: 'Ayuda y Soporte',
+          title: 'help-outline',
         }}
       />
 
