@@ -18,3 +18,12 @@ export const sendMail = async (emailConfig) => {
     throw new Error(error);
   }
 };
+
+export const createDriver = async (driver) => {
+  try {
+    const { data } = await axios.post(Config.CREATE_DRIVER_API, driver);
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
