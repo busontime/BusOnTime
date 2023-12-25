@@ -9,6 +9,13 @@ jobs:
     name: Generate APK
     runs-on: ubuntu-latest
 
+    env:
+      WEB_CLIENT_ID: ${{ secrets.WEB_CLIENT_ID }}
+      GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+      VERIFICATION_API: ${{ secrets.VERIFICATION_API }}
+      SEND_MAIL_API: ${{ secrets.SEND_MAIL_API }}
+      CREATE_DRIVER_API: ${{ secrets.CREATE_DRIVER_API }}
+
     steps:
       - uses: actions/checkout@v3
       - name: Install npm dependencies
