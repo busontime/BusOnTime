@@ -8,7 +8,6 @@ import { userService } from '@/services/user';
 import { type ChildrenProps } from '@/interfaces';
 
 import { validateAuthError } from '@/utils/error';
-// import { showErrorDialog } from '@/utils/dialog';
 
 GoogleSignin.configure({ webClientId: Config.WEB_CLIENT_ID });
 
@@ -69,25 +68,8 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     try {
       await auth().signInWithEmailAndPassword(email, password);
       return true;
-      // const data = await userService.getById(auth().currentUser.uid);
-
-      // if (!data) {
-      //   await deleteAccount();
-      //   showErrorDialog('Esta cuenta ha sido eliminada por el administrador!');
-      // }
     } catch (error) {
       return validateAuthError(error, 'No puede iniciar Sesión.!');
-    }
-  };
-
-  const createDriver = async (email: string, password: string) => {
-    try {
-      const data = await auth().createUserWithEmailAndPassword(email, password);
-      logout();
-      login('gato@dev.com', '123456');
-      return data;
-    } catch (error) {
-      validateAuthError(error, 'No se pudo registrar, Intentelo más tarde.!');
     }
   };
 
@@ -157,7 +139,6 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
     login,
     createAccount,
     updateProfile,
-    createDriver,
     deleteAccount,
     sendPasswordResetEmail,
     updatePassword,

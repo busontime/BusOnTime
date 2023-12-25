@@ -7,6 +7,7 @@ import { useLoader } from '@/contexts/loader';
 
 import { userService } from '@/services/user';
 import { cooperativeService } from '@/services/cooperative';
+import { createDriver } from '@/services/functions';
 
 import { TogleSidebar } from '@/components/togleSidebar';
 import { FormInput } from '@/components/formInput';
@@ -20,7 +21,6 @@ import { getDiffYears } from '@/utils/helpers';
 
 import { ROLES_ID } from '@/constants/bd';
 import { initDriverForm } from '@/constants/forms';
-import { createDriver } from '@/services/functions';
 
 export const DriverForm = () => {
   const navigation = useNavigation();
@@ -65,11 +65,18 @@ export const DriverForm = () => {
             cooperativeId: formValues.cooperativeId,
           };
 
-          await createDriver(data);
-          showSuccessDialog('Conductor creado exitosamente!');
+          const res = await createDriver(data);
+
+          if (res.success) {
+            showSuccessDialog(res.message);
+
+            goBack();
+          } else {
+            showErrorDialog(res.message);
+          }
         }
       } catch (error) {
-        showErrorDialog('ocurrió un error inténtelo más tarde');
+        showErrorDialog('Ocurrió un error inténtelo más tarde');
         console.log(error, 'error en el handler service');
       } finally {
         hideLoader();

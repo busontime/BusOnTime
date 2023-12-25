@@ -77,7 +77,7 @@ export const Map = () => {
             geodesic={false}
           />
         ) : (
-          lines.map((item, index) => (
+          lines?.map((item, index) => (
             <Polyline
               key={index}
               coordinates={item?.route ?? []}
@@ -88,11 +88,11 @@ export const Map = () => {
           ))
         )}
 
-        {busStops.map((item, index) => (
+        {busStops?.map((item, index) => (
           <Marker key={index} coordinate={item.coordinate} title={item.name} image={BusStopImg} />
         ))}
 
-        {travels.map((item, index) => (
+        {travels?.map((item, index) => (
           <Marker key={index} image={BusImg} coordinate={item?.location} title={item?.line?.name} />
         ))}
 
