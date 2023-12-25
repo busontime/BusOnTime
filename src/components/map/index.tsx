@@ -11,6 +11,10 @@ import { useMapContext } from '@/contexts/map';
 
 import { travelService } from '@/services/travel';
 
+import LocationImg from '@/assets/images/location.png';
+import BusImg from '@/assets/images/bus.png';
+import BusStopImg from '@/assets/images/stop.png';
+
 import { COLORS, MAP_STYLES } from '@/constants/styles';
 
 export const Map = () => {
@@ -57,7 +61,7 @@ export const Map = () => {
         }}>
         <Marker
           draggable
-          pinColor={COLORS.green}
+          image={LocationImg}
           coordinate={currentLocation}
           title={'Mi Ubicación'}
           onDragEnd={(direcction) => {
@@ -85,21 +89,11 @@ export const Map = () => {
         )}
 
         {busStops.map((item, index) => (
-          <Marker
-            key={index}
-            coordinate={item.coordinate}
-            title={item.name}
-            pinColor={COLORS.secondary}
-          />
+          <Marker key={index} coordinate={item.coordinate} title={item.name} image={BusStopImg} />
         ))}
 
         {travels.map((item, index) => (
-          <Marker
-            key={index}
-            pinColor={COLORS.purple}
-            coordinate={item?.location}
-            title={item?.line?.name}
-          />
+          <Marker key={index} image={BusImg} coordinate={item?.location} title={item?.line?.name} />
         ))}
 
         {currentLocation && destination && (

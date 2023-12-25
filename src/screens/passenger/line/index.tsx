@@ -10,7 +10,10 @@ import { travelService } from '@/services/travel';
 import { TogleBack } from '@/components/togleBack';
 import { LineSelectedView } from '@/components/passenger/lineSelectedView';
 
-import { COLORS, MAP_STYLES } from '@/constants/styles';
+import BusImg from '@/assets/images/bus.png';
+import BusStopImg from '@/assets/images/stop.png';
+
+import { MAP_STYLES } from '@/constants/styles';
 
 export const PassengerLineScreen = () => {
   const { lineSelected, currentLocation } = useMapContext();
@@ -71,20 +74,11 @@ export const PassengerLineScreen = () => {
         />
 
         {lineSelected?.stops?.map((item, index) => (
-          <Marker
-            key={index}
-            coordinate={item.coordinate}
-            title={item.name}
-            pinColor={COLORS.secondary}
-          />
+          <Marker key={index} coordinate={item.coordinate} title={item.name} image={BusStopImg} />
         ))}
 
         {travel && (
-          <Marker
-            pinColor={COLORS.purple}
-            coordinate={travel?.location}
-            title={lineSelected?.name}
-          />
+          <Marker image={BusImg} coordinate={travel?.location} title={lineSelected?.name} />
         )}
       </MapView>
 

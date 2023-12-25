@@ -7,6 +7,9 @@ import { useTravelContext } from '@/contexts/travel';
 
 import { TogleBack } from '@/components/togleBack';
 
+import BusImg from '@/assets/images/bus.png';
+import BusStopImg from '@/assets/images/stop.png';
+
 import { COLORS, MAP_STYLES } from '@/constants/styles';
 
 export const TravelMap = () => {
@@ -39,7 +42,7 @@ export const TravelMap = () => {
           longitudeDelta: 0.001,
         }}>
         {currentLocation && (
-          <Marker pinColor={COLORS.secondary} coordinate={currentLocation} title={'Mi Ubicación'} />
+          <Marker image={BusImg} coordinate={currentLocation} title={'Mi Ubicación'} />
         )}
 
         {line?.route && (
@@ -52,12 +55,7 @@ export const TravelMap = () => {
         )}
 
         {busStops.map((item, index) => (
-          <Marker
-            key={index}
-            coordinate={item.coordinate}
-            title={item.name}
-            pinColor={COLORS.green}
-          />
+          <Marker key={index} coordinate={item.coordinate} title={item.name} image={BusStopImg} />
         ))}
       </MapView>
     </YStack>
