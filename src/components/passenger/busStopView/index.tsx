@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { YStack, Text, XStack, Stack, ScrollView } from 'tamagui';
 
 import { BusFront, Star, StarOff, Sparkles } from 'lucide-react-native';
@@ -15,18 +15,15 @@ import { showSuccessToast } from '@/utils/toast';
 
 import { COLORS } from '@/constants/styles';
 
-export const BusStopView = () => {
+export const BusStopView = ({ searchValue = '' }) => {
   const { isDark } = useThemeContext();
-  const { changeBusStop, busStopSelected, busStops } = useMapContext();
+  const { changeBusStop, busStopSelected, busStops, lines } = useMapContext();
   const { showLoader, hideLoader } = useLoader();
   const { profile, updateProfile } = useAuthContext();
   const { user, person } = profile;
 
   const [principalTab, setPrincipalTab] = useState(true);
-
-  const changeTab = () => {
-    setPrincipalTab(!principalTab);
-  };
+  const [busStopsSelected, setBusStopsSelected] = useState([]);
 
   const addBusStopFavorite = async (busStop) => {
     if (isBusStopFavorite(busStop)) {
@@ -78,6 +75,30 @@ export const BusStopView = () => {
     return person?.busStops?.some((item) => item.id === busStop.id);
   };
 
+  const getLinesByBusStopId = (id) => {
+    const data = lines?.filter(
+      (item) =>
+        item.stops.some((stop) => stop.id === id) ||
+        item?.destination.id === id ||
+        item?.origin.id === id
+    );
+
+    return data ?? [];
+  };
+
+  const updateBusStops = (text) => {
+    if (text !== '') {
+      const data = busStops.filter((item) => item.name.toLowerCase().includes(text.toLowerCase()));
+      setBusStopsSelected(data);
+    } else {
+      setBusStopsSelected(busStops);
+    }
+  };
+
+  useEffect(() => {
+    updateBusStops(searchValue);
+  }, [searchValue, busStops]);
+
   return (
     <YStack bg={'$backgroundFocus'} height={300}>
       <XStack>
@@ -89,7 +110,9 @@ export const BusStopView = () => {
           height={'$4'}
           borderBottomColor={principalTab ? '$blue8' : '$gray8'}
           borderBottomWidth={2}
-          onPress={changeTab}>
+          onPress={() => {
+            setPrincipalTab(true);
+          }}>
           <Text color={'$color'} fontWeight={principalTab ? 'bold' : 'normal'}>
             Paradas Cercanas
           </Text>
@@ -103,7 +126,9 @@ export const BusStopView = () => {
           height={'$4'}
           borderBottomColor={!principalTab ? '$blue8' : '$gray8'}
           borderBottomWidth={2}
-          onPress={changeTab}>
+          onPress={() => {
+            setPrincipalTab(false);
+          }}>
           <Text color={'$color'} fontWeight={!principalTab ? 'bold' : 'normal'}>
             Paradas Favoritas
           </Text>
@@ -112,7 +137,7 @@ export const BusStopView = () => {
 
       {principalTab && (
         <ScrollView>
-          {busStops.map((item, index) => (
+          {busStopsSelected.map((item, index) => (
             <XStack
               key={index}
               bg={
@@ -135,6 +160,16 @@ export const BusStopView = () => {
                   {item.name}
                 </Text>
               </XStack>
+
+              {busStopSelected && busStopSelected.name === item.name && (
+                <YStack f={1}>
+                  {getLinesByBusStopId(item.id).map((line, idx) => (
+                    <Text key={idx} color={line?.lineColor}>
+                      - {line.name}
+                    </Text>
+                  ))}
+                </YStack>
+              )}
 
               <XStack
                 bg='$colorTransparent'
@@ -179,6 +214,16 @@ export const BusStopView = () => {
                   {item.name}
                 </Text>
               </XStack>
+
+              {busStopSelected && busStopSelected.name === item.name && (
+                <YStack f={1}>
+                  {getLinesByBusStopId(item.id).map((line, idx) => (
+                    <Text key={idx} color={line?.lineColor}>
+                      - {line.name}
+                    </Text>
+                  ))}
+                </YStack>
+              )}
 
               <XStack
                 bg='$colorTransparent'

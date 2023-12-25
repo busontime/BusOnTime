@@ -2,57 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { YStack, Text, XStack, Stack, ScrollView } from 'tamagui';
 import { useNavigation } from '@react-navigation/native';
 
-import { BusFront, Search } from 'lucide-react-native';
+import { BusFront } from 'lucide-react-native';
 
 import { useThemeContext } from '@/contexts/theme';
 import { useMapContext } from '@/contexts/map';
 
-import { FormInput } from '@/components/formInput';
-
 import { COLORS } from '@/constants/styles';
 
-export const LineView = () => {
+export const LineView = ({ searchValue = '' }) => {
   const navigation = useNavigation();
 
   const { isDark } = useThemeContext();
   const { changeLine, lines, lineSelected } = useMapContext();
 
   const [mapLines, setMapLines] = useState([]);
-  const [search, setSearch] = useState('');
-
-  const searchLine = (text) => {
-    setSearch(text);
-    setMapLines(
-      text !== ''
-        ? lines.filter((item) => item.name.toLowerCase().includes(text.toLowerCase()))
-        : lines
-    );
-  };
 
   const selectLine = (line) => {
     changeLine(line);
     navigation.navigate('line' as never);
   };
 
+  const searchLine = () => {
+    setMapLines(
+      searchValue !== ''
+        ? lines.filter((item) => item.name.toLowerCase().includes(searchValue.toLowerCase()))
+        : lines
+    );
+  };
+
   useEffect(() => {
-    setMapLines(lines);
-  }, []);
+    searchLine();
+  }, [searchValue, lines]);
 
   return (
-    <YStack bg={'$backgroundFocus'} height={300}>
-      <XStack pos='relative' p='$2'>
-        <FormInput
-          placeholder='Búsqueda por linea'
-          value={search}
-          onChangeText={searchLine}
-          w={'100%'}
-        />
-
-        <Stack pos='absolute' right='$4' top='$3.5'>
-          <Search color={isDark ? COLORS.light : COLORS.dark} size={25} />
-        </Stack>
-      </XStack>
-
+    <YStack bg={'$backgroundFocus'} f={1}>
       <ScrollView>
         {mapLines.map((item, index) => (
           <XStack
