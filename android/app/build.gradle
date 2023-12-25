@@ -124,7 +124,7 @@ dependencies {
 
 project.ext.envConfigFiles = [
     debug: ".env",
-    release: ".env",
+    release: ".env.production",
 ]
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
