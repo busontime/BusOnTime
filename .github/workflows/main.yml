@@ -9,13 +9,6 @@ jobs:
     name: Generate APK
     runs-on: ubuntu-latest
 
-    env:
-      WEB_CLIENT_ID: ${{ secrets.WEB_CLIENT_ID }}
-      GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
-      VERIFICATION_API: ${{ secrets.VERIFICATION_API }}
-      SEND_MAIL_API: ${{ secrets.SEND_MAIL_API }}
-      CREATE_DRIVER_API: ${{ secrets.CREATE_DRIVER_API }}
-
     steps:
       - uses: actions/checkout@v3
       - name: Install npm dependencies
@@ -23,7 +16,18 @@ jobs:
           npm install
 
       - name: Build Android Release
+        env:
+          WEB_CLIENT_ID: ${{ secrets.WEB_CLIENT_ID }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          VERIFICATION_API: ${{ secrets.VERIFICATION_API }}
+          SEND_MAIL_API: ${{ secrets.SEND_MAIL_API }}
+          CREATE_DRIVER_API: ${{ secrets.CREATE_DRIVER_API }}
         run: |
+          echo "WEB_CLIENT_ID: $WEB_CLIENT_ID"
+          echo "GOOGLE_MAPS_API_KEY: $GOOGLE_MAPS_API_KEY"
+          echo "VERIFICATION_API: $VERIFICATION_API"
+          echo "SEND_MAIL_API: $SEND_MAIL_API"
+          echo "CREATE_DRIVER_API: $CREATE_DRIVER_API"
           cd android && chmod +x ./gradlew && ./gradlew assembleRelease
 
       - name: Upload APK
