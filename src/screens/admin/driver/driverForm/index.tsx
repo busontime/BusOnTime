@@ -3,7 +3,6 @@ import { KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform } fr
 import { ScrollView, H4, XStack } from 'tamagui';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-import { useAuthContext } from '@/contexts/auth';
 import { useLoader } from '@/contexts/loader';
 
 import { userService } from '@/services/user';
@@ -21,9 +20,9 @@ import { getDiffYears } from '@/utils/helpers';
 
 import { ROLES_ID } from '@/constants/bd';
 import { initDriverForm } from '@/constants/forms';
+import { createDriver } from '@/services/functions';
 
 export const DriverForm = () => {
-  const { createDriver } = useAuthContext();
   const navigation = useNavigation();
   const { showLoader, hideLoader } = useLoader();
   const route = useRoute();
@@ -55,26 +54,19 @@ export const DriverForm = () => {
 
           goBack();
         } else {
-          const driverRegister = await createDriver(email, formValues.ci);
+          const data = {
+            name: formValues.name,
+            lastname: formValues.lastname,
+            email,
+            roleId: ROLES_ID.driver,
+            phone: formValues.phone,
+            birthdate: formValues.birthdate,
+            ci: formValues.ci,
+            cooperativeId: formValues.cooperativeId,
+          };
 
-          if (driverRegister) {
-            const { user } = driverRegister;
-
-            const data = {
-              name: formValues.name,
-              lastname: formValues.lastname,
-              email,
-              roleId: ROLES_ID.driver,
-              phone: formValues.phone,
-              birthdate: formValues.birthdate,
-              ci: formValues.ci,
-              cooperativeId: formValues.cooperativeId,
-            };
-
-            await userService.createUser(user.uid, data);
-
-            showSuccessDialog('Conductor creado exitosamente!');
-          }
+          await createDriver(data);
+          showSuccessDialog('Conductor creado exitosamente!');
         }
       } catch (error) {
         showErrorDialog('ocurrió un error inténtelo más tarde');
