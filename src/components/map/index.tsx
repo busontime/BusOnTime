@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react';
 
 import { YStack, XStack, Stack } from 'tamagui';
-import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import Config from 'react-native-config';
 
@@ -16,6 +16,7 @@ import BusImg from '@/assets/images/bus.png';
 import BusStopImg from '@/assets/images/stop.png';
 
 import { COLORS, MAP_STYLES } from '@/constants/styles';
+import { ImageMarker } from '../marker';
 
 export const Map = () => {
   const { lines, lineSelected, busStops, busStopSelected, setCurrentLocation, currentLocation } =
@@ -59,11 +60,11 @@ export const Map = () => {
           latitudeDelta: 0.001,
           longitudeDelta: 0.01,
         }}>
-        <Marker
-          draggable
-          image={LocationImg}
+        <ImageMarker
+          draggable={true}
           coordinate={currentLocation}
           title={'Mi Ubicación'}
+          image={LocationImg}
           onDragEnd={(direcction) => {
             setCurrentLocation(direcction.nativeEvent.coordinate);
           }}
@@ -89,11 +90,23 @@ export const Map = () => {
         )}
 
         {busStops?.map((item, index) => (
-          <Marker key={index} coordinate={item.coordinate} title={item.name} image={BusStopImg} />
+          <ImageMarker
+            key={index}
+            draggable={false}
+            coordinate={item.coordinate}
+            title={item.name}
+            image={BusStopImg}
+          />
         ))}
 
         {travels?.map((item, index) => (
-          <Marker key={index} image={BusImg} coordinate={item?.location} title={item?.line?.name} />
+          <ImageMarker
+            key={index}
+            draggable={false}
+            coordinate={item?.location}
+            title={item?.line?.name}
+            image={BusImg}
+          />
         ))}
 
         {currentLocation && destination && (
