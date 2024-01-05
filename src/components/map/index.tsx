@@ -61,7 +61,6 @@ export const Map = () => {
           longitudeDelta: 0.01,
         }}>
         <ImageMarker
-          draggable={true}
           coordinate={currentLocation}
           title={'Mi Ubicación'}
           image={LocationImg}
@@ -92,7 +91,6 @@ export const Map = () => {
         {busStops?.map((item, index) => (
           <ImageMarker
             key={index}
-            draggable={false}
             coordinate={item.coordinate}
             title={item.name}
             image={BusStopImg}
@@ -102,7 +100,6 @@ export const Map = () => {
         {travels?.map((item, index) => (
           <ImageMarker
             key={index}
-            draggable={false}
             coordinate={item?.location}
             title={item?.line?.name}
             image={BusImg}

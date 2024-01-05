@@ -1,19 +1,11 @@
 import React from 'react';
 import { Marker } from 'react-native-maps';
-import { Image, View } from 'tamagui';
+import { Image } from 'react-native';
 
-export const ImageMarker = ({
-  image = null,
-  title = null,
-  coordinate = null,
-  onDragEnd = (value) => {},
-  draggable = false,
-}) => {
+export const ImageMarker = ({ image, title = null, coordinate, onDragEnd = (value) => {} }) => {
   return (
-    <Marker title={title} draggable={draggable} onDragEnd={onDragEnd} coordinate={coordinate}>
-      <View h={100} w={100}>
-        <Image w={22} h={25} source={image} />
-      </View>
+    <Marker onDragEnd={onDragEnd} title={title} coordinate={coordinate}>
+      <Image style={{ width: 40, height: 40, resizeMode: 'contain' }} source={image} />
     </Marker>
   );
 };
