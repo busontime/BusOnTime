@@ -1,22 +1,11 @@
 import React, { Fragment } from 'react';
 import { H5 } from 'tamagui';
-import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 
 import { COLORS, MAP_STYLES } from '@/constants/styles';
+import { ImageMarker } from '../marker';
 
 export const MapTravel = ({ travel = null }) => {
-  // console.log('travel.route', travel.route.length);
-
-  // const demo = new Set();
-  // const demo2 = new Set();
-  // travel?.route.forEach((item) => {
-  //   demo.add(item.latitude);
-  //   demo2.add(item.longitude);
-  // });
-
-  // console.log('demo', demo);
-
-  // console.log('demo2', demo2);
   return (
     <Fragment>
       {travel && (
@@ -40,9 +29,13 @@ export const MapTravel = ({ travel = null }) => {
           style={{ flex: 1 }}>
           {travel.route && travel.route.length > 0 && (
             <Fragment>
-              <Marker coordinate={travel?.route[0]} title={'Origen'} pinColor={COLORS.primary} />
+              <ImageMarker
+                coordinate={travel?.route[0]}
+                title={'Origen'}
+                pinColor={COLORS.primary}
+              />
 
-              <Marker
+              <ImageMarker
                 coordinate={travel?.route[travel?.route.length - 1]}
                 title={'Destino'}
                 pinColor={COLORS.green}

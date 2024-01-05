@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { YStack } from 'tamagui';
-import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import { getDistance } from 'geolib';
 
 import { useMapContext } from '@/contexts/map';
@@ -9,6 +9,7 @@ import { travelService } from '@/services/travel';
 
 import { TogleBack } from '@/components/togleBack';
 import { LineSelectedView } from '@/components/passenger/lineSelectedView';
+import { ImageMarker } from '@/components/marker';
 
 import BusImg from '@/assets/images/bus.png';
 import BusStopImg from '@/assets/images/stop.png';
@@ -74,11 +75,16 @@ export const PassengerLineScreen = () => {
         />
 
         {lineSelected?.stops?.map((item, index) => (
-          <Marker key={index} coordinate={item.coordinate} title={item.name} image={BusStopImg} />
+          <ImageMarker
+            key={index}
+            coordinate={item.coordinate}
+            title={item.name}
+            image={BusStopImg}
+          />
         ))}
 
         {travel && (
-          <Marker image={BusImg} coordinate={travel?.location} title={lineSelected?.name} />
+          <ImageMarker image={BusImg} coordinate={travel?.location} title={lineSelected?.name} />
         )}
       </MapView>
 

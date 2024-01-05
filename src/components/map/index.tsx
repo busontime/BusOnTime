@@ -16,6 +16,7 @@ import BusImg from '@/assets/images/bus.png';
 import BusStopImg from '@/assets/images/stop.png';
 
 import { COLORS, MAP_STYLES } from '@/constants/styles';
+
 import { ImageMarker } from '../marker';
 
 export const Map = () => {

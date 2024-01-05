@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { XStack, YStack, SizableText } from 'tamagui';
 import { MapPin } from 'lucide-react-native';
 
@@ -11,6 +11,7 @@ import { ModalButtons } from '../modalButtons';
 import { showAlertDialog } from '@/utils/dialog';
 
 import { COLORS, MAP_STYLES } from '@/constants/styles';
+import { ImageMarker } from '../marker';
 
 export const PickLocation = ({ changeValue = (val) => {}, coordinate = null, markerName = '' }) => {
   const { currentLocation } = useMapContext();
@@ -76,12 +77,12 @@ export const PickLocation = ({ changeValue = (val) => {}, coordinate = null, mar
             onPress={handlerMapPress}
             style={{ flex: 1 }}>
             {marker && (
-              <Marker
-                title={markerName !== '' ? markerName : 'Parada'}
+              <ImageMarker
                 coordinate={{
                   latitude: Number(marker?.latitude),
                   longitude: Number(marker?.longitude),
                 }}
+                title={markerName !== '' ? markerName : 'Parada'}
                 pinColor={COLORS.secondary}
               />
             )}
