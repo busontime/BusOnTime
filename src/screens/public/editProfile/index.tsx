@@ -171,7 +171,9 @@ export const EditProfileScreen = () => {
             <ImagePickerDialog
               picture={updateForm?.photo}
               changePicture={(picture) => {
-                setUpdateForm({ ...updateForm, photo: picture ? picture.uri : null });
+                if (picture) {
+                  setUpdateForm({ ...updateForm, photo: picture.uri });
+                }
               }}
             />
 

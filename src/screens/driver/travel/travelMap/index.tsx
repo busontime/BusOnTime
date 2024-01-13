@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { YStack } from 'tamagui';
-import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 
 import { useMapContext } from '@/contexts/map';
 import { useTravelContext } from '@/contexts/travel';
 
 import { TogleBack } from '@/components/togleBack';
+import { ImageMarker } from '@/components/marker';
 
 import BusImg from '@/assets/images/bus.png';
 import BusStopImg from '@/assets/images/stop.png';
@@ -42,7 +43,7 @@ export const TravelMap = () => {
           longitudeDelta: 0.001,
         }}>
         {currentLocation && (
-          <Marker image={BusImg} coordinate={currentLocation} title={'Mi Ubicación'} />
+          <ImageMarker image={BusImg} coordinate={currentLocation} title={'Mi Ubicación'} />
         )}
 
         {line?.route && (
@@ -55,7 +56,12 @@ export const TravelMap = () => {
         )}
 
         {busStops.map((item, index) => (
-          <Marker key={index} coordinate={item.coordinate} title={item.name} image={BusStopImg} />
+          <ImageMarker
+            key={index}
+            coordinate={item.coordinate}
+            title={item.name}
+            image={BusStopImg}
+          />
         ))}
       </MapView>
     </YStack>
