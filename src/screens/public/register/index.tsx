@@ -150,7 +150,7 @@ export const RegisterScreen = () => {
           />
 
           <Button w='$12' iconAfter={<Pen />} backgroundColor='$blue8' size='$4' onPress={register}>
-            Registrate!
+            Registrar
           </Button>
 
           <Button

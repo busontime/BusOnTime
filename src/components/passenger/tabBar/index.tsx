@@ -7,6 +7,19 @@ import { useThemeContext } from '@/contexts/theme';
 
 import { COLORS } from '@/constants/styles';
 
+const TABS = [
+  {
+    tab: true,
+    label: 'Paradas',
+    Icon: BusFront,
+  },
+  {
+    label: 'Lineas',
+    tab: false,
+    Icon: TrainTrack,
+  },
+];
+
 export const TabBar = ({ principalTab = true, setPrincipalTab = (value) => {} }) => {
   const { isDark } = useThemeContext();
 
@@ -17,37 +30,29 @@ export const TabBar = ({ principalTab = true, setPrincipalTab = (value) => {} })
       p='$2'
       borderTopColor={'$blue8'}
       borderTopWidth='$0.5'>
-      <YStack
-        bg={'$colorTransparent'}
-        alignItems='center'
-        onPress={() => {
-          setPrincipalTab(true);
-        }}>
-        <BusFront
-          color={principalTab ? COLORS.secondary : isDark ? COLORS.light : COLORS.dark}
-          size={30}
-        />
+      {TABS.map((item, index) => (
+        <YStack
+          key={index}
+          bg={'$colorTransparent'}
+          borderRightColor={'$blue8'}
+          borderRightWidth={index === 0 ? '$1' : '$0'}
+          w={'50%'}
+          alignItems='center'
+          onPress={() => {
+            setPrincipalTab(item.tab);
+          }}>
+          <item.Icon
+            color={
+              principalTab === item.tab ? COLORS.secondary : isDark ? COLORS.light : COLORS.dark
+            }
+            size={30}
+          />
 
-        <Text color={principalTab ? COLORS.secondary : '$color'} fontSize={14}>
-          Paradas
-        </Text>
-      </YStack>
-
-      <YStack
-        bg={'$colorTransparent'}
-        alignItems='center'
-        onPress={() => {
-          setPrincipalTab(false);
-        }}>
-        <TrainTrack
-          color={!principalTab ? COLORS.secondary : isDark ? COLORS.light : COLORS.dark}
-          size={30}
-        />
-
-        <Text color={!principalTab ? COLORS.secondary : '$color'} fontSize={14}>
-          Lineas
-        </Text>
-      </YStack>
+          <Text color={principalTab === item.tab ? COLORS.secondary : '$color'} fontSize={14}>
+            {item.label}
+          </Text>
+        </YStack>
+      ))}
     </XStack>
   );
 };

@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { PassengerHomeScreen } from '@/screens/passenger/home';
 import { PassengerLineScreen } from '@/screens/passenger/line';
+import { PassengerBusStopScreen } from '@/screens/passenger/busStop';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +26,7 @@ export const PassengerHomeStack = (props) => {
       }}>
       <Stack.Screen name='home' component={PassengerHomeScreen} />
       <Stack.Screen name='line' component={PassengerLineScreen} />
+      <Stack.Screen name='bus-stop' component={PassengerBusStopScreen} />
     </Stack.Navigator>
   );
 };

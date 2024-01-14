@@ -29,6 +29,9 @@ export const FormInput = ({
 
   // for Color
   isColor = false,
+
+  // for press
+  onPress = () => {},
 }) => {
   const { isDark } = useThemeContext();
 
@@ -82,6 +85,7 @@ export const FormInput = ({
         <Input
           placeholder={placeholder}
           value={field}
+          onFocus={onPress}
           onChangeText={changeField}
           keyboardType={type}
           secureTextEntry={showPassword}

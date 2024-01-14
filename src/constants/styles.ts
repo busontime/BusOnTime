@@ -6,6 +6,8 @@ export const COLORS = {
   red: '#ff0a0a',
   green: '#0eff0a',
   purple: '#5800b0',
+  yellow: '#fff700',
+  yellowDark: '#ffd000',
 };
 
 export const MAP_STYLES = [

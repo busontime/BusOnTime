@@ -134,7 +134,7 @@ export const ProfileScreen = () => {
           onPress={() => {
             navigation.navigate('change-password' as never);
           }}
-          bg='$orange10'
+          bg='$blue8'
           w='$20'
           mb='$10'>
           <SizableText color={'$color'} fontWeight={'bold'}>
