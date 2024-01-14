@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { H4, Button, SizableText, YStack, Card } from 'tamagui';
 import { useNavigation } from '@react-navigation/native';
-import BackgroundTimer from 'react-native-background-timer';
 import Geolocation from '@react-native-community/geolocation';
 import moment from 'moment';
 
@@ -37,6 +36,7 @@ Geolocation.setRNConfiguration({
 });
 
 const route = [];
+let travelId = null;
 
 export const TravelForm = () => {
   const navigation = useNavigation();
@@ -73,31 +73,18 @@ export const TravelForm = () => {
         };
 
         const newTravel = await travelService.create(data);
+
         const newTravelId = newTravel._documentPath._parts[1];
 
-        changeCurrentTravel(newTravelId);
+        travelId = newTravelId;
 
-        route.push(currentLocation);
+        changeCurrentTravel(newTravelId);
 
         setFormValues(initTravelForm);
 
         await busService.updateById(data.bus.id, { inUse: true });
 
         showSuccessDialog('Recorrido iniciado con éxito!');
-
-        BackgroundTimer.runBackgroundTimer(() => {
-          // Geolocation.getCurrentPosition(async (info) => {
-          //   const location = {
-          //     latitude: info.coords.latitude,
-          //     longitude: info.coords.longitude,
-          //   };
-          //   console.log('location', location);
-          console.log('route.', route.length);
-          //   route.push(location);
-          //   await travelService.updateById(newTravelId, { location });
-          //   setCurrentLocation(location);
-          // });
-        }, 5000);
       } catch (error) {
         showErrorDialog('Ocurrió un error al iniciar el recorrido, inténtelo nuevamente');
         console.log(error, 'error al iniciar el recorrido');
@@ -119,9 +106,9 @@ export const TravelForm = () => {
 
       await busService.updateById(currentTravel.bus.id, { inUse: false });
 
-      BackgroundTimer.stopBackgroundTimer();
-
       route.length = 0;
+
+      travelId = null;
 
       changeCurrentTravel(null);
 
@@ -148,9 +135,9 @@ export const TravelForm = () => {
 
         await busService.updateById(currentTravel.bus.id, { inUse: false });
 
-        BackgroundTimer.stopBackgroundTimer();
-
         route.length = 0;
+
+        travelId = null;
 
         changeCurrentTravel(null);
 
@@ -296,22 +283,19 @@ export const TravelForm = () => {
       async (position) => {
         const { latitude, longitude } = position.coords;
 
-        const currentLocation = { latitude, longitude };
+        const location = { latitude, longitude };
 
-        console.log('currentLocation', currentLocation);
+        setCurrentLocation(location);
 
-        route.push(currentLocation);
-
-        if (currentTravel) {
-          await travelService.updateById(currentTravel?.id, { currentLocation });
+        if (travelId) {
+          route.push(location);
+          await travelService.updateById(travelId, { location });
         }
-
-        setCurrentLocation(currentLocation);
       },
       (error) => {
         console.error('Error al obtener la ubicación:', error);
       },
-      { interval: 5000, maximumAge: 0, enableHighAccuracy: true, distanceFilter: 0 }
+      { interval: 5000, enableHighAccuracy: true, distanceFilter: 1 }
     );
 
     return () => {

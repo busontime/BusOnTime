@@ -22,7 +22,7 @@ export const PassengerBusStopScreen = () => {
   const [busStopsSearch, setBusStopsSearch] = useState([]);
 
   const selectBusStop = (item) => {
-    setCurrentLocation(item);
+    setCurrentLocation(item?.coordinate);
     goBack();
   };
 

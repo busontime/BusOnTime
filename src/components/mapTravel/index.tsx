@@ -14,18 +14,6 @@ import { COLORS, MAP_STYLES } from '@/constants/styles';
 
 export const MapTravel = ({ travel = null }) => {
   const { busStops } = useMapContext();
-  // console.log('travel.route', travel.route.length);
-
-  // const demo = new Set();
-  // const demo2 = new Set();
-  // travel?.route.forEach((item) => {
-  //   demo.add(item.latitude);
-  //   demo2.add(item.longitude);
-  // });
-
-  // console.log('demo', demo);
-
-  // console.log('demo2', demo2);
 
   return (
     <Fragment>
