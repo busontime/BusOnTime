@@ -1,23 +1,21 @@
-import React, { useState, useEffect, Fragment } from 'react';
-
-import { YStack, XStack, Stack } from 'tamagui';
+import React, { useState, useEffect } from 'react';
+import { YStack } from 'tamagui';
 import MapView, { PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import Config from 'react-native-config';
 
-import { CarFront, Footprints } from 'lucide-react-native';
-
 import { useMapContext } from '@/contexts/map';
 
 import { travelService } from '@/services/travel';
+
+import { ImageMarker } from '../marker';
+import { MapSelectDirecction } from '../mapSelectDirecction';
 
 import LocationImg from '@/assets/images/location.png';
 import BusImg from '@/assets/images/bus.png';
 import BusStopImg from '@/assets/images/stop.png';
 
 import { COLORS, MAP_STYLES } from '@/constants/styles';
-
-import { ImageMarker } from '../marker';
 
 export const Map = () => {
   const { lines, lineSelected, busStops, busStopSelected, setCurrentLocation, currentLocation } =
@@ -54,6 +52,9 @@ export const Map = () => {
         loadingEnabled
         mapType='standard'
         customMapStyle={MAP_STYLES}
+        mapPadding={{ top: 0, right: 0, bottom: 0, left: 40 }}
+        showsCompass={true}
+        compassOffset={{ x: 40, y: 10 }}
         style={{ flex: 1 }}
         region={{
           latitude: currentLocation?.latitude,
@@ -62,6 +63,7 @@ export const Map = () => {
           longitudeDelta: 0.01,
         }}>
         <ImageMarker
+          draggable
           coordinate={currentLocation}
           title={'Mi Ubicación'}
           image={LocationImg}
@@ -108,40 +110,20 @@ export const Map = () => {
         ))}
 
         {currentLocation && destination && (
-          <Fragment>
-            <MapViewDirections
-              origin={currentLocation}
-              destination={destination}
-              strokeColor={COLORS.secondary}
-              strokeWidth={3}
-              apikey={Config.GOOGLE_MAPS_API_KEY}
-              mode={directionMode}
-            />
-
-            <XStack pos='absolute' top={'$2.5'} right={'$2.5'} space='$2'>
-              <Stack
-                bg={directionMode === 'DRIVING' ? '$gray11Dark' : '$colorTransparent'}
-                borderRadius={'$5'}
-                padding='$1.5'
-                onPress={() => {
-                  setDirectionMode('DRIVING');
-                }}>
-                <CarFront color={COLORS.dark} size={30} />
-              </Stack>
-
-              <Stack
-                bg={directionMode === 'WALKING' ? '$gray11Dark' : '$colorTransparent'}
-                padding='$1.5'
-                borderRadius={'$5'}
-                onPress={() => {
-                  setDirectionMode('WALKING');
-                }}>
-                <Footprints color={COLORS.dark} size={30} />
-              </Stack>
-            </XStack>
-          </Fragment>
+          <MapViewDirections
+            origin={currentLocation}
+            destination={destination}
+            strokeColor={COLORS.secondary}
+            strokeWidth={3}
+            apikey={Config.GOOGLE_MAPS_API_KEY}
+            mode={directionMode}
+          />
         )}
       </MapView>
+
+      {currentLocation && destination && (
+        <MapSelectDirecction directionMode={directionMode} setDirectionMode={setDirectionMode} />
+      )}
     </YStack>
   );
 };

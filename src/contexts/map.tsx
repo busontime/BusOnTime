@@ -12,6 +12,8 @@ import { showAlertDialog } from '@/utils/dialog';
 
 import { type ChildrenProps } from '@/interfaces';
 
+import { DEFAULT_COORDINATE } from '@/constants/bd';
+
 export const MapContext = createContext(null);
 
 export const useMapContext = () => useContext(MapContext);
@@ -23,10 +25,7 @@ export const MapProvider: React.FC<ChildrenProps> = ({ children }) => {
   const [lineSelected, setLineSelected] = useState(null);
   const [busStops, setBusStops] = useState([]);
   const [busStopSelected, setBusStopSelected] = useState(null);
-  const [currentLocation, setCurrentLocation] = useState({
-    latitude: -0.952515,
-    longitude: -80.744904,
-  });
+  const [currentLocation, setCurrentLocation] = useState(DEFAULT_COORDINATE);
 
   const requestLocationPermission = async () => {
     try {
@@ -45,21 +44,17 @@ export const MapProvider: React.FC<ChildrenProps> = ({ children }) => {
         console.log('Location permission granted');
 
         Geolocation.getCurrentPosition((info) => {
-          // console.log('posicion actualizada', info);
           setCurrentLocation({
-            // latitude: -0.945576,
-            // longitude: -80.723126,
             latitude: info.coords.latitude,
             longitude: info.coords.longitude,
           });
+
+          // setCurrentLocation(DEFAULT_COORDINATE);
         });
       } else {
         console.log('Location permission denied');
 
-        setCurrentLocation({
-          latitude: -0.952515,
-          longitude: -80.744904,
-        });
+        setCurrentLocation(DEFAULT_COORDINATE);
 
         showAlertDialog('Permiso de Ubicación Denegado');
       }

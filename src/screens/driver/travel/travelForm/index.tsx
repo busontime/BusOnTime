@@ -29,6 +29,13 @@ import { convertFirestoreDateToString } from '@/utils/helpers';
 import { initTravelForm } from '@/constants/forms';
 import { TRAVEL_STATUS } from '@/constants/bd';
 
+Geolocation.setRNConfiguration({
+  skipPermissionRequests: false,
+  authorizationLevel: 'always',
+  enableBackgroundLocationUpdates: true,
+  locationProvider: 'android',
+});
+
 const route = [];
 
 export const TravelForm = () => {
@@ -79,19 +86,17 @@ export const TravelForm = () => {
         showSuccessDialog('Recorrido iniciado con éxito!');
 
         BackgroundTimer.runBackgroundTimer(() => {
-          Geolocation.getCurrentPosition(async (info) => {
-            const location = {
-              latitude: info.coords.latitude,
-              longitude: info.coords.longitude,
-            };
-            console.log('location', location);
-            console.log('route.', route.length);
-            route.push(location);
-
-            await travelService.updateById(newTravelId, { location });
-
-            setCurrentLocation(location);
-          });
+          // Geolocation.getCurrentPosition(async (info) => {
+          //   const location = {
+          //     latitude: info.coords.latitude,
+          //     longitude: info.coords.longitude,
+          //   };
+          //   console.log('location', location);
+          console.log('route.', route.length);
+          //   route.push(location);
+          //   await travelService.updateById(newTravelId, { location });
+          //   setCurrentLocation(location);
+          // });
         }, 5000);
       } catch (error) {
         showErrorDialog('Ocurrió un error al iniciar el recorrido, inténtelo nuevamente');
@@ -286,6 +291,34 @@ export const TravelForm = () => {
     getBuses();
   }, []);
 
+  useEffect(() => {
+    const watchId = Geolocation.watchPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        const currentLocation = { latitude, longitude };
+
+        console.log('currentLocation', currentLocation);
+
+        route.push(currentLocation);
+
+        if (currentTravel) {
+          await travelService.updateById(currentTravel?.id, { currentLocation });
+        }
+
+        setCurrentLocation(currentLocation);
+      },
+      (error) => {
+        console.error('Error al obtener la ubicación:', error);
+      },
+      { interval: 5000, maximumAge: 0, enableHighAccuracy: true, distanceFilter: 0 }
+    );
+
+    return () => {
+      Geolocation.clearWatch(watchId);
+    };
+  }, []);
+
   return (
     <YStack f={1} bg={'$backgroundFocus'}>
       <TogleSidebar />
@@ -353,19 +386,19 @@ export const TravelForm = () => {
             {showEdit && (
               <YStack ai='center' jc='center' space='$3'>
                 <FormSelect
-                  label='Linea:'
-                  placeholder='Selecciona una linea'
-                  value={formValues?.line?.id}
-                  options={lines}
-                  onValueChange={changeLineSelect}
-                />
-
-                <FormSelect
                   label='Cooperativa:'
                   placeholder='Selecciona una cooperativa'
                   value={formValues?.cooperative?.id}
                   options={cooperatives}
                   onValueChange={changeCooperativeSelect}
+                />
+
+                <FormSelect
+                  label='Linea:'
+                  placeholder='Selecciona una linea'
+                  value={formValues?.line?.id}
+                  options={lines}
+                  onValueChange={changeLineSelect}
                 />
 
                 <FormSelect
@@ -448,19 +481,19 @@ export const TravelForm = () => {
             <H4 color={'$color'}>Nuevo Recorrido</H4>
 
             <FormSelect
-              label='Linea:'
-              placeholder='Selecciona una linea'
-              value={formValues?.line?.id}
-              options={lines}
-              onValueChange={changeLineSelect}
-            />
-
-            <FormSelect
               label='Cooperativa:'
               placeholder='Selecciona una cooperativa'
               value={formValues?.cooperative?.id}
               options={cooperatives}
               onValueChange={changeCooperativeSelect}
+            />
+
+            <FormSelect
+              label='Linea:'
+              placeholder='Selecciona una linea'
+              value={formValues?.line?.id}
+              options={lines}
+              onValueChange={changeLineSelect}
             />
 
             <FormSelect

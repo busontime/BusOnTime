@@ -2,10 +2,31 @@ import React, { Fragment } from 'react';
 import { H5 } from 'tamagui';
 import MapView, { PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 
+import { useMapContext } from '@/contexts/map';
+
+import { ImageMarker } from '@/components/marker';
+
+import LocationImg from '@/assets/images/location.png';
+import BusImg from '@/assets/images/bus.png';
+import BusStopImg from '@/assets/images/stop.png';
+
 import { COLORS, MAP_STYLES } from '@/constants/styles';
-import { ImageMarker } from '../marker';
 
 export const MapTravel = ({ travel = null }) => {
+  const { busStops } = useMapContext();
+  // console.log('travel.route', travel.route.length);
+
+  // const demo = new Set();
+  // const demo2 = new Set();
+  // travel?.route.forEach((item) => {
+  //   demo.add(item.latitude);
+  //   demo2.add(item.longitude);
+  // });
+
+  // console.log('demo', demo);
+
+  // console.log('demo2', demo2);
+
   return (
     <Fragment>
       {travel && (
@@ -27,18 +48,23 @@ export const MapTravel = ({ travel = null }) => {
             longitudeDelta: 0.001,
           }}
           style={{ flex: 1 }}>
+          {busStops?.map((item, index) => (
+            <ImageMarker
+              key={index}
+              coordinate={item.coordinate}
+              title={item.name}
+              image={BusStopImg}
+            />
+          ))}
+
           {travel.route && travel.route.length > 0 && (
             <Fragment>
-              <ImageMarker
-                coordinate={travel?.route[0]}
-                title={'Origen'}
-                pinColor={COLORS.primary}
-              />
+              <ImageMarker coordinate={travel?.route[0]} title={'Origen'} image={LocationImg} />
 
               <ImageMarker
                 coordinate={travel?.route[travel?.route.length - 1]}
                 title={'Destino'}
-                pinColor={COLORS.green}
+                image={BusImg}
               />
 
               <Polyline

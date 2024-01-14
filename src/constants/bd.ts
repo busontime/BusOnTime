@@ -17,3 +17,5 @@ export const TRAVEL_STATUS = {
   finalized: 'finalized',
   cancelled: 'cancelled',
 };
+
+export const DEFAULT_COORDINATE = { latitude: -0.952515, longitude: -80.744904 };

@@ -7,11 +7,13 @@ import { MapPin } from 'lucide-react-native';
 import { useMapContext } from '@/contexts/map';
 
 import { ModalButtons } from '../modalButtons';
+import { ImageMarker } from '../marker';
 
 import { showAlertDialog } from '@/utils/dialog';
 
+import BusStopImg from '@/assets/images/stop.png';
+
 import { COLORS, MAP_STYLES } from '@/constants/styles';
-import { ImageMarker } from '../marker';
 
 export const PickLocation = ({ changeValue = (val) => {}, coordinate = null, markerName = '' }) => {
   const { currentLocation } = useMapContext();
@@ -83,7 +85,7 @@ export const PickLocation = ({ changeValue = (val) => {}, coordinate = null, mar
                   longitude: Number(marker?.longitude),
                 }}
                 title={markerName !== '' ? markerName : 'Parada'}
-                pinColor={COLORS.secondary}
+                image={BusStopImg}
               />
             )}
           </MapView>
