@@ -9,6 +9,10 @@ export const convertFirestoreDateToString = (date) => {
     return '';
   }
 
+  if (moment(date, moment.ISO_8601, true).isValid()) {
+    return moment(date).format('DD/MM/YYYY');
+  }
+
   const time = date.seconds * 1000 + Math.round(date.nanoseconds / 1e6);
 
   return moment(time).format('DD/MM/YYYY');
@@ -17,6 +21,10 @@ export const convertFirestoreDateToString = (date) => {
 export const convertFirestoreDateToDate = (date) => {
   if (!date) {
     return new Date();
+  }
+
+  if (moment(date, moment.ISO_8601, true).isValid()) {
+    return new Date(date);
   }
 
   const time = date.seconds * 1000 + Math.round(date.nanoseconds / 1e6);

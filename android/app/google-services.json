@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "818561313921",
-    "project_id": "busontime-93cb9",
-    "storage_bucket": "busontime-93cb9.appspot.com"
+    "project_number": "458760340231",
+    "project_id": "busontime-cf5da",
+    "storage_bucket": "busontime-cf5da.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:818561313921:android:d4d09f5902a2843c4cf180",
+        "mobilesdk_app_id": "1:458760340231:android:2aede4bd023a5a508cfba2",
         "android_client_info": {
           "package_name": "com.busontime"
         }
       },
       "oauth_client": [
         {
-          "client_id": "818561313921-9iug3qd98i61ken8ns3a8imqclk0lg1n.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.busontime",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
-          }
-        },
-        {
-          "client_id": "818561313921-8966j03p9c1isrc10293s9eqb9o15bdv.apps.googleusercontent.com",
+          "client_id": "458760340231-4p2laijvkfko6qcftr1qm8lv7v834r8h.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAVCxEQMfNHryysta3-mX0mg6la5k4IIFk"
+          "current_key": "AIzaSyBSs9nUsJYgY579twsI91BXA-ZD7zXP0ZU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "818561313921-8966j03p9c1isrc10293s9eqb9o15bdv.apps.googleusercontent.com",
+              "client_id": "458760340231-4p2laijvkfko6qcftr1qm8lv7v834r8h.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
