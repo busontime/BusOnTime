@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "458760340231-4p2laijvkfko6qcftr1qm8lv7v834r8h.apps.googleusercontent.com",
+          "client_id": "458760340231-q9h5rfj3qpohnla48sf0fjih0lacq71j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.busontime",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "458760340231-h3dkoetl4sl08a75tejrc986u3hi2p99.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,7 +35,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "458760340231-4p2laijvkfko6qcftr1qm8lv7v834r8h.apps.googleusercontent.com",
+              "client_id": "458760340231-h3dkoetl4sl08a75tejrc986u3hi2p99.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
